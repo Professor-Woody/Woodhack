@@ -18,8 +18,8 @@ class Screen:
     def clear(self):
         self.console.clear()
 
-    def draw(self, x, y, char):
-        self.console.print(x=x, y=y, string=char)
+    def draw(self, entity):
+        self.console.print(x=entity.x, y=entity.y, string=entity.char)
     
     def drawArray(self, horizontal, vertical, array):
         self.console.tiles_rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array

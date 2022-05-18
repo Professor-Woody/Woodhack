@@ -1,6 +1,5 @@
 import tcod
 from EventHandlers import EventHandler
-from Actions import ActionManager, EscapeAction
 from Level import Level
 from Screen import Screen
 

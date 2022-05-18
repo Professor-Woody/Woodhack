@@ -1,5 +1,5 @@
-import csv
 import copy
+from Components import BaseAI
 
 class Entity:
     x = 0
@@ -35,13 +35,14 @@ class Entity:
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-
         entityManager.add(clone)
 
 
 class NPC(Entity):
-    def __init__(self, breed, ai=BaseAI(self)):
+    def __init__(self, breed, ai=None):
         self.breed = breed
+        if not ai:
+            ai = BaseAI(self)
         self.ai = ai
 
     def update(self, level):

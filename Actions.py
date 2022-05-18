@@ -52,13 +52,19 @@ class MovementAction(ActionWithDirection):
         dx = self.entity.x + self.dx
         dy = self.entity.y + self.dy
 
+        print(1)
         if not level.map.checkInBounds(dx, dy):
+            print (2)
             return
+        print (3)
         if not level.map.checkIsPassable(dx, dy):
+            print (4)
             return 
-        if level.EntityManager.checkIsBlocked(self.entity):
+        print (5)
+        if level.entityManager.checkIsBlocked(dx, dy):
+            print (6)
             return
-
+        print(7)
         self.entity.move(dx, dy)
 
 class CheerAction(EntityAction):

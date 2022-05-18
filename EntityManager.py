@@ -1,19 +1,30 @@
+import csv
+from Entity import Entity
+from Components import Breed
+
 class EntityManager:
     entityTypes = {}
     breedTypes = {}
     allEntities = set()
+    players = set()
 
     def add(self, entity):
         self.allEntities.add(entity)
+        if entity.type == "PLAYER":
+            self.players.add(entity)
+        print (self.allEntities)
 
     def remove(self, entity):
         if entity in self.allEntities:
             self.allEntities.remove(entity)
+        if entity in self.players:
+            self.players.remove(entity)
 
-    def checkIsBlocked(self, movingEntity):
+    def checkIsBlocked(self, dx, dy):
         for entity in self.allEntities:
             if entity.blocksMovement:
-                if movingEntity.x == entity.x and movingEntity.y == entity.y:
+
+                if dx == entity.x and dy == entity.y:
                     return entity
         return None
 
@@ -22,7 +33,7 @@ class EntityManager:
             entity.update(level)
 
     def draw(self, map, screen):
-        for entity in self.entities:
+        for entity in self.allEntities:
             if map.checkIsVisible(entity):
                 screen.draw(entity)
 
@@ -36,7 +47,9 @@ class EntityManager:
                 if not readHeader:
                     readHeader = True
                 else:
-                    self.entityTypes[row[0]] = Entity(row[1], (row[2], row[3], row[4]), row[5])
+                    self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6])
+                    print (row[6])
+
 
     def loadBreeds(self, filename):
         with open(filename) as breedDefs:    

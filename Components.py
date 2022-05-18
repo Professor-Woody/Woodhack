@@ -1,8 +1,9 @@
-from Entity import Entity
-
+import tcod
+from Actions import Action
+import numpy as np
 
 class BaseComponent:
-    entity: Entity
+    entity = None
 
     @property
     def level(self):

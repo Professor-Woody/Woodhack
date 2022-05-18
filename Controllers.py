@@ -1,5 +1,3 @@
-from Events import KeyDownEvent, KeyUpEvent
-
 class KeyboardController:
     key = {}
 

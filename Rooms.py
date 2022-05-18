@@ -18,10 +18,10 @@ tile_dt = np.dtype(
     ]
 )
 
-SHROUD = np.array((order(" "), (255, 255, 255), (0, 0, 0)), dtype="graphic_dt")
+SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
 
-def newTile(passable, transparent, dark):
+def newTile(passable, transparent, dark, light):
     return np.array((passable, transparent, dark, light), dtype=tile_dt)
 
 
@@ -30,15 +30,15 @@ def newTile(passable, transparent, dark):
 floor = newTile(
     passable=True, 
     transparent=True,
-    dark=(ord(" "), (255,255,255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (130, 110, 50)),
+    dark=(ord(" "), (255,255,255), (10, 10, 10)),
+    light=(ord(" "), (255, 255, 255), (100, 100, 100)),
 )
 
 wall = newTile(
     passable=False, 
     transparent=False, 
-    dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (130, 110, 50)),
+    dark=(ord("#"), (255, 255, 255), (0, 0, 0)),
+    light=(ord("#"), (255, 255, 255), (100, 100, 100)),
 )
 
 
@@ -49,6 +49,7 @@ class RectangularRoom:
         self.y = y
         self.x2 = x + width
         self.y2 = y + height
+
 
     @property
     def center(self):
@@ -66,7 +67,7 @@ class RectangularRoom:
     def intersects(self, other):
         return (
             self.x <= other.x2
-            and self.x2 >= other.x1
+            and self.x2 >= other.x
             and self.y < other.y2
             and self.y2 >= other.y
         )

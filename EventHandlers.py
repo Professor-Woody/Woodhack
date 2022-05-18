@@ -1,8 +1,8 @@
 import tcod
-from Actions import EscapeAction, KeyAction
+from Actions import Action, KeyAction
 
 
-class EventHandler(tcod.event.EventDispatch[Event]):
+class EventHandler(tcod.event.EventDispatch[Action]):
     def ev_quit(self, event: tcod.event.Quit):
         raise SystemExit()
 

@@ -1,6 +1,7 @@
 from Entity import Entity
-from Controllers import KeyboardController
+from Actions import CheerAction, MovementAction
 import tcod
+
 
 class Player(Entity):
     def __init__(self, x, y, char, colour, controller):
@@ -32,13 +33,14 @@ class Player(Entity):
             dx += 1
 
         if dx or dy:
+            print (dx, dy)
             MovementAction(self, dx, dy).perform(level)
 
         # perform actions based off action keys
-        if self.controller.checkKeyPressedOnce(tcod.event.K_Z):
+        if self.controller.checkKeyPressedOnce(tcod.event.K_z):
             if self.action1:
                 self.action1.perform(level)
-        elif self.controller.checkKeyPressedOnce(tcod.event.K_X):
+        elif self.controller.checkKeyPressedOnce(tcod.event.K_x):
             if self.action2:
                 self.action2.perform(level)
 
