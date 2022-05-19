@@ -39,19 +39,12 @@ class MovementAction(ActionWithDirection):
         dx = self.entity.x + self.dx
         dy = self.entity.y + self.dy
 
-        print(1)
         if not self.entity.level.map.checkInBounds(dx, dy):
-            print (2)
             return
-        print (3)
         if not self.entity.level.map.checkIsPassable(dx, dy):
-            print (4)
-            return 
-        print (5)
-        if self.entity.level.entityManager.checkIsBlocked(dx, dy):
-            print (6)
             return
-        print(7)
+        if self.entity.level.entityManager.checkIsBlocked(dx, dy):
+            return
         self.entity.move(dx, dy)
 
 class CheerAction(EntityAction):
@@ -61,6 +54,7 @@ class CheerAction(EntityAction):
 
     def perform(self):
         print (self.msg)
+        WaitAction(self.entity, 60).perform()
 
 
 class WaitAction(EntityAction):
@@ -77,7 +71,6 @@ class WatchAction(WaitAction):
         super().__init__(entity, time)
     
     def perform(self):
-        self.entity.target = None
         if self.entity.level.map.checkIsVisible(self.entity):
             for player in self.entity.level.entityManager.players:
                 if player == self.entity:
@@ -88,7 +81,8 @@ class WatchAction(WaitAction):
                     if self.getDistance(player) < self.getDistance(self.entity.target):
                         self.entity.target = player
         else:
-            super().perform()        
+            if not self.entity.target:
+                super().perform()        
     
     def getDistance(self, target):
         dx = target.x - self.entity.x
