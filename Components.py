@@ -1,5 +1,5 @@
 import tcod
-from Actions import CheerAction, EntityAction, MovementAction, WatchAction
+from Actions import CheerAction, EntityAction, MovementAction, WatchAction, WaitAction
 import numpy as np
 
 class Breed:
@@ -43,6 +43,8 @@ class BaseAI(EntityAction):
 
         return [(index[0], index[1]) for index in path]
 
+    def perform(self):
+        return WaitAction(60)
 
 class HostileAI(BaseAI):
     def __init__(self, entity):
@@ -66,6 +68,6 @@ class HostileAI(BaseAI):
                 destx, desty = self.path.pop(0)
                 return MovementAction(self.entity, destx-self.entity.x, desty-self.entity.y).perform()
         
-        return WatchAction(self.entity).perform()
+        return WatchAction(self.entity, 60).perform()
 
 
