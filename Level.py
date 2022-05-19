@@ -21,6 +21,10 @@ class Level:
         self.entityManager.add(player)
 
         self.entityManager.spawn('orc', self.map.end[0], self.map.end[1])
+        self.entityManager.spawn('orc', self.map.end[0]+1, self.map.end[1])
+        self.entityManager.spawn('orc', self.map.end[0]-1, self.map.end[1])
+        self.entityManager.spawn('orc', self.map.end[0], self.map.end[1]+1)
+        self.entityManager.spawn('orc', self.map.end[0], self.map.end[1]-1)
 
 
     def update(self):

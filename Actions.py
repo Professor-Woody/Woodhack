@@ -71,7 +71,6 @@ class WatchAction(WaitAction):
         super().__init__(entity, time)
     
     def perform(self):
-        self.entity.target = None
         if self.entity.level.map.checkIsVisible(self.entity):
             for player in self.entity.level.entityManager.players:
                 if player == self.entity:
@@ -82,7 +81,8 @@ class WatchAction(WaitAction):
                     if self.getDistance(player) < self.getDistance(self.entity.target):
                         self.entity.target = player
         else:
-            super().perform()        
+            if not self.entity.target:
+                super().perform()        
     
     def getDistance(self, target):
         dx = target.x - self.entity.x
