@@ -1,22 +1,23 @@
 import copy
-from Components import BaseAI
+from Components import BaseAI, Breed, HostileAI
 
 class Entity:
     x = 0
     y = 0
     level = None
 
-    def __init__(self, eType, char, colour, blocksMovement=False):
+    def __init__(self, eType, char, colour, blocksMovement=False, level=None):
         self.char = char
         self.colour = colour
         self.type = eType
         self.blocksMovement = blocksMovement
+        self.level = level
 
     def draw(self, screen, gameMap):
         if gameMap.visible[self.x, self.y]:
             screen.draw(self.x, self.y, self.char)
 
-    def update(self, level):
+    def update(self):
         pass
 
     def move(self, x, y):
@@ -31,21 +32,34 @@ class Entity:
         self.level = level
         self.level.entityManager.add(self)
     
-    def spawn(self, entityManager, x, y):
+    def spawn(self, level, x, y):
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-        entityManager.add(clone)
+        clone.level = level
+        level.entityManager.add(clone)
 
 
-class NPC(Entity):
-    def __init__(self, breed, ai=None):
+class Actor(Entity):
+    def __init__(self, eType, char, colour, blocksMovement=False, level=None, breed=None, ai=None):
+        super().__init__(eType, char, colour, blocksMovement, level)
+
+        # components
+        if not breed:
+            breed=Breed(8,1)
         self.breed = breed
         if not ai:
-            ai = BaseAI(self)
+            ai = HostileAI(self)
         self.ai = ai
 
-    def update(self, level):
-        pass
+        self.speed = 0
+        self.target = None
+
+    def update(self):
+        if self.speed:
+            self.speed -= 1
+            return
+        self.ai.perform()
 
     
+

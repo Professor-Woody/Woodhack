@@ -14,19 +14,18 @@ class Level:
 
         self.map = DungeonCreator.giveMeADungeon(self.width, self.height)
 
-        self.keyboardController = KeyboardController()    # there's only 1 keyboard per computer    
-        player = Player(self.map.start[0], self.map.start[1], "@", WHITE, self.keyboardController)
+        player = Player(self.map.start[0], self.map.start[1], "@", WHITE, self.app.keyboardController, self)
 
-        self.entityManager = EntityManager()
+        self.entityManager = EntityManager(self)
         self.entityManager.loadEntities('npcs.csv')
         self.entityManager.add(player)
 
-        self.entityManager.spawn('orc', player.x+1, player.y)
+        self.entityManager.spawn('orc', self.map.end[0], self.map.end[1])
 
 
     def update(self):
         self.map.update(self.entityManager.players)
-        self.entityManager.update(self)
+        self.entityManager.update()
 
 
     def draw(self, screen):

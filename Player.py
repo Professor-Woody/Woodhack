@@ -4,13 +4,14 @@ import tcod
 
 
 class Player(Entity):
-    def __init__(self, x, y, char, colour, controller):
-        super().__init__("PLAYER", char, colour, True)
+    def __init__(self, x, y, char, colour, controller, level):
+        super().__init__("PLAYER", char, colour, True, level)
         self.x = x
         self.y = y
         self.char = char
         self.colour = colour
         self.controller = controller
+        self.level = level
 
         self.action1 = CheerAction(self, "Left hand")
         self.action2 = CheerAction(self, "Right hand")
@@ -19,7 +20,7 @@ class Player(Entity):
     def performAction(self, action):
         pass
 
-    def update(self, level):
+    def update(self):
         # check movement
         dx = 0
         dy = 0
@@ -34,15 +35,15 @@ class Player(Entity):
 
         if dx or dy:
             print (dx, dy)
-            MovementAction(self, dx, dy).perform(level)
+            MovementAction(self, dx, dy).perform()
 
         # perform actions based off action keys
         if self.controller.checkKeyPressedOnce(tcod.event.K_z):
             if self.action1:
-                self.action1.perform(level)
+                self.action1.perform()
         elif self.controller.checkKeyPressedOnce(tcod.event.K_x):
             if self.action2:
-                self.action2.perform(level)
+                self.action2.perform()
 
     def draw(self, screen):
         screen.draw(self.x, self.y, self.char)

@@ -1,24 +1,10 @@
-
-class ActionManager:
-    def __init__(self):
-        self.actionQueue = []
-
-    def add(self, action):
-        self.actionQueue.append(action)
-
-    def getActions(self):
-        queue = self.actionQueue.copy()
-        self.actionQueue = []
-        return queue
-
-
-
 class Action:
     def __init__(self):
         pass
 
-    def perform(self, level):
+    def perform(self):
         print (f"why are you performing {type(self)}?")
+
 
 class EntityAction(Action):
     def __init__(self, entity):
@@ -29,13 +15,14 @@ class EntityAction(Action):
 
 
 class KeyAction(Action):
-    def __init__(self, key, state):
+    def __init__(self, key, state, app):
         super().__init__()
         self.key = key
         self.state = state
+        self.app = app
 
-    def perform(self, level):
-        level.keyboardController.setKey(self.key, self.state)
+    def perform(self):
+        self.app.keyboardController.setKey(self.key, self.state)
     
 
 
@@ -48,20 +35,20 @@ class ActionWithDirection(EntityAction):
 
 
 class MovementAction(ActionWithDirection):
-    def perform(self, level):
+    def perform(self):
         dx = self.entity.x + self.dx
         dy = self.entity.y + self.dy
 
         print(1)
-        if not level.map.checkInBounds(dx, dy):
+        if not self.entity.level.map.checkInBounds(dx, dy):
             print (2)
             return
         print (3)
-        if not level.map.checkIsPassable(dx, dy):
+        if not self.entity.level.map.checkIsPassable(dx, dy):
             print (4)
             return 
         print (5)
-        if level.entityManager.checkIsBlocked(dx, dy):
+        if self.entity.level.entityManager.checkIsBlocked(dx, dy):
             print (6)
             return
         print(7)
@@ -72,5 +59,23 @@ class CheerAction(EntityAction):
         super().__init__(entity)
         self.msg = msg
 
-    def perform(self, level):
+    def perform(self):
         print (self.msg)
+
+
+class WaitAction(EntityAction):
+    def __init__(self, entity, time):
+        super().__init__(entity)
+        self.time = time
+    
+    def perform(self):
+        print(f"{self.entity.type} is waiting")
+        self.entity.speed += self.time
+
+class WatchAction(WaitAction):
+    def __init__(self, entity, time):
+        super().__init__(entity, time)
+    
+    def perform(self):
+        target = None
+        for player in self.entity.level.entityManager.players:

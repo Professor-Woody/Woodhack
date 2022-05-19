@@ -1,5 +1,5 @@
 import csv
-from Entity import Entity
+from Entity import Entity, Actor
 from Components import Breed
 
 class EntityManager:
@@ -7,6 +7,9 @@ class EntityManager:
     breedTypes = {}
     allEntities = set()
     players = set()
+
+    def __init__(self, level):
+        self.level = level
 
     def add(self, entity):
         self.allEntities.add(entity)
@@ -28,9 +31,9 @@ class EntityManager:
                     return entity
         return None
 
-    def update(self, level):
+    def update(self):
         for entity in self.allEntities:
-            entity.update(level)
+            entity.update()
 
     def draw(self, map, screen):
         for entity in self.allEntities:
@@ -47,7 +50,10 @@ class EntityManager:
                 if not readHeader:
                     readHeader = True
                 else:
-                    self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6])
+                    if row[1] == "NPC":
+                        self.entityTypes[row[0]] = Actor(row[1], row[2], (row[3], row[4], row[5]), row[6], level=self.level)
+                    else:
+                        self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6], level=self.level)
                     print (row[6])
 
 
@@ -65,7 +71,16 @@ class EntityManager:
                     
 
     def spawn(self, entityName, x, y):
-        self.entityTypes[entityName].spawn(self, x, y)
+        self.entityTypes[entityName].spawn(self.level, x, y)
+
+
+
+
+
+
+
+
+
 
 
 

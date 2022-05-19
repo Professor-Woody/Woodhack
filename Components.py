@@ -1,17 +1,8 @@
 import tcod
-from Actions import Action
+from Actions import CheerAction, EntityAction, MovementAction, WatchAction
 import numpy as np
 
-class BaseComponent:
-    entity = None
-
-    @property
-    def level(self):
-        return self.entity.level
-
-
-
-class Breed(BaseComponent):
+class Breed:
     def __init__(self, hp, defense):
         self.maxHp = hp
         self._hp = hp
@@ -28,7 +19,7 @@ class Breed(BaseComponent):
 
 
 
-class BaseAI(Action, BaseComponent):
+class BaseAI(EntityAction):
     def getPathTo(self, dx, dy):
         cost = np.array(self.entity.level.map.tiles["walkable"], dtype=np.int8)
 
@@ -51,4 +42,30 @@ class BaseAI(Action, BaseComponent):
         path = pathfinder.path_to((dx, dy))[1:].tolist()
 
         return [(index[0], index[1]) for index in path]
+
+
+class HostileAI(BaseAI):
+    def __init__(self, entity):
+        super().__init__(entity)
+        self.path = []
+
+    def perform(self):
+        target = self.entity.target
+        if target:
+            dx = target.x - self.entity.x
+            dy = target.y - self.entity.y
+            distance = max(abs(dx), abs(dy))
+
+            if self.entity.level.map.visible[self.entity.x, self.entity.y]:
+                if distance <= 1:
+                    return CheerAction(self.entity, f"{self.entity.type} is attacking")
+
+                self.path = self.getPathTo(dx, dy)
+
+            if self.path:
+                destx, desty = self.path.pop(0)
+                return MovementAction(self.entity, destx-self.entity.x, desty-self.entity.y).perform()
+        
+        return WatchAction(self.entity).perform()
+
 
