@@ -21,6 +21,7 @@ class Breed:
 
 class BaseAI(EntityAction):
     def getPathTo(self, dx, dy):
+        print ((dx, dy))
         cost = np.array(self.entity.level.map.tiles["passable"], dtype=np.int8)
 
         for entity in self.entity.level.entityManager.allEntities:

@@ -39,19 +39,12 @@ class MovementAction(ActionWithDirection):
         dx = self.entity.x + self.dx
         dy = self.entity.y + self.dy
 
-        print(1)
         if not self.entity.level.map.checkInBounds(dx, dy):
-            print (2)
             return
-        print (3)
         if not self.entity.level.map.checkIsPassable(dx, dy):
-            print (4)
-            return 
-        print (5)
-        if self.entity.level.entityManager.checkIsBlocked(dx, dy):
-            print (6)
             return
-        print(7)
+        if self.entity.level.entityManager.checkIsBlocked(dx, dy):
+            return
         self.entity.move(dx, dy)
 
 class CheerAction(EntityAction):
@@ -61,6 +54,7 @@ class CheerAction(EntityAction):
 
     def perform(self):
         print (self.msg)
+        WaitAction(self.entity, 60).perform()
 
 
 class WaitAction(EntityAction):
