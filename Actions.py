@@ -78,7 +78,7 @@ class WatchAction(WaitAction):
     
     def perform(self):
         self.entity.target = None
-        if self.entity.level.map.checkIsVisible(self.entity.x, self.entity.y):
+        if self.entity.level.map.checkIsVisible(self.entity):
             for player in self.entity.level.entityManager.players:
                 if player == self.entity:
                     continue

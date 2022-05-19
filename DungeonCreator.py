@@ -1,6 +1,4 @@
-import numpy as np
-from Rooms import RectangularRoom, floor, wall, SHROUD
-from tcod.map import compute_fov
+from Rooms import RectangularRoom, floor
 import random
 import tcod
 from Maps import GameMap

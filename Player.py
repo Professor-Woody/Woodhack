@@ -5,11 +5,9 @@ import tcod
 
 class Player(Entity):
     def __init__(self, x, y, char, colour, controller, level):
-        super().__init__("PLAYER", char, colour, True, level)
+        super().__init__("PLAYER", char, colour, True)
         self.x = x
         self.y = y
-        self.char = char
-        self.colour = colour
         self.controller = controller
         self.level = level
 

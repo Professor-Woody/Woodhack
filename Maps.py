@@ -1,3 +1,7 @@
+import numpy as np
+from Rooms import wall, SHROUD
+import tcod
+from tcod.map import compute_fov
 
 class GameMap:
     def __init__(self, width, height):

@@ -6,12 +6,11 @@ class Entity:
     y = 0
     level = None
 
-    def __init__(self, eType, char, colour, blocksMovement=False, level=None):
+    def __init__(self, eType, char, colour, blocksMovement=False):
         self.char = char
         self.colour = colour
         self.type = eType
         self.blocksMovement = blocksMovement
-        self.level = level
 
     def draw(self, screen, gameMap):
         if gameMap.visible[self.x, self.y]:
@@ -41,8 +40,8 @@ class Entity:
 
 
 class Actor(Entity):
-    def __init__(self, eType, char, colour, blocksMovement=False, level=None, breed=None, ai=None):
-        super().__init__(eType, char, colour, blocksMovement, level)
+    def __init__(self, eType, char, colour, blocksMovement=False, breed=None, ai=None):
+        super().__init__(eType, char, colour, blocksMovement)
 
         # components
         if not breed:

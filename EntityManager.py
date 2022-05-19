@@ -51,9 +51,9 @@ class EntityManager:
                     readHeader = True
                 else:
                     if row[1] == "NPC":
-                        self.entityTypes[row[0]] = Actor(row[1], row[2], (row[3], row[4], row[5]), row[6], level=self.level)
+                        self.entityTypes[row[0]] = Actor(row[1], row[2], (row[3], row[4], row[5]), row[6])
                     else:
-                        self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6], level=self.level)
+                        self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6])
                     print (row[6])
 
 
