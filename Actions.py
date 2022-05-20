@@ -28,10 +28,11 @@ class KeyAction(Action):
 
 
 class ActionWithDirection(EntityAction):
-    def __init__(self, entity, dx, dy):
+    def __init__(self, entity, dx, dy, time=10):
         super().__init__(entity)
         self.dx = dx
         self.dy = dy
+        self.time = time
 
 
 class MovementAction(ActionWithDirection):
@@ -46,6 +47,7 @@ class MovementAction(ActionWithDirection):
         if self.entity.level.entityManager.checkIsBlocked(dx, dy):
             return
         self.entity.move(dx, dy)
+        self.entity.speed += self.time
 
 class CheerAction(EntityAction):
     def __init__(self, entity, msg):

@@ -11,29 +11,32 @@ class Player(Entity):
         self.controller = controller
         self.level = level
 
+        self.speed = 0
+
         self.action1 = CheerAction(self, "Left hand")
         self.action2 = CheerAction(self, "Right hand")
 
 
-    def performAction(self, action):
-        pass
-
     def update(self):
+        if self.speed > 0:
+            self.speed -= 1
+            return
+
         # check movement
         dx = 0
         dy = 0
-        if self.controller.checkKeyPressedOnce(tcod.event.K_UP):
+        if self.controller.checkKeyPressed(tcod.event.K_UP):
             dy -= 1
-        if self.controller.checkKeyPressedOnce(tcod.event.K_DOWN):
+        if self.controller.checkKeyPressed(tcod.event.K_DOWN):
             dy += 1
-        if self.controller.checkKeyPressedOnce(tcod.event.K_LEFT):
+        if self.controller.checkKeyPressed(tcod.event.K_LEFT):
             dx -= 1
-        if self.controller.checkKeyPressedOnce(tcod.event.K_RIGHT):
+        if self.controller.checkKeyPressed(tcod.event.K_RIGHT):
             dx += 1
 
         if dx or dy:
             print (dx, dy)
-            MovementAction(self, dx, dy).perform()
+            MovementAction(self, dx, dy, 10).perform()
 
         # perform actions based off action keys
         if self.controller.checkKeyPressedOnce(tcod.event.K_z):

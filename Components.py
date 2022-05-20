@@ -58,7 +58,6 @@ class HostileAI(BaseAI):
 
             if self.entity.level.map.visible[self.entity.x, self.entity.y]:
                 if distance <= 1:
-                    WaitAction(self.entity, 30).perform()
                     return CheerAction(self.entity, f"{self.entity.type} is attacking").perform()
             if distance < 15:
                 self.path = self.getPathTo(target.x, target.y)
@@ -66,8 +65,7 @@ class HostileAI(BaseAI):
 
             if self.path:
                 destx, desty = self.path.pop(0)
-                WaitAction(self.entity, 30).perform()
-                return MovementAction(self.entity, destx-self.entity.x, desty-self.entity.y).perform()
+                return MovementAction(self.entity, destx-self.entity.x, desty-self.entity.y, 30).perform()
             return WaitAction(self.entity, 60).perform()
         return WatchAction(self.entity, 60).perform()
 
