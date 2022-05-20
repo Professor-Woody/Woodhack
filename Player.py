@@ -12,6 +12,8 @@ class Player(Entity):
         self.controller = controller
         self.level = level
 
+        self.speed = 0
+
         self.action1 = CheerAction(self, "Left hand")
         self.action2 = CheerAction(self, "Right hand")
 
@@ -20,14 +22,12 @@ class Player(Entity):
         self.maxHP = 5
 
 
-    def performAction(self, action):
-        pass
-
     def update(self):
-        if self.speed:
+
+        if self.speed > 0:
             self.speed -= 1
             return
-        
+
         # check movement
         dx = 0
         dy = 0
@@ -41,8 +41,7 @@ class Player(Entity):
             dx += 1
 
         if dx or dy:
-            WaitAction(self, 30).perform()
-            MovementAction(self, dx, dy).perform()
+            MovementAction(self, dx, dy, 10).perform()
 
         # perform actions based off action keys
         if self.controller.checkKeyPressedOnce(tcod.event.K_z):
