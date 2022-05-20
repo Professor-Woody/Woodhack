@@ -56,5 +56,6 @@ class Player(Entity):
 
     def draw(self, screen):
         screen.draw(self)
-        self.ui.draw(screen)
+        # self.ui.draw(screen)
+        screen.drawFrame(0, 40, "test", "testing\nsome stuff")
         #ui.renderHPBar(screen, 0, 45, self.hp, self.maxHP, 20)

@@ -1,5 +1,6 @@
 import Colours as colour
 import tcod
+import numpy as np
 
 def renderHPBar(screen, x, y, value, maxValue, totalWidth):
     barWidth = int(float(value) / maxValue * totalWidth)
@@ -21,10 +22,7 @@ class TextBox:
     def __init__(self, x, y, msg, title="", timeToLive=-1, width=0, height=0):
         self.x = x
         self.y = y
-        self.permananent = False
-        if self.timeToLive == -1:
-            self.permananent = True
-
+        self.state = OPENING
         self.timeToLive = timeToLive
 
         self.msg = msg.split("\n")
@@ -70,9 +68,9 @@ class TextBox:
             )
             self.buffer["ch"] = ord(' ')
             self.buffer["ch"][:,0] = ord('-')
-            self.buffer["ch"][:,self.currentHeight] = ord('-')
+            self.buffer["ch"][:,self.currentHeight-1] = ord('-')
             self.buffer["ch"][0,:]=ord('|')
-            self.buffer["ch"][self.currentWidth,:]=ord('|')
+            self.buffer["ch"][self.currentWidth-1,:]=ord('|')
 
             if self.currentHeight == self.height and self.currentWidth == self.width:
                 row = 1

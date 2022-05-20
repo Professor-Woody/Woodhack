@@ -28,6 +28,21 @@ class Screen:
     def drawArray(self, horizontal, vertical, array):
         self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
+    def drawFrame(self, x, y, title, msg):
+        lines = msg.split("\n")
+        width = 0
+        for line in lines:
+            if len(line) > width:
+                width = len(line)
+        height = len(lines) + 2
+        width += 2
+
+        self.console.draw_frame(x, y, width, height, title=title, clear=True, fg=colour.WHITE, bg=colour.BLACK)
+        
+        for line in lines:
+            y+= 1
+            self.print(x+1, y, line)
+
     def print(self, x, y, msg, foreground = colour.WHITE):
         self.console.print(x=x, y=y, string=msg, fg=foreground)
 
