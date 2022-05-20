@@ -54,6 +54,7 @@ class Actor(Entity):
         self.speed = 0
         self.target = None
 
+
     def update(self):
         if self.speed:
             self.speed -= 1
