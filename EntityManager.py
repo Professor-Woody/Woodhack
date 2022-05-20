@@ -38,7 +38,7 @@ class EntityManager:
     def draw(self, map, screen):
         for entity in self.allEntities:
             if map.checkIsVisible(entity):
-                screen.draw(entity)
+                entity.draw(screen)
 
 
     # TODO: Replace both of these with an xml parser
