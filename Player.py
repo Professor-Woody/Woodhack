@@ -21,6 +21,8 @@ class Player(Entity):
         self.hp = 5
         self.maxHP = 5
 
+        self.ui = ui.TextBox(0, 40, "\n\n\n\n", "Woody")
+
 
     def update(self):
 
@@ -54,4 +56,5 @@ class Player(Entity):
 
     def draw(self, screen):
         screen.draw(self)
-        ui.renderHPBar(screen, 0, 45, self.hp, self.maxHP, 20)
+        self.ui.draw(screen)
+        #ui.renderHPBar(screen, 0, 45, self.hp, self.maxHP, 20)

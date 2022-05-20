@@ -26,7 +26,7 @@ class Screen:
         self.console.draw_rect(x=x, y=y, width=width, height=height, ch=ch, bg=background)
     
     def drawArray(self, horizontal, vertical, array):
-        self.console.tiles_rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
+        self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
     def print(self, x, y, msg, foreground = colour.WHITE):
         self.console.print(x=x, y=y, string=msg, fg=foreground)
