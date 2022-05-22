@@ -7,7 +7,7 @@ from Maps import GameMap
 class DungeonCreator:
     minRoomSize = 2
     maxRoomSize = 12
-    maxRooms = 10
+    maxRooms = 20
 
     @classmethod
     def giveMeADungeon(cls, width, height):

@@ -1,9 +1,7 @@
 from DungeonCreator import DungeonCreator
 from Player import Player
 from EntityManager import EntityManager
-from Controllers import KeyboardController
-
-WHITE = (255, 255, 255)
+import Colours as colour
 
 class Level:
     def __init__(self, app, width, height):
@@ -12,9 +10,9 @@ class Level:
         self.width = width
         self.height = height
 
-        self.map = DungeonCreator.giveMeADungeon(self.width, self.height)
+        self.map = DungeonCreator.giveMeADungeon(self.width-40, self.height-10)
 
-        player = Player(self.map.start[0], self.map.start[1], "@", WHITE, self.app.keyboardController, self)
+        player = Player(self.map.start[0], self.map.start[1], "@", colour.WHITE, self.app.keyboardController, self)
 
         self.entityManager = EntityManager(self)
         self.entityManager.loadEntities('npcs.csv')

@@ -1,4 +1,6 @@
 import Colours as colour
+import tcod
+import numpy as np
 
 def renderHPBar(screen, x, y, value, maxValue, totalWidth):
     barWidth = int(float(value) / maxValue * totalWidth)
@@ -23,7 +25,7 @@ class TextBox:
         self.state = OPENING
         self.timeToLive = timeToLive
 
-        self.msg = msg
+        self.msg = msg.split("\n")
         self.title = title
 
         self.width = width
@@ -33,37 +35,47 @@ class TextBox:
 
         if not self.width and not self.height:
             maxLength = 0
-            lines = 1
-            msg = msg.split("\n")
-            for line in msg:
+            for line in self.msg:
                 if len(line) > maxLength:
                     maxLength = len(line)
-                lines += 1
-            self.width = 8 + maxLength
+            self.width = 2 + maxLength
 
+            lines = 1 + len(self.msg)
             self.height = 2 + lines
 
-        self.speed = 2
         self.update()
 
         self.state = OPENING
 
 
-
     def update(self):
-        if self.state == OPENING:            
-            if self.speed:
-                self.speed -= 1
-                return
-            self.speed = 2
-            
+        if self.state == OPENING:
+            print ("opening")
             if (self.currentHeight == self.height and self.currentWidth == self.width):
                 self.state = OPENED
 
             self.currentWidth += max(min(self.width-self.currentWidth, 1), -1)
             self.currentHeight += max(min(self.height-self.currentHeight, 1), -1)
 
-            if self.currentHeight == self.height and self.currentWidth == self.width:          
+            self.buffer = np.full(
+                shape=(self.currentWidth, self.currentHeight),
+                fill_value=ord(' '),
+                dtype=tcod.console.Console.DTYPE,
+                order="F"
+            )
+            self.buffer["ch"][:,0] = ord('-')
+            self.buffer["ch"][:,self.currentHeight-1] = ord('-')
+            self.buffer["ch"][0,:]=ord('|')
+            self.buffer["ch"][self.currentWidth-1,:]=ord('|')
+
+            if self.currentHeight == self.height and self.currentWidth == self.width:
+                row = 1
+                for line in self.msg:
+                    cursor = 1
+                    for letter in line:
+                        self.buffer["ch"][cursor,row]=ord(letter)
+                        cursor += 1
+                    row += 1                
                 self.state == OPENED
 
         elif self.state == OPENED:
@@ -76,24 +88,23 @@ class TextBox:
 
 
     def updateText(self, msg):
-        self.msg
+        self.msg = msg
         maxLength = 0
-        msg = msg.split("\n")
-        lines = 1
-        for line in msg:
-            lines += 1
+        for line in self.msg:
             if len(line) > maxLength:
                 maxLength = len(line)
+        self.width = 2 + maxLength
 
-        self.width = 2 + maxLength       
+        lines = 1 + len(self.msg)
         self.height = 2 + lines        
         self.state = OPENING
 
 
     def draw(self, screen):
-        if self.state == OPENING:
-            screen.drawFrame(self.x, self.y, self.currentWidth, self.currentHeight)
-        if self.state == OPENED:
-            screen.drawFrame(self.x, self.y, self.currentWidth, self.currentHeight, f"┤{self.title}├", self.msg)
+        screen.drawArray(
+            (self.x, self.x+self.currentWidth),
+            (self.y, self.y+self.currentHeight),
+            self.buffer
+        )
 
 

@@ -32,7 +32,7 @@ class GameMap:
             self.visible[:] = compute_fov(
                 self.tiles["transparent"],
                 (player.x, player.y),
-                radius=5,
+                radius=40,
                 algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
             )
         self.explored |= self.visible
