@@ -6,12 +6,14 @@ from Controllers import KeyboardController
 import time
 
 class App:
+    width = 192
+    height = 108
     def __init__(self):
-        self.screen = Screen(80, 50)  
+        self.screen = Screen(self.width, self.height)  
         self.eventHandler = EventHandler(self) 
         self.isRunning = True    
         self.keyboardController = KeyboardController()    # there's only 1 keyboard per computer    
-        self.level = Level(self, 80, 50)
+        self.level = Level(self, self.width, self.height)
         self.clock = Clock(60)
 
     def run(self):

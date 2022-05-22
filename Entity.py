@@ -12,9 +12,9 @@ class Entity:
         self.type = eType
         self.blocksMovement = blocksMovement
 
-    def draw(self, screen, gameMap):
-        if gameMap.visible[self.x, self.y]:
-            screen.draw(self.x, self.y, self.char)
+    def draw(self, screen):
+        if self.level.map.checkIsVisible(self):
+            screen.draw(self)
 
     def update(self):
         pass
@@ -53,6 +53,7 @@ class Actor(Entity):
 
         self.speed = 0
         self.target = None
+
 
     def update(self):
         if self.speed:

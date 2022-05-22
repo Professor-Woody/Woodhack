@@ -54,14 +54,12 @@ class HostileAI(BaseAI):
             dx = target.x - self.entity.x
             dy = target.y - self.entity.y
             distance = max(abs(dx), abs(dy))
-            print(f"Distance: {distance}")
 
             if self.entity.level.map.visible[self.entity.x, self.entity.y]:
                 if distance <= 1:
                     return CheerAction(self.entity, f"{self.entity.type} is attacking").perform()
-            if distance < 15:
+            if distance < 8:
                 self.path = self.getPathTo(target.x, target.y)
-            print (self.path)
 
             if self.path:
                 destx, desty = self.path.pop(0)

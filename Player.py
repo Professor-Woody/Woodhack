@@ -1,6 +1,7 @@
 from Entity import Entity
 from Actions import CheerAction, MovementAction
 import tcod
+import UI as ui
 
 
 class Player(Entity):
@@ -16,8 +17,15 @@ class Player(Entity):
         self.action1 = CheerAction(self, "Left hand")
         self.action2 = CheerAction(self, "Right hand")
 
+        self.speed = 0
+        self.hp = 5
+        self.maxHP = 5
+
+        self.ui = ui.TextBox(1, 40, "testing\nsome\nstuff", "Woody")
+
 
     def update(self):
+
         if self.speed > 0:
             self.speed -= 1
             return
@@ -35,8 +43,7 @@ class Player(Entity):
             dx += 1
 
         if dx or dy:
-            print (dx, dy)
-            MovementAction(self, dx, dy, 10).perform()
+            MovementAction(self, dx, dy, 6).perform()
 
         # perform actions based off action keys
         if self.controller.checkKeyPressedOnce(tcod.event.K_z):
@@ -45,6 +52,11 @@ class Player(Entity):
         elif self.controller.checkKeyPressedOnce(tcod.event.K_x):
             if self.action2:
                 self.action2.perform()
+        self.ui.update()
+        
 
     def draw(self, screen):
-        screen.draw(self.x, self.y, self.char)
+        screen.draw(self)
+        self.ui.draw(screen)
+        #screen.drawFrame(0, 40, "test", "testing\nsome stuff")
+        #ui.renderHPBar(screen, 0, 45, self.hp, self.maxHP, 20)
