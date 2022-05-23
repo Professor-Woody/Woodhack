@@ -4,13 +4,15 @@ from Components import BaseAI, Breed, HostileAI
 class Entity:
     x = 0
     y = 0
+    lightRadius = 0
     level = None
 
-    def __init__(self, eType, char, colour, blocksMovement=False):
+    def __init__(self, eType, char, colour, blocksMovement=False, lightRadius=0):
         self.char = char
         self.colour = colour
         self.type = eType
         self.blocksMovement = blocksMovement
+        self.lightRadius=lightRadius
 
     def draw(self, screen):
         if self.level.map.checkIsVisible(self):

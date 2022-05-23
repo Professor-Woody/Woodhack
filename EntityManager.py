@@ -7,6 +7,7 @@ class EntityManager:
     breedTypes = {}
     allEntities = set()
     players = set()
+    lights = set()
 
     def __init__(self, level):
         self.level = level
@@ -15,6 +16,8 @@ class EntityManager:
         self.allEntities.add(entity)
         if entity.type == "PLAYER":
             self.players.add(entity)
+        if entity.lightRadius:
+            self.lights.add(entity)
         print (self.allEntities)
 
     def remove(self, entity):
@@ -22,6 +25,8 @@ class EntityManager:
             self.allEntities.remove(entity)
         if entity in self.players:
             self.players.remove(entity)
+        if entity in self.lights:
+            self.lights.remove(entity)
 
     def checkIsBlocked(self, dx, dy):
         for entity in self.allEntities:
@@ -44,16 +49,21 @@ class EntityManager:
     # TODO: Replace both of these with an xml parser
     def loadEntities(self, filename):
         with open(filename) as entityDefs:
-            reader = csv.reader(entityDefs, delimiter=',')
+            reader = csv.reader(entityDefs, delimiter=',', quotechar='"')
             readHeader = False
             for row in reader:
                 if not readHeader:
                     readHeader = True
                 else:
                     if row[1] == "NPC":
-                        self.entityTypes[row[0]] = Actor(row[1], row[2], (row[3], row[4], row[5]), row[6])
+                        self.entityTypes[row[0]] = Actor(row[1], row[2], (row[3], row[4], row[5]), row[6], int(row[7]))
                     else:
-                        self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6])
+                        self.entityTypes[row[0]] = Entity(row[1], row[2], (row[3], row[4], row[5]), row[6], int(row[7]))
+                        print ("=========")
+                        for r in row:
+                            print ("---")
+                            print (r)
+                            print (type(r))
 
 
     def loadBreeds(self, filename):

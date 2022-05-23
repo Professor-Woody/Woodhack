@@ -21,6 +21,8 @@ class Player(Entity):
         self.hp = 5
         self.maxHP = 5
 
+        self.lightRadius = 5
+
         self.ui = ui.TextBox(1, 40, "testing\nsome\nstuff", "Woody")
 
 

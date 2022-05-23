@@ -10,8 +10,8 @@ class DungeonCreator:
     maxRooms = 20
 
     @classmethod
-    def giveMeADungeon(cls, width, height):
-        dungeon = GameMap(width, height)
+    def giveMeADungeon(cls, level, width, height):
+        dungeon = GameMap(level, width, height)
 
         lastRoom = None
         rooms = []
