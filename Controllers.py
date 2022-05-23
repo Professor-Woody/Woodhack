@@ -24,42 +24,80 @@ class KeyboardController:
         return state
 
 class JoystickController:
-    actions = {
-        "up": False,
-        "down": False,
-        "left": False,
-        "right": False,
-        "lefthand": False,
-        "righthand": False,
-        "use": False,
-        "cancel": False,
-        "next": False,
-        "previous": False,
-        "nearestEnemy": False,
-        "inventory": False
-    }
-
-    mappings = {
-        0: "use",
-        1: "cancel",
-        2: "nearestEnemy",
-        3: "inventory",
-        4: "previous",
-        5: "next",
-        "dpad-left": "left",
-        "dpad-right": "right",
-        "dpad-up": "up",
-        "dpad-down": "down",
-        "l-trigger": "lefthand",
-        "r-trigger": "righthand"
-    }
-
     def __init__(self, joystick):
         self.joystick = joystick
+        self.actions = {
+            "up": (self.getAxis, (1, -1)),
+            "down": (self.getAxis, (1, 1)),
+            "left": (self.getAxis, (0, -1)),
+            "right": (self.getAxis, (0, 1)),
+            "lefthand": (self.getAxis, (4, 1)),
+            "righthand": (self.getAxis, (5, 1)),
+            "use": (self.getButton, (0)),
+            "cancel": (self.getButton, (1)),
+            "next": (self.getButton, (4)),
+            "previous": (self.getButton, (5)),
+            "nearestEnemy": (self.getButton, (2)),
+            "inventory": (self.getButton, (3)),
+            "aimXAxis": (self.getRawAxis, (2)),
+            "aimYAxis": (self.getRawAxis, (3))
+        }
+
 
     def update(self):
-        for button in self.joystick.get_numbuttons():
-            if button in self.actions.keys():
-                self.actions[button]=self.joystick.get_button(button)
+        pass
         
+
+    def getButtonForMapping(self):
+        for button in range(self.joystick.get_numbuttons()):
+            if self.joystick.get_button(button):
+                return (self.getButton, (button))
+        
+        for axis in range(self.joystick.get_numaxes()):
+            value = self.joystick.get_axis(axis)
+            if value > .5 or value < -.5:
+                return (self.getAxis, (axis, value))
+
+        for hat in range(self.joystick.get_numhats()):
+            for axis in range(2):
+                value = self.joystick.get_hat(hat)[axis]
+                if  value != 0:
+                    return(self.getHat, (hat, axis, value))
+                
+    def mapButton(self, action):
+        self.actions[action] = self.getButtonForMapping()
+
+
+    def getButton(self, data):
+        button = data[0]
+        return bool(self.joystick.get_button(button))
+
+    def getAxis(self, data):
+        axis, direction = data
+        if direction > 0 and self.joystick.get_axis(axis) > .5:
+            return True
+        if direction < 0 and self.joystick.get_axis(axis) < -.5:
+            return True
+        return False
+            
+    def getRawAxis(self, data):
+        axis = data[0]
+        return self.joystick.get_axis(axis)
+
+    def getHat(self, data):
+        hat, axis, direction = data
+        value = self.joystick.get_hat(hat)[axis]
+        if direction > 0 and value > 0:
+            return True
+        if direction < 0 and value < 0:
+            return True
+        return False           
+
+
+    def getPressed(self, action):
+        command, data = self.actions[action]
+        return command(data)
+
+
+
 

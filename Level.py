@@ -1,7 +1,9 @@
+from Controllers import JoystickController
 from DungeonCreator import DungeonCreator
 from Player import Player
 from EntityManager import EntityManager
 import Colours as colour
+import Controllers
 
 class Level:
     def __init__(self, app, width, height):
@@ -12,7 +14,8 @@ class Level:
 
         self.map = DungeonCreator.giveMeADungeon(self.width-40, self.height-10)
 
-        player = Player(self.map.start[0], self.map.start[1], "@", colour.WHITE, self.app.keyboardController, self)
+        controller1 = JoystickController(Controllers.joysticks[0])
+        player = Player(self.map.start[0], self.map.start[1], "@", colour.WHITE, controller1, self)
 
         self.entityManager = EntityManager(self)
         self.entityManager.loadEntities('npcs.csv')

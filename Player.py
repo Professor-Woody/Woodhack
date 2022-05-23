@@ -33,23 +33,23 @@ class Player(Entity):
         # check movement
         dx = 0
         dy = 0
-        if self.controller.checkKeyPressed(tcod.event.K_UP):
+        if self.controller.getPressed("up"):
             dy -= 1
-        if self.controller.checkKeyPressed(tcod.event.K_DOWN):
+        if self.controller.getPressed("down"):
             dy += 1
-        if self.controller.checkKeyPressed(tcod.event.K_LEFT):
+        if self.controller.getPressed("left"):
             dx -= 1
-        if self.controller.checkKeyPressed(tcod.event.K_RIGHT):
+        if self.controller.getPressed("right"):
             dx += 1
 
         if dx or dy:
             MovementAction(self, dx, dy, 6).perform()
 
         # perform actions based off action keys
-        if self.controller.checkKeyPressedOnce(tcod.event.K_z):
+        if self.controller.getPressed("lefthand"):
             if self.action1:
                 self.action1.perform()
-        elif self.controller.checkKeyPressedOnce(tcod.event.K_x):
+        elif self.controller.getPressed("righthand"):
             if self.action2:
                 self.action2.perform()
         self.ui.update()

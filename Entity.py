@@ -19,9 +19,9 @@ class Entity:
     def update(self):
         pass
 
-    def move(self, x, y):
-        self.x = x
-        self.y = y
+    def move(self, dx, dy):
+        self.x += dx
+        self.y += dy
 
     def place(self, level, x, y):
         self.x = x
