@@ -13,7 +13,8 @@ class App:
         self.eventHandler = EventHandler(self) 
         self.isRunning = True    
         self.keyboardController = KeyboardController()    # there's only 1 keyboard per computer    
-        self.level = Level(self, self.width, self.height)
+        # self.level = Level(self, self.width, self.height)
+        self.level = MainMenu(self, self.width, self.height)
         self.clock = Clock(60)
 
     def run(self):

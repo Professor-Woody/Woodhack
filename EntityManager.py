@@ -8,17 +8,20 @@ class EntityManager:
     allEntities = set()
     players = set()
     lights = set()
+    ui = set()
 
     def __init__(self, level):
         self.level = level
 
     def add(self, entity):
         self.allEntities.add(entity)
+
         if entity.type == "PLAYER":
             self.players.add(entity)
         if entity.lightRadius:
             self.lights.add(entity)
-        print (self.allEntities)
+        if entity.ui:
+            self.ui.add(entity)
 
     def remove(self, entity):
         if entity in self.allEntities:
@@ -40,10 +43,9 @@ class EntityManager:
         for entity in self.allEntities:
             entity.update()
 
-    def draw(self, map, screen):
+    def draw(self, screen):
         for entity in self.allEntities:
-            if map.checkIsVisible(entity):
-                entity.draw(screen)
+            entity.draw(screen)
 
 
     # TODO: Replace both of these with an xml parser

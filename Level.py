@@ -4,6 +4,32 @@ from Player import Player
 from EntityManager import EntityManager
 import Colours as colour
 import Controllers
+from UI import Button
+from Actions import PrintAction
+
+class BaseLevel:
+    def __init__(self, app, width, height):
+        self.app = app
+        self.width = width
+        self.height = height
+
+        self.entityManager = EntityManager(self)
+
+    def update(self):
+        self.entityManager.update()
+    
+    def draw(self, screen):
+        self.entityManager.draw(screen)
+
+
+class MainMenu(BaseLevel):
+    def __init__(self, app, width, height):
+        super().__init__(app, width, height)
+
+        button = Button(self, 10, 10, 7, 3, "test", PrintAction("test button pressed"))
+        self.entityManager.add(button)
+
+
 
 class Level:
     def __init__(self, app, width, height):
@@ -36,6 +62,5 @@ class Level:
 
 
     def draw(self, screen):
-        self.map.draw(screen)
-        
-        self.entityManager.draw(self.map, screen)
+        self.map.draw(screen)        
+        self.entityManager.draw(screen)

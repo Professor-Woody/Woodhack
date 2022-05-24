@@ -1,4 +1,7 @@
 import Colours as colour
+import Entity
+import Colours as colour
+
 
 def renderHPBar(screen, x, y, value, maxValue, totalWidth):
     barWidth = int(float(value) / maxValue * totalWidth)
@@ -9,6 +12,64 @@ def renderHPBar(screen, x, y, value, maxValue, totalWidth):
         screen.drawRect(x, y, barWidth, 1, 1, colour.BAR_FILLED)
 
     screen.print(x+1, y, f"HP: {value}/{maxValue}", colour.BAR_TEXT)
+
+
+class CollisionBox:
+    x=0
+    y=0
+    width=0
+    height=0
+
+    def areaCollides(self, other):
+        return (
+            self.x < other.x+other.width
+            and self.x+self.width >= other.x
+            and self.y < other.y+other.height
+            and self.y+self.height >= other.y
+        )
+    
+    def pointCollides(self, x, y):
+        return (
+            x >= self.x
+            and x < self.x + self.width
+            and y >= self.y
+            and y < self.y + self.height
+        )
+
+class Button(Entity, CollisionBox):
+    def __init__(self, level, x, y, width, height, msg, action=None):
+        Entity.__init__(self, "UI", "B", colour.GREY)
+        CollisionBox.__init__(self)
+
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.msg = msg
+
+        self.changed = False
+        self.selected = False
+        self.pressed = False
+        self.bg = colour.GREY
+        self.fg = colour.WHITE
+
+        self.action = action(self)
+
+    def update(self):
+        # if selected then highlight
+        if self.changed:
+            self.changed = False
+            if self.selected and not self.pressed:
+                self.bg = colour.LIGHT_GREY
+                self.fg = colour.BLACK
+            else:
+                self.bg = colour.GREY
+                self.fg = colour.WHITE
+
+    def draw(self, screen):
+        screen.drawFrame(self.x, self.y, self.width, self.height, msg=self.msg, bg=self.bg, fg=self.fg)
+
+
 
 
 STARTED = 0

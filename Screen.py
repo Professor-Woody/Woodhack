@@ -28,10 +28,10 @@ class Screen:
     def drawArray(self, horizontal, vertical, array):
         self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
-    def drawFrame(self, x, y, width, height, title="", msg=""):
-        self.console.draw_frame(x, y, width, height, clear=True, fg=colour.WHITE, bg=colour.BLACK)
-        self.console.print_box(x, y, width, height, string=title, bg=colour.BLACK, alignment=tcod.constants.CENTER)
-        self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=colour.BLACK)
+    def drawFrame(self, x, y, width, height, title="", msg="", bg=colour.BLACK, fg=colour.WHITE):
+        self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg)
+        self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
+        self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 
     def print(self, x, y, msg, foreground = colour.WHITE):
         self.console.print(x=x, y=y, string=msg, fg=foreground)

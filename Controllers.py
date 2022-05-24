@@ -43,9 +43,18 @@ class JoystickController:
             "aimYAxis": (self.getRawAxis, (3))
         }
 
+        self.checked = set()
 
     def update(self):
-        pass
+        if self.speed:
+            self.speed -= 1
+            return
+        self.speed = 10
+
+        for check in self.checked:
+            command, data = self.actions[check]
+            if not command(data):
+                self.checked.remove(check)
         
 
     def getButtonForMapping(self):
@@ -97,6 +106,14 @@ class JoystickController:
     def getPressed(self, action):
         command, data = self.actions[action]
         return command(data)
+
+    def getPressedOnce(self, action):
+        command, data = self.actions[action]
+        result = command(data)
+        if result:
+            self.checked.add(action)
+        return result
+        
 
 
 
