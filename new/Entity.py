@@ -114,6 +114,7 @@ class NewPlayer(Player):
     width = 18
     height = 30
     colourIndex = 0
+    ready = False
 
     def update(self):
         if self.controller.getPressedOnce("left"):
@@ -124,11 +125,21 @@ class NewPlayer(Player):
             colourIndex += 1
             if colourIndex >= len(colour.COLOURS):
                 colourIndex = 0
+        if self.controller.getPressedOnce("use"):
+            self.ready = True
+        
+        if self.controller.getPressedOnce("cancel"):
+            self.level.unassignedControllers.add(self.controller)
+            self.level.entityManager.remove(self)
+        
 
     def draw(self, screen):
-        screen.drawFrame(self.x, self.y, self.width, self.height)
+        if self.ready:
+            screen.drawFrame(self.x, self.y, self.width, self.height, fg=colour.COLOURS[self.colourIndex])
+        else:
+            screen.drawFrame(self.x, self.y, self.width, self.height)
         screen.printLine(self.x+4, self.y+2, self.name)
         screen.printLine(self.x+4, self.y+3, "Color: ")
-        screen.printLine(self.x+11, self.y+3, self.char, fg=colour.COLOURS[self.colourIndex])
+        screen.print(self.x+11, self.y+3, self.char, fg=colour.COLOURS[self.colourIndex])
 
         screen.printLines(self.x+4, self.y+5, "I should\nprobably put\na few lines\nof text to\ndescribe the\nchar here")

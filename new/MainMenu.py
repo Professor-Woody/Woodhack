@@ -60,10 +60,13 @@ class NewGameLevel(BaseLevel):
                 x = (len(self.entityManager.players) * 20) + 20
                 player.place(self, x, 60)
                 self.unassignedControllers.remove(controller)
-        
+
+        count = 0        
         for player in self.entityManager.players:
-            if player.controller.getPressed("cancel"):
-                self.unassignedControllers.add(player.controller)
-                self.entityManager.remove(player)
-                    
+            if player.ready:
+                count += 1
+        if count == len(self.entityManager.players):
+            level = GameLevel(self.app, self.width, self.height)
+            ChangeLevelAction(self.app, level).perform()
+
         self.entityManager.update()
