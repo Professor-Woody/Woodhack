@@ -4,7 +4,10 @@ class Action:
     def perform(self):
         print (f"why are you performing {type(self)}?")
 
-
+class QuitAction(Action):
+    def perform(self):
+        print ("Quitting")
+        raise SystemExit()
 
 class PrintAction(Action):
     def __init__(self, msg):

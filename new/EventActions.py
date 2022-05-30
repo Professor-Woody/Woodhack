@@ -1,15 +1,10 @@
 from Actions import Action
+import Controllers
 
 class EventAction(Action):
     def __init__(self, app):
         super().__init__()
         self.app = app
-
-
-class QuitAction(EventAction):
-    def perform(self):
-        print ("Quitting")
-        raise SystemExit()
 
 
 class KeyAction(EventAction):
@@ -19,7 +14,7 @@ class KeyAction(EventAction):
         self.pressed = pressed
 
     def perform(self):
-        self.app.keyboardController.setKey(self.key, self.pressed)
+        Controllers.keyboardController.setKeyPressed(self.key, self.pressed)
 
 
 class MouseMotionAction(EventAction):
@@ -29,7 +24,11 @@ class MouseMotionAction(EventAction):
         self.y = y
 
     def perform(self):
+        print ("-----------")
+        print (self.app.level)
+        print (self.app.level.entityManager.ui)
         for uiElement in self.app.level.entityManager.ui:
+            print (uiElement)
             uiElement.mouseMotion(self.x, self.y)
 
 class MouseClickAction(EventAction):

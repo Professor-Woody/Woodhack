@@ -1,5 +1,8 @@
 from Flags import *
-from 
+from Components import CollisionBoxComponent
+from EntityActions import MovementAction
+import Colours as colour
+import copy
 
 
 class Entity:
@@ -10,8 +13,10 @@ class Entity:
     lightRadius = 0
     char='@'
     collider = None
-    flags = set()
-    self.level = None
+    level = None
+
+    def __init__(self):
+        self.flags = set()
 
     def place(self, level, x, y):
         self.x = x
@@ -20,6 +25,7 @@ class Entity:
             self.level.entityManager.remove(self)
         self.level = level
         self.level.entityManager.add(self)
+
 
     def spawn(self, level, x, y):
         clone = copy.deepcopy(self)
@@ -50,7 +56,7 @@ class Actor(Entity):
 
     def __init__(self):
         super().__init__()
-        self.collider = CollisionBox(self)
+        self.collider = CollisionBoxComponent(self)
         self.flags.add(ACTOR)
 
     def update(self):
@@ -68,9 +74,10 @@ class Player(Actor):
     rightHand = None
 
     def __init__(self, controller):
+        super().__init__()
         self.controller = controller
+        self.flags.remove(ACTOR)
 
-        self.collider = CollisionBoxComponent(self)
         self.flags.add(PLAYER)
         self.flags.add(LIGHT)
 
@@ -116,16 +123,22 @@ class NewPlayer(Player):
     colourIndex = 0
     ready = False
 
+    def __init__(self, controller):
+        super().__init__(controller)
+        print (self.flags)
+
     def update(self):
+        self.controller.update()
         if self.controller.getPressedOnce("left"):
-            colourIndex -= 1
-            if colourIndex < 0:
-                colourIndex = len(colour.COLOURS)-1
+            print (self.controller.checked)
+            self.colourIndex -= 1
+            if self.colourIndex < 0:
+                self.colourIndex = len(colour.COLOURS)-1
         if self.controller.getPressedOnce("right"):
-            colourIndex += 1
-            if colourIndex >= len(colour.COLOURS):
-                colourIndex = 0
-        if self.controller.getPressedOnce("use"):
+            self.colourIndex += 1
+            if self.colourIndex >= len(colour.COLOURS):
+                self.colourIndex = 0
+        if self.controller.getPressedOnce("up"):
             self.ready = True
         
         if self.controller.getPressedOnce("cancel"):

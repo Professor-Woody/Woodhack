@@ -33,8 +33,8 @@ class Screen:
         self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
         self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 
-    def print(self, x, y, msg, foreground = colour.WHITE):
-        self.console.print(x=x, y=y, string=msg, fg=foreground)
+    def print(self, x, y, msg, fg = colour.WHITE):
+        self.console.print(x=x, y=y, string=msg, fg=fg)
 
     def printLine(self, x, y, msg, fg=colour.WHITE, bg=colour.BLACK):
         self.console.print_box(x, y, width=len(msg), height=1, string=msg, fg=fg, bg=bg)

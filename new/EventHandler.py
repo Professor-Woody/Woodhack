@@ -1,5 +1,6 @@
 import tcod
 from EventActions import *
+from Actions import QuitAction
 
 class EventHandler(tcod.event.EventDispatch[Action]):
     def __init__(self, app):
@@ -19,4 +20,8 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion):
         self.app.screen.context.convert_event(event)
+        return MouseMotionAction(self.app, event.tile[0], event.tile[1])
         
+    def ev_mousebuttonup(self, event: tcod.event.MouseButtonDown):
+        self.app.screen.context.convert_event(event)
+        return MouseClickAction(self.app, event.button, event.tile[0], event.tile[1])

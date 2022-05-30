@@ -22,6 +22,7 @@ class CollisionBoxComponent(PositionBoxComponent):
             and self.parent.y+self.parent.height >= other.y
         )
     
+
     def pointCollides(self, x, y):
         return (
             x >= self.parent.x
@@ -29,3 +30,4 @@ class CollisionBoxComponent(PositionBoxComponent):
             and y >= self.parent.y
             and y < self.parent.y + self.parent.height
         )
+

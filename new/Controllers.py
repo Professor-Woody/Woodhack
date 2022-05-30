@@ -1,5 +1,6 @@
 import pygame
 pygame.joystick.init()
+import tcod
 
 
 class KeyboardController:
@@ -17,7 +18,7 @@ class KeyboardController:
             "righthand": tcod.event.K_x,
             "use":  tcod.event.K_v,
             "cancel":  tcod.event.K_c,
-            "next":  tcod.event.K_,
+            "next":  tcod.event.K_d,
             "previous":  tcod.event.K_s,
             "nearestEnemy":  tcod.event.K_r,
             "inventory": tcod.event.K_i
@@ -72,17 +73,17 @@ class JoystickController:
             "right": (self.getAxis, (0, 1)),
             "lefthand": (self.getAxis, (4, 1)),
             "righthand": (self.getAxis, (5, 1)),
-            "use": (self.getButton, (0)),
-            "cancel": (self.getButton, (1)),
-            "next": (self.getButton, (4)),
-            "previous": (self.getButton, (5)),
-            "nearestEnemy": (self.getButton, (2)),
-            "inventory": (self.getButton, (3)),
-            "aimXAxis": (self.getRawAxis, (2)),
-            "aimYAxis": (self.getRawAxis, (3))
+            "use": (self.getButton, [0]),
+            "cancel": (self.getButton, [1]),
+            "next": (self.getButton, [4]),
+            "previous": (self.getButton, [5]),
+            "nearestEnemy": (self.getButton, [2]),
+            "inventory": (self.getButton, [3]),
+            "aimXAxis": (self.getRawAxis, [2]),
+            "aimYAxis": (self.getRawAxis, [3])
         }
 
-        self.checked = set()
+        self.checked = []
 
     def update(self):
         for check in self.checked:
@@ -144,12 +145,14 @@ class JoystickController:
     def getPressedOnce(self, cmd):
         command, data = self.commands[cmd]
         result = command(data)
-        if result:
-            self.checked.add(cmd)
-        return result
+        if result and cmd not in self.checked:
+            self.checked.append(cmd)
+            return True
+        return False
         
 
 
 controllers = [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]
-controllers.append(KeyboardController())
+keyboardController = KeyboardController()
+controllers.append(keyboardController)
 

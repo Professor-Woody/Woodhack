@@ -1,25 +1,37 @@
-from Components import CollisionBox
+from Components import CollisionBoxComponent
 from Entity import Entity
+import Colours as colour
+from Flags import *
 
-class Text(Entity):
+class UIEntity(Entity):
+    def mouseMotion(self, x, y):
+        pass
+
+    def mouseClick(self, button, x, y):
+        pass
+
+
+class Text(UIEntity):
     def __init__(self, msg, ttl = -1, needsVisibility=False):
         super().__init__()
         self.msg = msg
         self.ttl = ttl
         self.needsVisibility = needsVisibility
+        self.flags.add(UI)
 
     def update(self):
-        if ttl != -1:
+        if self.ttl != -1:
             self.ttl -= 1
             if self.ttl == 0:
                 self.despawn()
 
     def draw(self, screen):
         if not self.needsVisibility or (self.needsVisibility and self.level.map.checkIsVisible(self)):
-            screen.draw(self)
+            screen.printLine(self.x, self.y, self.msg)
 
 
-class Button(Entity):
+
+class Button(UIEntity):
     selected = False
 
     def __init__(self, msg, action=None, width=0, height=0):
@@ -28,6 +40,7 @@ class Button(Entity):
         self.width = width
         self.height = height
         self.msg = msg
+        self.flags.add(UI)
 
         if not width:
             lines = msg.split("\n")
@@ -39,9 +52,11 @@ class Button(Entity):
             self.height = len(lines) + 4
 
         self.action = action
+
+        self.deselect()
         
     def mouseMotion(self, x, y):
-        if self.collider.areaCollides(x, y):
+        if self.collider.pointCollides(x, y):
             self.select()
         else:
             self.deselect()
@@ -55,13 +70,13 @@ class Button(Entity):
             self.fg = colour.WHITE
 
     def mouseClick(self, button, x, y):
-        if self.collider.areaCollides(x, y):
+        if self.collider.pointCollides(x, y):
             if self.action:
                 self.action.perform()
 
     def draw(self, screen):
-        screen.drawFrame(self.x, self.y, self.width, self.height)
+        screen.drawFrame(self.x, self.y, self.width, self.height, bg=self.bg, fg=self.fg)
         if self.msg.count("\n"):
-            screen.printLines(self.x+2, self.y+2, self.msg)
+            screen.printLines(self.x+2, self.y+2, self.msg, self.fg, self.bg)
         else:
-            screen.printLine(self.x+2, self.y+2, self.msg)
+            screen.printLine(self.x+2, self.y+2, self.msg, self.fg, self.bg)

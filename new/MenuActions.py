@@ -1,4 +1,4 @@
-from Action import Action
+from Actions import Action
 
 
 class MenuAction(Action):
@@ -13,8 +13,8 @@ class ChangeLevelAction(MenuAction):
         self.level = level
 
     def perform(self):
-        print ("changing level")
-        self.previousLevel = self.app.level
+        print (f"changing level: \n{self.app.previousLevel} \n {self.level}")
+        self.app.previousLevel = self.app.level
         self.app.level = self.level
 
 

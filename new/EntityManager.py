@@ -1,16 +1,24 @@
 from Flags import *
 
 class EntityManager:
-    entityTypes = set()
-
-    allEntities = set()
-    players = set()
-    actors = set()
-    lights = set()
-    ui = set()
-
     def __init__(self, level):
         self.level = level
+        self.entityTypes = set()
+
+        self.allEntities = set()
+        self.players = set()
+        self.actors = set()
+        self.lights = set()
+        self.ui = set()
+
+
+    def update(self):
+        for entity in self.allEntities:
+            entity.update()
+
+    def draw(self, screen):
+        for entity in self.allEntities:
+            entity.draw(screen)
 
     def add(self, entity):
         self.allEntities.add(entity)
@@ -23,6 +31,7 @@ class EntityManager:
             self.lights.add(entity)
         if UI in entity.flags:
             self.ui.add(entity)
+
 
     def remove(self, entity):
         self.allEntities.remove(entity)

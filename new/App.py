@@ -1,13 +1,14 @@
 import tcod
 from EventHandler import EventHandler
 from Screen import Screen
-from Controllers import KeyboardController
 from Clock import Clock
+from MainMenu import MainMenu
 
 
 class App:
     width = 150
     height = 100
+    previousLevel = None
 
     def __init__(self):
         self.screen = Screen(self.width, self.height)
@@ -39,3 +40,6 @@ class App:
             self.screen.flip()
 
         
+if __name__ == "__main__":
+    app = App()
+    app.run()
