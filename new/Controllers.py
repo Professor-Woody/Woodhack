@@ -4,8 +4,6 @@ import tcod
 
 
 class KeyboardController:
-    keysPressed = set()
-    keysChecked = set()
     parent = None
 
     def __init__(self):
@@ -23,12 +21,14 @@ class KeyboardController:
             "nearestEnemy":  tcod.event.K_r,
             "inventory": tcod.event.K_i
         }
+        self.keysPressed = []
+        self.keysChecked = []
 
     def update(self):
         for check in self.keysChecked:
-            command, data = self.commands[check]
-            if not command(data):
+            if not self.getPressed(check):
                 self.keysChecked.remove(check)
+                print (f"removing {check}")
 
 
     def getButton(self, button):
@@ -43,8 +43,12 @@ class KeyboardController:
 
     def getPressedOnce(self, cmd):
         result = self.getPressed(cmd)
-        if result and self.commands[cmd] not in self.keysChecked:
-            self.keysChecked.add(self.commands[cmd])
+        if result and cmd not in self.keysChecked:
+            print ("----")
+            print (result)
+            print (self.keysChecked)
+            self.keysChecked.append(cmd)
+            print (self.keysChecked)
             return True
         return False
 
@@ -53,7 +57,7 @@ class KeyboardController:
         if not pressed and key in self.keysPressed:
             self.keysPressed.remove(key)
         elif pressed:
-            self.keysPressed.add(key)
+            self.keysPressed.append(key)
 
             
             

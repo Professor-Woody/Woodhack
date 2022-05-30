@@ -130,7 +130,6 @@ class NewPlayer(Player):
     def update(self):
         self.controller.update()
         if self.controller.getPressedOnce("left"):
-            print (self.controller.checked)
             self.colourIndex -= 1
             if self.colourIndex < 0:
                 self.colourIndex = len(colour.COLOURS)-1

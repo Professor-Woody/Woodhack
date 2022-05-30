@@ -24,11 +24,7 @@ class MouseMotionAction(EventAction):
         self.y = y
 
     def perform(self):
-        print ("-----------")
-        print (self.app.level)
-        print (self.app.level.entityManager.ui)
         for uiElement in self.app.level.entityManager.ui:
-            print (uiElement)
             uiElement.mouseMotion(self.x, self.y)
 
 class MouseClickAction(EventAction):
