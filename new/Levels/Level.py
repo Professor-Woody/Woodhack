@@ -28,6 +28,10 @@ class GameLevel(BaseLevel):
 
         self.entityManager.loadEntities("npcs.csv")
         self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1])
+        self.entityManager.spawn("orc", self.map.start[0]+3, self.map.start[1])
+        self.entityManager.spawn("orc", self.map.start[0]+5, self.map.start[1])
+        self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
+        self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
 
     def update(self):
         self.map.update()

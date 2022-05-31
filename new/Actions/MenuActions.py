@@ -26,7 +26,7 @@ class NewGameAction(MenuAction):
     def perform(self):
         print (f"starting new game: {self.level}")
         for newPlayer in self.app.level.entityManager.players:
-            player = Player(newPlayer.controller, newPlayer.fg)
+            player = Player(newPlayer.controller, fg=newPlayer.fg)
             self.level.entityManager.add(player)
             player.place(self.level, self.level.map.start[0], self.level.map.start[1])
 

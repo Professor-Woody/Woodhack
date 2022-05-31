@@ -1,4 +1,4 @@
-from Components import CollisionBoxComponent
+from Components.Components import CollisionBoxComponent
 from Flags import *
 import csv
 from Entity import Actor, Entity, EntityDefs

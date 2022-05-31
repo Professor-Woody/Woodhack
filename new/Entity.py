@@ -1,5 +1,6 @@
 from Flags import *
-from Components import CollisionBoxComponent
+from Components.Components import CollisionBoxComponent
+from Components.AI import HostileAI
 from Actions.EntityActions import MovementAction, GetTargetAction
 import Colours as colour
 import copy
@@ -18,7 +19,8 @@ class Entity:
     collider = None
     level = None
     fg=colour.WHITE
-    bg=colour.BLACK
+    bg=None
+    name="Object"
 
     def __init__(self):
         self.flags = set()
@@ -60,6 +62,8 @@ class Entity:
 class Actor(Entity):
     speed = 0
     target = None
+    targetCycleSpeed = 0
+    targetCycleIndex = 0
 
     def __init__(self):
         super().__init__()
@@ -68,15 +72,29 @@ class Actor(Entity):
 
         self.targettedBy = []
 
+        self.ai = HostileAI(self)
+
     def update(self):
         super().update()
+        # Targetted Animation
+        if self.targettedBy:
+            self.targetCycleSpeed -= 1
+            if self.targetCycleSpeed <= 0:
+                self.targetCycleSpeed = 30
+                self.targetCycleIndex -= 1
+                if self.targetCycleIndex < 0:
+                    self.targetCycleIndex = len(self.targettedBy)-1
+                self.bg = self.targettedBy[self.targetCycleIndex].fg
+        else:
+            self.bg = None
+
+        # standard speed check
         if self.speed:
             self.speed -= 1
             return
-        if self.targettedBy:
-            self.bg = colour.DARK_ORANGE
-        else:
-            self.bg = colour.BLACK
+
+        self.ai.update()
+
 
 
 
@@ -178,6 +196,8 @@ class NewPlayer(Player):
             elif self.controller.getPressedOnce("cancel"):
                 self.level.unassignedControllers.append(self.controller)
                 self.level.entityManager.remove(self)
+            self.fg = colour.COLOURS[self.colourIndex]
+            
         else:
             if self.controller.getPressedOnce("cancel"):
                 self.ready = False
@@ -187,9 +207,9 @@ class NewPlayer(Player):
         if self.ready:
             screen.drawFrame(self.x, self.y, self.width, self.height, title="Ready")
 
-        screen.drawFrame(self.x+1, self.y+1, self.width-2, self.height-2, fg=colour.COLOURS[self.colourIndex])
+        screen.drawFrame(self.x+1, self.y+1, self.width-2, self.height-2, fg=self.fg)
         screen.printLine(self.x+3, self.y+3, f'"{self.name}"')
         screen.printLine(self.x+3, self.y+5, "Color: ")
-        screen.print(self.x+10, self.y+5, self.char, fg=colour.COLOURS[self.colourIndex])
+        screen.print(self.x+10, self.y+5, self.char, fg=self.fg)
 
         screen.printLines(self.x+3, self.y+7, "I should\nprobably put\na few lines\nof text to\ndescribe the\nchar here")

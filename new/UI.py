@@ -1,4 +1,4 @@
-from Components import CollisionBoxComponent
+from Components.Components import CollisionBoxComponent
 from Entity import Entity
 import Colours as colour
 from Flags import *
