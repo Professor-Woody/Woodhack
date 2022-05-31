@@ -1,0 +1,5 @@
+OBJECT = 0
+ACTOR = 1
+PLAYER = 2
+LIGHT = 4
+UI = 5

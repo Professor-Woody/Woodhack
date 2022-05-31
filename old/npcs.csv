@@ -1,0 +1,3 @@
+Name, Entity Type, character, R,G,B, blocks movement, light radius
+"orc","NPC","o",63,127,63,True,0
+"troll","NPC","T",0,127,0,True,0

@@ -25,6 +25,15 @@ class KeyAction(Action):
         self.app.keyboardController.setKey(self.key, self.state)
     
 
+class PrintAction(Action):
+    def __init__(self, msg):
+        super().__init__()
+        self.msg = msg
+
+    def perform(self):
+        print(self.msg)
+
+
 
 
 class ActionWithDirection(EntityAction):

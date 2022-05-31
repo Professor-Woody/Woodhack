@@ -1,0 +1,2 @@
+Name, Entity Type, character, R,G,B, blocks movement, light radius
+"torch","OBJECT","i",255,255,0,False,3
