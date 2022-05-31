@@ -28,7 +28,6 @@ class KeyboardController:
         for check in self.keysChecked:
             if not self.getPressed(check):
                 self.keysChecked.remove(check)
-                print (f"removing {check}")
 
 
     def getButton(self, button):
@@ -44,11 +43,7 @@ class KeyboardController:
     def getPressedOnce(self, cmd):
         result = self.getPressed(cmd)
         if result and cmd not in self.keysChecked:
-            print ("----")
-            print (result)
-            print (self.keysChecked)
             self.keysChecked.append(cmd)
-            print (self.keysChecked)
             return True
         return False
 

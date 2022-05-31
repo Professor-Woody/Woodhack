@@ -1,8 +1,11 @@
 from Flags import *
 from Components import CollisionBoxComponent
-from EntityActions import MovementAction
+from Actions.EntityActions import MovementAction, GetTargetAction
 import Colours as colour
 import copy
+
+
+EntityDefs = {}
 
 
 class Entity:
@@ -14,6 +17,8 @@ class Entity:
     char='@'
     collider = None
     level = None
+    fg=colour.WHITE
+    bg=colour.BLACK
 
     def __init__(self):
         self.flags = set()
@@ -50,6 +55,8 @@ class Entity:
 
 
 
+
+
 class Actor(Entity):
     speed = 0
     target = None
@@ -59,11 +66,17 @@ class Actor(Entity):
         self.collider = CollisionBoxComponent(self)
         self.flags.add(ACTOR)
 
+        self.targettedBy = []
+
     def update(self):
         super().update()
         if self.speed:
             self.speed -= 1
             return
+        if self.targettedBy:
+            self.bg = colour.DARK_ORANGE
+        else:
+            self.bg = colour.BLACK
 
 
 
@@ -73,13 +86,15 @@ class Player(Actor):
     leftHand = None
     rightHand = None
 
-    def __init__(self, controller):
+    def __init__(self, controller, fg=colour.WHITE):
         super().__init__()
         self.controller = controller
         self.flags.remove(ACTOR)
 
         self.flags.add(PLAYER)
         self.flags.add(LIGHT)
+
+        self.fg = fg
 
         
 
@@ -111,47 +126,70 @@ class Player(Actor):
         elif self.rightHand and self.controller.getPressed("rightHand"):
             self.rightHand.use()
             
+        target = None
+        if self.controller.getPressedOnce("next"):
+            target = "next"
+        elif self.controller.getPressedOnce("previous"):
+            target = "previous"
+        elif self.controller.getPressedOnce("nearestEnemy"):
+            target = "nearestEnemy"
+        
+        if target:
+            GetTargetAction(self, target).perform()
+
 
     def draw(self, screen):
         screen.draw(self)
 
 
+
+
+
+
+
+
+
+
+
+
 class NewPlayer(Player):
     name = "Bob"
-    width = 18
-    height = 30
+    width = 20
+    height = 22
     colourIndex = 0
     ready = False
 
     def __init__(self, controller):
         super().__init__(controller)
-        print (self.flags)
 
     def update(self):
         self.controller.update()
-        if self.controller.getPressedOnce("left"):
-            self.colourIndex -= 1
-            if self.colourIndex < 0:
-                self.colourIndex = len(colour.COLOURS)-1
-        if self.controller.getPressedOnce("right"):
-            self.colourIndex += 1
-            if self.colourIndex >= len(colour.COLOURS):
-                self.colourIndex = 0
-        if self.controller.getPressedOnce("up"):
-            self.ready = True
-        
-        if self.controller.getPressedOnce("cancel"):
-            self.level.unassignedControllers.add(self.controller)
-            self.level.entityManager.remove(self)
+        if not self.ready:
+            if self.controller.getPressedOnce("left"):
+                self.colourIndex -= 1
+                if self.colourIndex < 0:
+                    self.colourIndex = len(colour.COLOURS)-1
+            if self.controller.getPressedOnce("right"):
+                self.colourIndex += 1
+                if self.colourIndex >= len(colour.COLOURS):
+                    self.colourIndex = 0
+            if self.controller.getPressedOnce("use"):
+                self.ready = True
+            elif self.controller.getPressedOnce("cancel"):
+                self.level.unassignedControllers.append(self.controller)
+                self.level.entityManager.remove(self)
+        else:
+            if self.controller.getPressedOnce("cancel"):
+                self.ready = False
         
 
     def draw(self, screen):
         if self.ready:
-            screen.drawFrame(self.x, self.y, self.width, self.height, fg=colour.COLOURS[self.colourIndex])
-        else:
-            screen.drawFrame(self.x, self.y, self.width, self.height)
-        screen.printLine(self.x+4, self.y+2, self.name)
-        screen.printLine(self.x+4, self.y+3, "Color: ")
-        screen.print(self.x+11, self.y+3, self.char, fg=colour.COLOURS[self.colourIndex])
+            screen.drawFrame(self.x, self.y, self.width, self.height, title="Ready")
 
-        screen.printLines(self.x+4, self.y+5, "I should\nprobably put\na few lines\nof text to\ndescribe the\nchar here")
+        screen.drawFrame(self.x+1, self.y+1, self.width-2, self.height-2, fg=colour.COLOURS[self.colourIndex])
+        screen.printLine(self.x+3, self.y+3, f'"{self.name}"')
+        screen.printLine(self.x+3, self.y+5, "Color: ")
+        screen.print(self.x+10, self.y+5, self.char, fg=colour.COLOURS[self.colourIndex])
+
+        screen.printLines(self.x+3, self.y+7, "I should\nprobably put\na few lines\nof text to\ndescribe the\nchar here")

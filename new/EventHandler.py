@@ -1,6 +1,6 @@
 import tcod
-from EventActions import *
-from Actions import QuitAction
+from Actions.EventActions import *
+from Actions.Actions import QuitAction
 
 class EventHandler(tcod.event.EventDispatch[Action]):
     def __init__(self, app):

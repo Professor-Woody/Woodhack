@@ -2,8 +2,7 @@ import tcod
 from EventHandler import EventHandler
 from Screen import Screen
 from Clock import Clock
-from MainMenu import MainMenu
-
+from Levels.MainMenu import MainMenu
 
 class App:
     width = 150

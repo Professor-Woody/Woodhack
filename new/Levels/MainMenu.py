@@ -1,6 +1,6 @@
-from Level import BaseLevel, GameLevel
-from Actions import QuitAction
-from MenuActions import ChangeLevelAction
+from Levels.Level import BaseLevel, GameLevel
+from Actions.Actions import QuitAction
+from Actions.MenuActions import ChangeLevelAction, NewGameAction
 from UI import Button, Text
 from Controllers import controllers
 from Entity import NewPlayer
@@ -75,6 +75,6 @@ class NewGameLevel(BaseLevel):
                 count += 1
         if count and count == len(self.entityManager.players):
             level = GameLevel(self.app, self.width, self.height)
-            ChangeLevelAction(self.app, level).perform()
+            NewGameAction(self.app, level).perform()
 
         self.entityManager.update()
