@@ -62,12 +62,16 @@ class Entity:
 class Actor(Entity):
     speed = 0
     target = None
+
+    # Target animation variables
     targetCycleSpeed = 0
     targetCycleIndex = 0
+
 
     def __init__(self):
         super().__init__()
         self.collider = CollisionBoxComponent(self)
+        self.stats = StatsComponent(self)
         self.flags.add(ACTOR)
 
         self.targettedBy = []

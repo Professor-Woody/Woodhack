@@ -30,3 +30,14 @@ class CollisionBoxComponent(PositionBoxComponent):
             and y < self.entity.y + self.entity.height
         )
 
+
+class StatsComponent(Component):
+    hp = 10
+    maxHp = 10
+    armour = 0
+
+    str = 0
+    dex = 0
+    con = 0
+
+
