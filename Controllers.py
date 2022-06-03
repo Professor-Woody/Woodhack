@@ -2,8 +2,10 @@ import pygame
 pygame.joystick.init()
 import tcod
 
+class BaseController:
+    pass
 
-class KeyboardController:
+class KeyboardController(BaseController):
     parent = None
 
     def __init__(self):
@@ -60,7 +62,7 @@ class KeyboardController:
             
 
 
-class JoystickController:
+class JoystickController(BaseController):
     parent = None
     
     def __init__(self, joystick):

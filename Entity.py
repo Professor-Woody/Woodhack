@@ -10,16 +10,7 @@ EntityDefs = {}
 
 
 class Entity:
-    x = 0
-    y = 0
-    width = 1
-    height = 1
-    lightRadius = 0
-    char='@'
-    collider = None
     level = None
-    fg=colour.WHITE
-    bg=None
     name="Object"
 
     def __init__(self):
@@ -47,23 +38,13 @@ class Entity:
     def update(self):
         pass
 
-    def draw(self, screen):
-        if self.level.map.checkIsVisible(self):
-            screen.draw(self)
-
-    def move(self, x, y):
-        self.x = x
-        self.y = y
 
 
 
 
 
 class Actor(Entity):
-    speed = 0
     target = None
-    targetCycleSpeed = 0
-    targetCycleIndex = 0
 
     def __init__(self):
         super().__init__()

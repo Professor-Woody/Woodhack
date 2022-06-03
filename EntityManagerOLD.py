@@ -1,32 +1,41 @@
-from ecstremity import World
-from Components.Components import Collision, Initiative, Render
+from Components.Components import CollisionBoxComponent
 from Flags import *
 import csv
 from Entity import Actor, Entity, EntityDefs
 
 
 class EntityManager:
-    level: World
-
+    
     def __init__(self, level):
         self.level = level
+        self.entityTypes = set()
+
+        self.allEntities = set()
+        self.players = set()
+        self.actors = set()
+        self.lights = set()
+        self.ui = set()
 
 
     def update(self):
-        for entity in self.level.create_query(all_of=[Initiative]).result:
-            entity.fire_event('tick')
-
-        for entity in self.level.entities:
-            entity.fire_event('update')
-
+        for entity in self.allEntities:
+            entity.update()
 
     def draw(self, screen):
-        for entity in self.level.create_query(all_of=[Render]).result:
+        for entity in self.allEntities:
             entity.draw(screen)
 
-
     def add(self, entity):
-        self.level.add(entity)
+        self.allEntities.add(entity)
+
+        if PLAYER in entity.flags:
+            self.players.add(entity)
+        if ACTOR in entity.flags:
+            self.actors.add(entity)
+        if LIGHT in entity.flags:
+            self.lights.add(entity)
+        if UI in entity.flags:
+            self.ui.add(entity)
 
 
     def remove(self, entity):

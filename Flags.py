@@ -1,3 +1,5 @@
+FPS = 60
+
 OBJECT = 0
 ACTOR = 1
 PLAYER = 2
