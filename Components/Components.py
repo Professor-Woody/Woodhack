@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Tuple
-from ecstremity import Component
+from ecstremity import Component, Engine
 from Levels.Maps import GameMap
 import Colours as colour
 from Flags import FPS
@@ -9,8 +9,8 @@ from Actions.EntityActions import MovementAction, GetTargetAction
 
 @dataclass
 class Position(Component):
-    x: int
-    y: int
+    x: int = -1
+    y: int = -1
     width: int = 1
     height: int = 1
 
@@ -19,36 +19,37 @@ class Position(Component):
         self.y = event.y
 
 
-@dataclass
 class Collision(Component):
-    position: Position
-
     def areaCollides(self, other):
         return (
-            self.position.x < other.x + other.width
-                and self.position.x + self.position.width >= other.x
-                and self.position.y < other.y + other.height
-                and self.position.y + self.position.height >= other.y
+            self.entity[Position].x < other.x + other.width
+                and self.entity[Position].x + self.entity[Position].width >= other.x
+                and self.entity[Position].y < other.y + other.height
+                and self.entity[Position].y + self.entity[Position].height >= other.y
         )
     
     def pointCollides(self, x, y):
         return (
-            x >= self.position.x
-            and x < self.position.x + self.position.width
-            and y >= self.position.y
-            and y < self.position.y + self.position.height
+            x >= self.entity[Position].x
+            and x < self.entity[Position].x + self.entity[Position].width
+            and y >= self.entity[Position].y
+            and y < self.entity[Position].y + self.entity[Position].height
         )
+
+
+class Stats(Component):
+    def __init__(self, hp):
+        self.hp = hp
+        self.maxHp = hp
 
 
 @dataclass
 class Light(Component):
     radius: int = 0
 
-
 @dataclass
 class Render(Component):
-    map: GameMap
-    position: Position
+    map: GameMap = None
     entityName: str = "Bob"
     char: str = "@"
     fg: Tuple = colour.WHITE
@@ -56,21 +57,22 @@ class Render(Component):
     needsVisibility: bool = True
 
     def on_draw(self, event):
-        if (map.checkIsVisible(self.position) and self.needsVisibility) or not self.needsVisibility:
+        if (self.map.checkIsVisible(self) and self.needsVisibility) or not self.needsVisibility:
+            print (event.screen)
             event.screen.draw(self)
 
     @property
     def x(self):
-        return self.position.x
+        return self.entity[Position].x
     
     @property
     def y(self):
-        return self.position.y
+        return self.entity[Position].y
 
     def on_set_bg(self, event):
         self.bg = event.bg
 
-    def on_clear_bg(self, event):
+    def on_clear_bg(self, event=None):
         self.bg = None
 
 
@@ -158,3 +160,27 @@ class PlayerInput(Component):
             
             if target:
                 GetTargetAction(self, target).perform()
+
+
+class Player(Component):
+    pass
+
+
+class UI(Component):
+    pass
+
+def registerComponents(ecs: Engine):
+    components = [
+        Position,
+        Collision,
+        Light,
+        Render,
+        Initiative,
+        Targeted,
+        PlayerInput,
+        Stats,
+        Player,
+        UI,
+    ]
+    for component in components:
+        ecs.register_component(component)
