@@ -6,6 +6,7 @@ from Screen import Screen
 from Clock import Clock
 from Levels.Level import GameLevel
 from Components.Components import registerComponents
+from Flags import FPS
 
 class App:
     width = 150
@@ -22,7 +23,7 @@ class App:
         registerComponents(self.ecs)
 
         self.level = GameLevel(self, self.width, self.height)
-        self.clock = Clock(60)
+        self.clock = Clock(FPS)
 
 
 

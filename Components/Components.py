@@ -141,53 +141,38 @@ class PlayerInput(Component):
     controller: BaseController
 
     def on_update(self, event):
-        # print (1)
-        if self.entity[Initiative].ready:
-            # print (2)
-            # check menu
+        if self.entity[Initiative].ready and not self.entity.has(EffectControlsLocked):
+            return GetPlayerInputAction(self.entity).perform()
 
-            
-            # check movement
-            dx = 0
-            dy = 0
-            if self.controller.getPressed("up"):
-                dy -= 1
-            if self.controller.getPressed("down"):
-                dy += 1
-            if self.controller.getPressed("left"):
-                dx -= 1
-            if self.controller.getPressed("right"):
-                dx += 1
-
-            if dx or dy:
-                MovementAction(self.entity[Position], dx, dy, self.entity[Stats].moveSpeed).perform()            
-
-            # check use actions (IE equipment)
-
-            # print (3)
-
-            # check targetting
-            target = None
-            if self.controller.getPressedOnce("next"):
-                target = "next"
-            elif self.controller.getPressedOnce("previous"):
-                target = "previous"
-            elif self.controller.getPressedOnce("nearestEnemy"):
-                target = "nearestEnemy"
-            # print (target)
-            if target:
-                GetTargetAction(self, target).perform()
-            # print (4)
-
-
-class Player(Component):
+class IsPlayer(Component):
     pass
 
-class NPC(Component):
+class IsNPC(Component):
+    pass
+
+class IsItem(Component):
     pass
 
 class UI(Component):
     pass
+
+class Inventory(Component):
+    def __init__(self):
+        self.contents = set()
+
+class EffectControlsLocked(Component):
+    pass
+
+class SelectionUI(Component):
+    def __init__(self, items):
+        self.items = items
+        self.choice = 0
+
+    def on_update(self, event):
+        GetSelectionInput(self.entity).perform()
+
+    def on_draw(self, event):
+        self.entity.
 
 def registerComponents(ecs: Engine):
     components = [
@@ -200,8 +185,9 @@ def registerComponents(ecs: Engine):
         Targeted,
         PlayerInput,
         Stats,
-        Player,
-        NPC,
+        IsPlayer,
+        IsNPC,
+        IsItem,
         UI,
     ]
     for component in components:
