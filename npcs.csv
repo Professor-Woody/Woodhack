@@ -1,3 +1,4 @@
-Entity Type, Name, character, R,G,B, blocks movement, light radius
-"NPC","orc","o",63,127,63,True,0
-"NPC","troll","T",0,127,0,True,0
+Entity Type, Name, character, R,G,B, blocks movement, light radius, move speed(higher=slower)
+"NPC","orc","o",63,255,63,True,2,20
+"NPC","troll","T",0,127,0,True,0,30
+"PLAYER","Woody","@",200,200,200,True,5,6

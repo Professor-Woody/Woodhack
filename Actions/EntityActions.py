@@ -47,62 +47,67 @@ class WatchAction(WaitAction):
         return max(abs(dx, abs(dy)))
 
 
-class MovementAction(EntityAction):
-    def __init__(self, entity, dx, dy, speed):
-        super().__init__(entity)
+class MovementAction(Action):
+    def __init__(self, position, dx, dy, speed):
+        super().__init__()
         self.dx = dx
         self.dy = dy
         self.speed = speed
+        self.position = position
 
     def perform(self):
         # first check if we can diagonally move
-        newLocationX = self.entity.x + self.dx
-        newLocationY = self.entity.y + self.dy
+        newLocationX = self.position.x + self.dx
+        newLocationY = self.position.y + self.dy
         if self.checkCanMove(newLocationX, newLocationY):
             print ("option A")
             pass
 
         # if not then do our best single axis movement
         else:
-            if not self.checkCanMove(newLocationX, self.entity.y):
+            if not self.checkCanMove(newLocationX, self.position.y):
                 self.dx = 0
                 print ("option B")
 
-            if not self.checkCanMove(self.entity.x + self.dx, newLocationY):
+            if not self.checkCanMove(self.position.x + self.dx, newLocationY):
                 print ("option C")
                 self.dy = 0
 
-
         if self.dx or self.dy:
-            self.entity.move(self.entity.x + self.dx, self.entity.y + self.dy)
-            self.entity.speed += self.speed
+            self.position.entity.fire_event("move", {"x":self.position.x + self.dx, "y": self.position.y + self.dy})
+            self.position.entity.fire_event("add_initiative", {"speed": self.speed})
+
 
     def checkCanMove(self, dx, dy):
-        if not self.entity.level.map.checkInBounds(dx, dy) or \
-            not self.entity.level.map.checkIsPassable(dx, dy) or \
-            self.entity.level.entityManager.checkIsBlocked(dx, dy):
+        if not self.position.level or \
+            not self.position.level.map.checkInBounds(dx, dy) or \
+            not self.position.level.map.checkIsPassable(dx, dy) or \
+            self.position.level.map.checkIsBlocked(dx, dy):
             return False
         return True
 
+
+
 class GetTargetAction(EntityAction):
-    def __init__(self, entity, targetRange):
+    def __init__(self, entity, targetRange, targetType="NPC"):
         super().__init__(entity)
+        self.targetType = targetType
         self.targetRange = targetRange
 
     def perform(self):
         targets = []
         currentTargetIndex = -1
 
-        for actor in self.entity.level.entityManager.actors:
-            if actor.level.map.checkIsVisible(actor):
-                targetRange = max(abs(self.entity.x - actor.x), abs(self.entity.y - actor.y))
-                targets.append((actor, targetRange))
+        for entity in self.entity.world.create_query(all_of=[self.targetType]).result:
+            if entity["Position"].level.map.checkIsVisible(entity):
+                targetRange = max(abs(self.entity.x - entity.x), abs(self.entity.y - entity.y))
+                targets.append((entity, targetRange))
 
         targets.sort(key = lambda x: x[1])
         
         counter = 0
-        for actor in targets:
-            if actor[0] == self.entity.target:
+        for entity in targets:
+            if entity[0] == self.entity["Target"].target:
                 currentTargetIndex = counter
                 break
             counter += 1
@@ -120,15 +125,15 @@ class GetTargetAction(EntityAction):
                 currentTargetIndex = 0
 
             
-            if self.entity.target:
-                self.entity.target.targettedBy.remove(self.entity)
+            self.entity.fire_event("clear_target")
 
-            self.entity.target = targets[currentTargetIndex][0]
-            self.entity.target.targettedBy.append(self.entity)
-            self.entity.target.targetCycleSpeed = 0
+            finalTarget = targets[currentTargetIndex][0]
+            self.entity.fire_event("set_target", {"target": finalTarget})
+            finalTarget.fire_event("add_targeter", {"entity": self.entity})
+
         else:
             if self.entity.target:
                 self.entity.target.targettedBy.remove(self.entity)
             self.entity.target = None
 
-        print (f"Player {self.entity}\nis now targetting {self.entity.target}\nfrom list {targets}")
+        print (f"Player {self.entity}\nis now targetting {self.entity['Target'].target}\nfrom list {targets}")

@@ -28,8 +28,9 @@ class GameLevel(BaseLevel):
         self.map=LevelCreator.generateBasicLevel(self, self.width-40, self.height-10)
 
         self.entityManager.loadEntities("npcs.csv")
+        self.entityManager.spawn("orc", self.map.start[0]-1, self.map.start[1])
         self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1])
-        self.entityManager.spawn("orc", self.map.start[0]+3, self.map.start[1])
+        self.entityManager.spawn("Woody", self.map.start[0], self.map.start[1])
         # self.entityManager.spawn("orc", self.map.start[0]+5, self.map.start[1])
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)

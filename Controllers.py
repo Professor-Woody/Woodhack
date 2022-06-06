@@ -144,6 +144,8 @@ class JoystickController(BaseController):
         return command(data)
 
     def getPressedOnce(self, cmd):
+        if cmd == "next":
+            print ("get next")
         command, data = self.commands[cmd]
         result = command(data)
         if result and cmd not in self.checked:
