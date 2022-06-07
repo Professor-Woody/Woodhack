@@ -187,25 +187,26 @@ class PickupItemAction(EntityAction):
             # create the UI object
             selectionUI = self.entity.world.create_entity()
             selectionUI.add('UI')
-            selectionUI.add('SelectionUI', {'entity': self.entity, 'items': items})
-
-            # assign the player controller control over to it
-
+            selectionUI.add('SelectionUI', {'entity': self.entity, 'items': items, 'action': InventoryAddAction(self.entity)})
+            selectionUI.add('Position', {'x': self.entity['UIPosition'].sideX, 'y': self.entity['UIPosition'].sideY})
 
             # lock the player
             self.entity.add('EffectControlsLocked')
 
+
+
+
 class GetSelectionInput(EntityAction):
     def perform(self):
-        if self.entity['PlayerInput'].controller.getPressedOnce('cancel'):
-            self.entity.remove('EffectControlsLocked')
-            self.entity.remove('SelectionUI')
+        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce('cancel'):
+            self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
+            self.entity.destroy()
             return
 
         dy = 0
-        if self.entity['PlayerInput'].controller.getPressedOnce("up"):
+        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce("up"):
             dy -= 1
-        if self.entity['PlayerInput'].controller.getPressedOnce("down"):
+        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce("down"):
             dy += 1
         if dy:
             self.entity['SelectionUI'].choice += dy
@@ -214,8 +215,19 @@ class GetSelectionInput(EntityAction):
             elif self.entity['SelectionUI'].choice >= len(self.entity['SelectionUI'].items):
                 self.entity['SelectionUI'].choice = 0
 
-        if self.entity['PlayerInput'].controller.getPressedOnce('use'):
-            self.entity['Inventory'].contents.add(self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice])
-            self.entity.remove('EffectControlsLocked')
-            self.entity.remove('SelectionUI')
+        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce('use'):
+            self.entity['SelectionUI'].action.perform()
+            self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
+            self.entity.destroy()
 
+class InventoryAddAction(EntityAction):
+    def perform(self):
+        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
+        self.entity['SelectionUI'].entity['Inventory'].contents.add(item)
+        item.remove('Position')
+
+class InventorySubtractAction(EntityAction):
+    def perform(self):
+        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
+        self.entity['SelectionUI'].entity['Inventory'].contents.remove(item)
+        item.add('Position', {'x': self.entity['SelectionUI'].entity['Position'].x, 'y': self.entity['SelectionUI'].entity['Position'].y})

@@ -37,6 +37,13 @@ class Collision(Component):
             and y < self.entity[Position].y + self.entity[Position].height
         )
 
+@dataclass
+class UIPosition(Component):
+    sideX: int
+    sideY: int
+    bottomX: int
+    bottomY: int
+
 
 class Target(Component):
     target: Entity = None
@@ -164,15 +171,30 @@ class EffectControlsLocked(Component):
     pass
 
 class SelectionUI(Component):
-    def __init__(self, items):
+    def __init__(self, items, action):
         self.items = items
         self.choice = 0
+        self.action = action
 
     def on_update(self, event):
         GetSelectionInput(self.entity).perform()
 
     def on_draw(self, event):
-        self.entity.
+        screen = event.data.screen
+        screen.drawFrame(
+            self.entity[Position].x,
+            self.entity[Position].y,
+            self.entity[Position].width,
+            self.entity[Position].height,
+            "Pick up:"
+        )
+        for i in range(min(len(items), 10)):
+            if i == self.choice:
+                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, items[i], fg=colour.BLACK, bg=colour.WHITE)
+            else:
+                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, items[i])
+
+
 
 def registerComponents(ecs: Engine):
     components = [
@@ -189,6 +211,8 @@ def registerComponents(ecs: Engine):
         IsNPC,
         IsItem,
         UI,
+        SelectionUI,
+        EffectControlsLocked
     ]
     for component in components:
         ecs.register_component(component)
