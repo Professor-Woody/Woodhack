@@ -77,6 +77,16 @@ class EntityManager:
         if row[0] == "PLAYER":
             entity.add(Player)
             entity.add(PlayerInput, {"controller": controllers[0]})
+            entity.add(LeftHand)
+            entity.add(RightHand)
+            entity.add(UIPosition, {
+                'sideX': self.level.width + 2,
+                'sideY': self.level.sideY,
+                'bottomX': self.level.bottomX,
+                'bottomY': self.level.height + 2
+                })
+            self.level.sideY += 14
+            self.level.bottomX += 16
 
 
 

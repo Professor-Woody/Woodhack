@@ -159,7 +159,8 @@ class GetPlayerInputAction(EntityAction):
                 MovementAction(self.entity[Position], dx, dy, self.entity[Stats].moveSpeed).perform()            
 
             # check use actions (IE equipment)
-
+            if self.entity[PlayerInput].controller.getPressed('inventory'):
+                OpenInventoryAction(self.entity).perform()
             # print (3)
 
             # check targetting
@@ -187,22 +188,49 @@ class PickupItemAction(EntityAction):
             # create the UI object
             selectionUI = self.entity.world.create_entity()
             selectionUI.add('UI')
-            selectionUI.add('SelectionUI', {'entity': self.entity, 'items': items, 'action': InventoryAddAction(self.entity)})
+            selectionUI.add('SelectionUI', 
+                {'entity': self.entity, 
+                'items': items, 
+                'actions': {
+                    'use', InventoryAddAction(self.entity),
+                    'cancel', CancelSelectionUIAction(self.entity),
+                    }
+            })
             selectionUI.add('Position', {'x': self.entity['UIPosition'].sideX, 'y': self.entity['UIPosition'].sideY})
 
             # lock the player
             self.entity.add('EffectControlsLocked')
 
 
+class OpenInventoryAction(EntityAction):
+    def perform(self):
+        items = self.entity['Inventory'].contents
+        if len(items):
+            self.entity.add('EffectControlsLocked')
+            selectionUI = self.entity.world.create_entity()
+            selectionUI.add('UI')
+            selectionUI.add(
+                'SelectionUI',
+                {
+                    'entity': self.entity,
+                    'items': items,
+                    'actions': {
+                        'use': InventoryDropAction(self.entity),
+                        'cancel': CancelSelectionUIAction(self.entity),
+                        'lefthand': SwapEquippedItemAction(self.entity, 'lefthand'),
+                        'righthand': SwapEquippedItemAction(self.entity, 'righthand')
+                    }
+                })
+            selectionUI.add(
+                'Position',
+                {
+                    'x': self.entity['UIPosition'].sideX, 
+                    'y': self.entity['UIPosition'].sideY,
+                })
 
 
 class GetSelectionInput(EntityAction):
     def perform(self):
-        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce('cancel'):
-            self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
-            self.entity.destroy()
-            return
-
         dy = 0
         if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce("up"):
             dy -= 1
@@ -215,10 +243,15 @@ class GetSelectionInput(EntityAction):
             elif self.entity['SelectionUI'].choice >= len(self.entity['SelectionUI'].items):
                 self.entity['SelectionUI'].choice = 0
 
-        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce('use'):
-            self.entity['SelectionUI'].action.perform()
-            self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
-            self.entity.destroy()
+        for action in self.entity['SelectionUI'].actions:
+            if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce(action):
+                self.entity['SelectionUI'].actions[action].perform()
+
+class CancelSelectionUIAction(EntityAction):
+    def perform(self):
+        self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
+        self.entity.destroy()
+
 
 class InventoryAddAction(EntityAction):
     def perform(self):
@@ -226,8 +259,22 @@ class InventoryAddAction(EntityAction):
         self.entity['SelectionUI'].entity['Inventory'].contents.add(item)
         item.remove('Position')
 
-class InventorySubtractAction(EntityAction):
+class InventoryDropAction(EntityAction):
     def perform(self):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
         self.entity['SelectionUI'].entity['Inventory'].contents.remove(item)
         item.add('Position', {'x': self.entity['SelectionUI'].entity['Position'].x, 'y': self.entity['SelectionUI'].entity['Position'].y})
+
+class SwapEquippedItemAction(EntityAction):
+    def __init__(self, entity, hand):
+        super().__init__(entity)
+        self.hand = hand
+
+    def perform(self):
+        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
+        entity = self.entity['SelectionUI'].entity
+
+        if entity[self.hand].equipped:
+            item = entity['Inventory'].pop(self.entity['SelectionUI'].choice)
+            entity['Inventory'].contents.add(self.entity[self.hand].equipped)
+            entity[self.hand].equipped = item

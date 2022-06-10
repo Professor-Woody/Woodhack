@@ -9,8 +9,8 @@ from Components.Components import registerComponents
 from Flags import FPS
 
 class App:
-    width = 150
-    height = 100
+    width = 100
+    height = 80
     previousLevel = None
 
     def __init__(self):

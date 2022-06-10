@@ -171,10 +171,10 @@ class EffectControlsLocked(Component):
     pass
 
 class SelectionUI(Component):
-    def __init__(self, items, action):
+    def __init__(self, items, actions):
         self.items = items
         self.choice = 0
-        self.action = action
+        self.actions = actions
 
     def on_update(self, event):
         GetSelectionInput(self.entity).perform()
@@ -194,7 +194,14 @@ class SelectionUI(Component):
             else:
                 screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, items[i])
 
+class EquipmentSlot(Component):
+    equipped = None
 
+class LeftHand(EquipmentSlot):
+    pass
+
+class RightHand(EquipmentSlot):
+    pass
 
 def registerComponents(ecs: Engine):
     components = [
@@ -212,7 +219,10 @@ def registerComponents(ecs: Engine):
         IsItem,
         UI,
         SelectionUI,
-        EffectControlsLocked
+        EffectControlsLocked,
+        LeftHand,
+        RightHand,
+
     ]
     for component in components:
         ecs.register_component(component)

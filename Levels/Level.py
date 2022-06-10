@@ -6,6 +6,8 @@ class BaseLevel:
         self.app = app
         self.width = width
         self.height = height
+        self.bottomX = 0
+        self.sideY = 0
 
         self.world = self.app.ecs.create_world()
         self.entityManager = EntityManager(self)
@@ -25,7 +27,7 @@ class GameLevel(BaseLevel):
         super().__init__(app, width, height)
         print ("GameLevel")
 
-        self.map=LevelCreator.generateBasicLevel(self, self.width-40, self.height-10)
+        self.map=LevelCreator.generateBasicLevel(self, self.width, self.height)
 
         self.entityManager.loadEntities("npcs.csv")
         self.entityManager.spawn("orc", self.map.start[0]-1, self.map.start[1])
