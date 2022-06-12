@@ -1,0 +1,29 @@
+from Actions.Actions import EntityAction
+
+
+class GetSelectionInput(EntityAction):
+    def perform(self):
+        dy = 0
+        if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce("up"):
+            dy -= 1
+        if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce("down"):
+            dy += 1
+        if dy:
+            self.entity['SelectionUI'].choice += dy
+            if self.entity['SelectionUI'].choice < 0:
+                self.entity['SelectionUI'].choice = len(self.entity['SelectionUI'].items)-1
+            elif self.entity['SelectionUI'].choice >= len(self.entity['SelectionUI'].items):
+                self.entity['SelectionUI'].choice = 0
+
+        for action in self.entity['SelectionUI'].actions:
+            if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce(action):
+                self.entity['SelectionUI'].parentEntity.remove('EffectControlsLocked')
+                self.entity['SelectionUI'].actions[action].perform()
+                print ("---destroying---")
+                self.entity.destroy()
+                break
+                
+
+class CancelSelectionUIAction(EntityAction):
+    def perform(self):
+        print ("cancelling (no action)")

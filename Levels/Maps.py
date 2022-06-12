@@ -24,10 +24,10 @@ class GameMap:
         return 0 <= x < self.width and 0 <= y < self.height
 
     def checkIsVisible(self, entity):
-        return self.visible[entity.x, entity.y] and self.lit[entity.x, entity.y]
+        return self.visible[entity['Position'].x, entity['Position'].y] and self.lit[entity['Position'].x, entity['Position'].y]
 
     def checkIsBlocked(self, x, y):
-        for entity in self.level.world.create_query(all_of = ["Collision"]).result:
+        for entity in self.level.world.create_query(all_of = ["Collision", "BlocksMovement"]).result:
             if entity["Collision"].pointCollides(x, y):
                 return entity
 
@@ -46,7 +46,7 @@ class GameMap:
 
         # calculate visible squares from lit
         self.visible[:] = False
-        for entity in self.level.world.create_query(all_of=['Player']).result:
+        for entity in self.level.world.create_query(all_of=['IsPlayer']).result:
             self.visible[:] = np.logical_or(self.visible, np.logical_and(self.lit, compute_fov(
                         self.tiles["transparent"],
                         (entity['Position'].x, entity['Position'].y),

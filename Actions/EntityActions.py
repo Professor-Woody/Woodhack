@@ -1,11 +1,5 @@
-from Actions.Actions import Action
-
-
-class EntityAction(Action):
-    def __init__(self, entity):
-        super().__init__()
-        self.entity = entity
-
+from Actions.Actions import Action, EntityAction
+from ecstremity.entity import Entity
 
 class WaitAction(EntityAction):
     def __init__(self, entity, time):
@@ -60,17 +54,14 @@ class MovementAction(Action):
         newLocationX = self.position.x + self.dx
         newLocationY = self.position.y + self.dy
         if self.checkCanMove(newLocationX, newLocationY):
-            print ("option A")
             pass
 
         # if not then do our best single axis movement
         else:
             if not self.checkCanMove(newLocationX, self.position.y):
                 self.dx = 0
-                print ("option B")
 
             if not self.checkCanMove(self.position.x + self.dx, newLocationY):
-                print ("option C")
                 self.dy = 0
 
         if self.dx or self.dy:
@@ -95,16 +86,21 @@ class GetTargetAction(EntityAction):
         self.targetRange = targetRange
 
     def perform(self):
+        print ("targetting")
         targets = []
         currentTargetIndex = -1
-
-        for entity in self.entity.world.create_query(all_of=[self.targetType]).result:
+        print (self.entity.world.create_query(all_of=['Is' + self.targetType]).result)
+        print ('---')
+        for entity in self.entity.world.create_query(all_of=['Is' + self.targetType]).result:
             if entity["Position"].level.map.checkIsVisible(entity):
-                targetRange = max(abs(self.entity.x - entity.x), abs(self.entity.y - entity.y))
+                print (entity)
+                targetRange = max(abs(self.entity['Position'].x - entity['Position'].x), abs(self.entity['Position'].y - entity['Position'].y))
+                print ('x')
                 targets.append((entity, targetRange))
 
+
         targets.sort(key = lambda x: x[1])
-        
+        print (targets)
         counter = 0
         for entity in targets:
             if entity[0] == self.entity["Target"].target:
@@ -112,6 +108,7 @@ class GetTargetAction(EntityAction):
                 break
             counter += 1
 
+        self.entity.fire_event("clear_target")
         if targets:
             if self.targetRange == "next":
                 currentTargetIndex += 1
@@ -124,13 +121,10 @@ class GetTargetAction(EntityAction):
             else:
                 currentTargetIndex = 0
 
-            
-            self.entity.fire_event("clear_target")
-
             finalTarget = targets[currentTargetIndex][0]
             self.entity.fire_event("set_target", {"target": finalTarget})
             finalTarget.fire_event("add_targeter", {"entity": self.entity})
-
+            print (finalTarget)
         else:
             if self.entity.target:
                 self.entity.target.targettedBy.remove(self.entity)
@@ -138,50 +132,24 @@ class GetTargetAction(EntityAction):
 
         print (f"Player {self.entity}\nis now targetting {self.entity['Target'].target}\nfrom list {targets}")
 
-class GetPlayerInputAction(EntityAction):
-    def perform(self):
-            # check menu
 
-            
-            # check movement
-            dx = 0
-            dy = 0
-            if self.entity[PlayerInput].controller.getPressed("up"):
-                dy -= 1
-            if self.entity[PlayerInput].controller.getPressed("down"):
-                dy += 1
-            if self.entity[PlayerInput].controller.getPressed("left"):
-                dx -= 1
-            if self.entity[PlayerInput].controller.getPressed("right"):
-                dx += 1
 
-            if dx or dy:
-                MovementAction(self.entity[Position], dx, dy, self.entity[Stats].moveSpeed).perform()            
-
-            # check use actions (IE equipment)
-            if self.entity[PlayerInput].controller.getPressed('inventory'):
-                OpenInventoryAction(self.entity).perform()
-            # print (3)
-
-            # check targetting
-            target = None
-            if self.entity[PlayerInput].controller.getPressedOnce("next"):
-                target = "next"
-            elif self.entity[PlayerInput].controller.getPressedOnce("previous"):
-                target = "previous"
-            elif self.entity[PlayerInput].controller.getPressedOnce("nearestEnemy"):
-                target = "nearestEnemy"
-            # print (target)
-            if target:
-                GetTargetAction(self.entity, target).perform()
-            # print (4)
 
 class PickupItemAction(EntityAction):
     def perform(self):
-        items = self.entity.world.create_query(['IsItem']).result
+        allItems = self.entity.world.create_query(all_of=['IsItem', 'Position']).result
+        items = []
+        # check that it's in the same space as our player
+        items = list(filter(lambda item: item['Collision'].pointCollides(self.entity['Position'].x, self.entity['Position'].y, allItems)))
+        for item in allItems:
+            if item['Collision'].pointCollides(self.entity['Position'].x, self.entity['Position'].y):
+                items.append(item)
+
+        # now for those on the same space:
         if len(items) == 1:
             item = items[0]
-            self.entity['Inventory'].contents.add(item)
+            print (item)
+            self.entity['Inventory'].contents.append(item)
             item.remove('Position')
 
         if len(items) > 1:
@@ -189,92 +157,18 @@ class PickupItemAction(EntityAction):
             selectionUI = self.entity.world.create_entity()
             selectionUI.add('UI')
             selectionUI.add('SelectionUI', 
-                {'entity': self.entity, 
-                'items': items, 
-                'actions': {
-                    'use', InventoryAddAction(self.entity),
-                    'cancel', CancelSelectionUIAction(self.entity),
-                    }
-            })
+                {
+                    'parentEntity': self.entity,
+                    'items': items, 
+                    'actions': {
+                        'use', InventoryAddAction(self.entity),
+                        'cancel', CancelSelectionUIAction(self.entity),
+                        }
+                })
             selectionUI.add('Position', {'x': self.entity['UIPosition'].sideX, 'y': self.entity['UIPosition'].sideY})
 
             # lock the player
             self.entity.add('EffectControlsLocked')
 
 
-class OpenInventoryAction(EntityAction):
-    def perform(self):
-        items = self.entity['Inventory'].contents
-        if len(items):
-            self.entity.add('EffectControlsLocked')
-            selectionUI = self.entity.world.create_entity()
-            selectionUI.add('UI')
-            selectionUI.add(
-                'SelectionUI',
-                {
-                    'entity': self.entity,
-                    'items': items,
-                    'actions': {
-                        'use': InventoryDropAction(self.entity),
-                        'cancel': CancelSelectionUIAction(self.entity),
-                        'lefthand': SwapEquippedItemAction(self.entity, 'lefthand'),
-                        'righthand': SwapEquippedItemAction(self.entity, 'righthand')
-                    }
-                })
-            selectionUI.add(
-                'Position',
-                {
-                    'x': self.entity['UIPosition'].sideX, 
-                    'y': self.entity['UIPosition'].sideY,
-                })
 
-
-class GetSelectionInput(EntityAction):
-    def perform(self):
-        dy = 0
-        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce("up"):
-            dy -= 1
-        if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce("down"):
-            dy += 1
-        if dy:
-            self.entity['SelectionUI'].choice += dy
-            if self.entity['SelectionUI'].choice < 0:
-                self.entity['SelectionUI'].choice = len(self.entity['SelectionUI'].items)-1
-            elif self.entity['SelectionUI'].choice >= len(self.entity['SelectionUI'].items):
-                self.entity['SelectionUI'].choice = 0
-
-        for action in self.entity['SelectionUI'].actions:
-            if self.entity['SelectionUI'].entity['PlayerInput'].controller.getPressedOnce(action):
-                self.entity['SelectionUI'].actions[action].perform()
-
-class CancelSelectionUIAction(EntityAction):
-    def perform(self):
-        self.entity['SelectionUI'].entity.remove('EffectControlsLocked')
-        self.entity.destroy()
-
-
-class InventoryAddAction(EntityAction):
-    def perform(self):
-        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
-        self.entity['SelectionUI'].entity['Inventory'].contents.add(item)
-        item.remove('Position')
-
-class InventoryDropAction(EntityAction):
-    def perform(self):
-        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
-        self.entity['SelectionUI'].entity['Inventory'].contents.remove(item)
-        item.add('Position', {'x': self.entity['SelectionUI'].entity['Position'].x, 'y': self.entity['SelectionUI'].entity['Position'].y})
-
-class SwapEquippedItemAction(EntityAction):
-    def __init__(self, entity, hand):
-        super().__init__(entity)
-        self.hand = hand
-
-    def perform(self):
-        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
-        entity = self.entity['SelectionUI'].entity
-
-        if entity[self.hand].equipped:
-            item = entity['Inventory'].pop(self.entity['SelectionUI'].choice)
-            entity['Inventory'].contents.add(self.entity[self.hand].equipped)
-            entity[self.hand].equipped = item

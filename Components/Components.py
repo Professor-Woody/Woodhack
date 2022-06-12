@@ -5,7 +5,7 @@ from Levels.Maps import GameMap
 import Colours as colour
 from Flags import FPS
 from Controllers import BaseController
-from Actions.EntityActions import MovementAction, GetTargetAction
+from Actions.EntityActions import GetSelectionInput, GetPlayerInputAction
 
 @dataclass
 class Position(Component):
@@ -18,7 +18,6 @@ class Position(Component):
     def on_move(self, event):
         self.x = event.data.x
         self.y = event.data.y
-
 
 class Collision(Component):
     def areaCollides(self, other):
@@ -36,6 +35,9 @@ class Collision(Component):
             and y >= self.entity[Position].y
             and y < self.entity[Position].y + self.entity[Position].height
         )
+
+class BlocksMovement(Component):
+    pass
 
 @dataclass
 class UIPosition(Component):
@@ -76,10 +78,11 @@ class Render(Component):
     needsVisibility: bool = True
 
     def on_draw(self, event):
-        if (self.map.checkIsVisible(self) and self.needsVisibility):
-            event.data.screen.draw(self)
-        if not self.needsVisibility:
-            event.data.screen.draw(self)
+        if self.entity.has(Position):
+            if (self.map.checkIsVisible(self.entity) and self.needsVisibility):
+                event.data.screen.draw(self)
+            if not self.needsVisibility:
+                event.data.screen.draw(self)
 
     @property
     def x(self):
@@ -129,7 +132,7 @@ class Targeted(Component):
                 self.targetCycleIndex -= 1
                 if self.targetCycleIndex < 0:
                     self.targetCycleIndex = len(self.targetedBy)-1
-                self.entity.fire_event('set_bg', {'bg': self.targetedBy[Render].bg})
+                self.entity.fire_event('set_bg', {'bg': self.targetedBy[self.targetCycleIndex][Render].fg})
 
     def on_add_targeter(self, event):
         if event.data.entity not in self.targetedBy:
@@ -137,8 +140,9 @@ class Targeted(Component):
             self.targetCycleSpeed = 0
     
     def on_remove_targeter(self, event):
+        print (f"removing {event.data.entity}")
         if event.data.entity in self.targetedBy:
-            self.targetedby.remove(event.data.entity)
+            self.targetedBy.remove(event.data.entity)
             self.targetCycleSpeed = 0
             if not self.targetedBy:
                 self.entity.fire_event('set_bg', {'bg': None})
@@ -148,8 +152,9 @@ class PlayerInput(Component):
     controller: BaseController
 
     def on_update(self, event):
+        self.controller.update()
         if self.entity[Initiative].ready and not self.entity.has(EffectControlsLocked):
-            return GetPlayerInputAction(self.entity).perform()
+            event.data.actions.append(GetPlayerInputAction(self.entity))
 
 class IsPlayer(Component):
     pass
@@ -160,24 +165,28 @@ class IsNPC(Component):
 class IsItem(Component):
     pass
 
+class IsEquipped(Component):
+    pass
+
 class UI(Component):
     pass
 
 class Inventory(Component):
     def __init__(self):
-        self.contents = set()
+        self.contents = []
 
 class EffectControlsLocked(Component):
     pass
 
 class SelectionUI(Component):
-    def __init__(self, items, actions):
+    def __init__(self, parentEntity, items, actions):
+        self.parentEntity = parentEntity
         self.items = items
         self.choice = 0
         self.actions = actions
 
     def on_update(self, event):
-        GetSelectionInput(self.entity).perform()
+        event.data.actions.append(GetSelectionInput(self.entity))
 
     def on_draw(self, event):
         screen = event.data.screen
@@ -188,11 +197,11 @@ class SelectionUI(Component):
             self.entity[Position].height,
             "Pick up:"
         )
-        for i in range(min(len(items), 10)):
+        for i in range(min(len(self.entity['SelectionUI'].items), 10)):
             if i == self.choice:
-                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, items[i], fg=colour.BLACK, bg=colour.WHITE)
+                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, self.entity['SelectionUI'].items[i][Render].entityName, fg=colour.BLACK, bg=colour.WHITE)
             else:
-                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, items[i])
+                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, self.entity['SelectionUI'].items[i][Render].entityName)
 
 class EquipmentSlot(Component):
     equipped = None
@@ -217,11 +226,14 @@ def registerComponents(ecs: Engine):
         IsPlayer,
         IsNPC,
         IsItem,
+        IsEquipped,
         UI,
         SelectionUI,
         EffectControlsLocked,
         LeftHand,
         RightHand,
+        BlocksMovement,
+        SelectionUI,
 
     ]
     for component in components:

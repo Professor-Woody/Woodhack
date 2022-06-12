@@ -17,3 +17,7 @@ class PrintAction(Action):
     def perform(self):
         print (self.msg)
         
+class EntityAction(Action):
+    def __init__(self, entity):
+        super().__init__()
+        self.entity = entity
