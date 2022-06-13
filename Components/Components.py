@@ -5,7 +5,8 @@ from Levels.Maps import GameMap
 import Colours as colour
 from Flags import FPS
 from Controllers import BaseController
-from Actions.EntityActions import GetSelectionInput, GetPlayerInputAction
+from Actions.PlayerActions import GetPlayerInputAction
+from Actions.UIActions import GetSelectionInput
 
 @dataclass
 class Position(Component):
@@ -168,6 +169,10 @@ class IsItem(Component):
 class IsEquipped(Component):
     pass
 
+@dataclass
+class IsEquippable(Component):
+    equipmentSlot: str
+
 class UI(Component):
     pass
 
@@ -212,6 +217,20 @@ class LeftHand(EquipmentSlot):
 class RightHand(EquipmentSlot):
     pass
 
+class Body(EquipmentSlot):
+    def __init__(self):
+        self.slots = {
+            'head': None,
+            'lefthand': None,
+            'righthand': None,
+            'body': None,
+            'legs': None,
+            'Feet': None
+        }
+
+
+
+
 def registerComponents(ecs: Engine):
     components = [
         Position,
@@ -234,6 +253,8 @@ def registerComponents(ecs: Engine):
         RightHand,
         BlocksMovement,
         SelectionUI,
+        IsEquippable,
+        Body,
 
     ]
     for component in components:

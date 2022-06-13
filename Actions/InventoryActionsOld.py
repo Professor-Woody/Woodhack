@@ -1,8 +1,5 @@
-from xml.dom.minidom import Entity
 from Actions.BaseActions import EntityAction
-from Actions.UIActions import CancelSelectionUIAction, DestroyUIAction
-
-
+from Actions.UIActions import CancelSelectionUIAction
 
 class OpenInventoryAction(EntityAction):
     def perform(self):
@@ -36,14 +33,12 @@ class InventoryAddAction(EntityAction):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
         self.entity['SelectionUI'].parentEntity['Inventory'].contents.append(item)
         item.remove('Position')
-        DestroyUIAction(self.entity)
 
 class InventoryDropAction(EntityAction):
     def perform(self):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
         self.entity['SelectionUI'].parentEntity['Inventory'].contents.remove(item)
         item.add('Position', {'x': self.entity['SelectionUI'].parentEntity['Position'].x, 'y': self.entity['SelectionUI'].parentEntity['Position'].y})
-        DestroyUIAction(self.entity).perform()
 
 class SwapEquippedItemAction(EntityAction):
     def __init__(self, entity, equipmentSlot):
@@ -52,27 +47,19 @@ class SwapEquippedItemAction(EntityAction):
 
     def perform(self):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
-        body = self.entity['SelectionUI'].parentEntity['Body'].equipmentSlots
+        entity = self.entity['SelectionUI'].parentEntity
 
-        # confirm the item is equippable
         if not item.has('IsEquippable'):
             return
 
-        # confirm the body has the requisite slot
-        if not self.equipmentSlot:  # we haven't confirmed a hand so check the item
+        if not self.equipmentSlot:
             self.equipmentSlot = item['IsEquippable'].equipmentSlot
-            if self.equipmentSlot == "anyhand":
-                hands = [body['lefthand'], body['righthand']]
 
-                if not hands[1]:
-                    self.equipmentSlot = 'righthand'
-                else:
-                    self.equipmentSlot = 'lefthand'
+        if not entity.has(self.equipmentSlot):
+            return
 
-        # swap the item into the slot
-        if body[self.equipmentSlot]:
-            body[self.equipmentSlot].remove('IsEquipped')
-        body[self.equipmentSlot] = item
+        if entity[self.equipmentSlot].equipped:
+            entity[self.equipmentSlot].equipped.remove('IsEquipped')
+            
         item.add('IsEquipped')
-        DestroyUIAction(self.entity).perform()
-
+        entity[self.equipmentSlot].equipped = item

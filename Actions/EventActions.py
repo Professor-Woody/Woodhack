@@ -1,4 +1,4 @@
-from Actions.Actions import Action
+from Actions.BaseActions import Action
 import Controllers
 
 class EventAction(Action):

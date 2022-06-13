@@ -1,4 +1,4 @@
-from Actions.Actions import Action, EntityAction
+from Actions.BaseActions import Action, EntityAction
 from ecstremity.entity import Entity
 
 class WaitAction(EntityAction):
@@ -86,21 +86,15 @@ class GetTargetAction(EntityAction):
         self.targetRange = targetRange
 
     def perform(self):
-        print ("targetting")
         targets = []
         currentTargetIndex = -1
-        print (self.entity.world.create_query(all_of=['Is' + self.targetType]).result)
-        print ('---')
         for entity in self.entity.world.create_query(all_of=['Is' + self.targetType]).result:
             if entity["Position"].level.map.checkIsVisible(entity):
-                print (entity)
                 targetRange = max(abs(self.entity['Position'].x - entity['Position'].x), abs(self.entity['Position'].y - entity['Position'].y))
-                print ('x')
                 targets.append((entity, targetRange))
 
 
         targets.sort(key = lambda x: x[1])
-        print (targets)
         counter = 0
         for entity in targets:
             if entity[0] == self.entity["Target"].target:
@@ -124,51 +118,14 @@ class GetTargetAction(EntityAction):
             finalTarget = targets[currentTargetIndex][0]
             self.entity.fire_event("set_target", {"target": finalTarget})
             finalTarget.fire_event("add_targeter", {"entity": self.entity})
-            print (finalTarget)
         else:
             if self.entity.target:
                 self.entity.target.targettedBy.remove(self.entity)
             self.entity.target = None
 
-        print (f"Player {self.entity}\nis now targetting {self.entity['Target'].target}\nfrom list {targets}")
 
 
 
-
-class PickupItemAction(EntityAction):
-    def perform(self):
-        allItems = self.entity.world.create_query(all_of=['IsItem', 'Position']).result
-        items = []
-        # check that it's in the same space as our player
-        items = list(filter(lambda item: item['Collision'].pointCollides(self.entity['Position'].x, self.entity['Position'].y, allItems)))
-        for item in allItems:
-            if item['Collision'].pointCollides(self.entity['Position'].x, self.entity['Position'].y):
-                items.append(item)
-
-        # now for those on the same space:
-        if len(items) == 1:
-            item = items[0]
-            print (item)
-            self.entity['Inventory'].contents.append(item)
-            item.remove('Position')
-
-        if len(items) > 1:
-            # create the UI object
-            selectionUI = self.entity.world.create_entity()
-            selectionUI.add('UI')
-            selectionUI.add('SelectionUI', 
-                {
-                    'parentEntity': self.entity,
-                    'items': items, 
-                    'actions': {
-                        'use', InventoryAddAction(self.entity),
-                        'cancel', CancelSelectionUIAction(self.entity),
-                        }
-                })
-            selectionUI.add('Position', {'x': self.entity['UIPosition'].sideX, 'y': self.entity['UIPosition'].sideY})
-
-            # lock the player
-            self.entity.add('EffectControlsLocked')
 
 
 

@@ -1,6 +1,6 @@
 from cmath import e
 from dataclasses import dataclass
-from Components.Components import BlocksMovement, Inventory, IsItem, IsNPC, Collision, Initiative, Light, IsPlayer, PlayerInput, Position, Render, Stats, Target, Targeted, UIPosition, LeftHand, RightHand
+from Components.Components import BlocksMovement, Inventory, IsEquippable, IsItem, IsNPC, Collision, Initiative, Light, IsPlayer, PlayerInput, Position, Render, Stats, Target, Targeted, UIPosition, LeftHand, RightHand
 from Controllers import controllers
 import csv
 
@@ -79,6 +79,9 @@ class EntityManager:
         if row[0] == "OBJECT":
             entity.add(IsItem)
             entity.add(Collision)
+            if row[9]:
+                print (f"{row[1]} is equippable in {row[9]}")
+                entity.add(IsEquippable, {'equipmentSlot': row[9]})
 
         if row[0] == "NPC" or row[0] == "PLAYER":
             entity.add(Collision)
