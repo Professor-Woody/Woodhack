@@ -124,7 +124,13 @@ class GetTargetAction(EntityAction):
             self.entity.target = None
 
 
+class CalculateStatsAction(EntityAction):
+    def perform(self):
+        # set the stats back to default
+        stats = self.entity['stats']
+        body = self.entity['body'].equipmentSlots
 
+        
 
 
 

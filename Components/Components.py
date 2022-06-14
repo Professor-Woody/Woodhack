@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Tuple
 from ecstremity import Component, Engine, Entity
 from Levels.Maps import GameMap
@@ -6,7 +6,7 @@ import Colours as colour
 from Flags import FPS
 from Controllers import BaseController
 from Actions.PlayerActions import GetPlayerInputAction
-from Actions.UIActions import GetSelectionInput
+
 
 @dataclass
 class Position(Component):
@@ -62,6 +62,8 @@ class Stats(Component):
     def __init__(self, hp, moveSpeed):
         self.hp = hp
         self.maxHp = hp
+        self.baseMaxHp = hp
+        self.baseMoveSpeed = moveSpeed
         self.moveSpeed = moveSpeed
 
 
@@ -173,8 +175,7 @@ class IsEquipped(Component):
 class IsEquippable(Component):
     equipmentSlot: str
 
-class UI(Component):
-    pass
+
 
 class Inventory(Component):
     def __init__(self):
@@ -183,41 +184,9 @@ class Inventory(Component):
 class EffectControlsLocked(Component):
     pass
 
-class SelectionUI(Component):
-    def __init__(self, parentEntity, items, actions):
-        self.parentEntity = parentEntity
-        self.items = items
-        self.choice = 0
-        self.actions = actions
 
-    def on_update(self, event):
-        event.data.actions.append(GetSelectionInput(self.entity))
 
-    def on_draw(self, event):
-        screen = event.data.screen
-        screen.drawFrame(
-            self.entity[Position].x,
-            self.entity[Position].y,
-            self.entity[Position].width,
-            self.entity[Position].height,
-            "Pick up:"
-        )
-        for i in range(min(len(self.entity['SelectionUI'].items), 10)):
-            if i == self.choice:
-                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, self.entity['SelectionUI'].items[i][Render].entityName, fg=colour.BLACK, bg=colour.WHITE)
-            else:
-                screen.printLine(self.entity[Position].x+2, self.entity[Position].y+i+1, self.entity['SelectionUI'].items[i][Render].entityName)
-
-class EquipmentSlot(Component):
-    equipped = None
-
-class LeftHand(EquipmentSlot):
-    pass
-
-class RightHand(EquipmentSlot):
-    pass
-
-class Body(EquipmentSlot):
+class Body(Component):
     def __init__(self):
         self.slots = {
             'head': None,
@@ -231,31 +200,3 @@ class Body(EquipmentSlot):
 
 
 
-def registerComponents(ecs: Engine):
-    components = [
-        Position,
-        Collision,
-        Light,
-        Render,
-        Initiative,
-        Target,
-        Targeted,
-        PlayerInput,
-        Stats,
-        IsPlayer,
-        IsNPC,
-        IsItem,
-        IsEquipped,
-        UI,
-        SelectionUI,
-        EffectControlsLocked,
-        LeftHand,
-        RightHand,
-        BlocksMovement,
-        SelectionUI,
-        IsEquippable,
-        Body,
-
-    ]
-    for component in components:
-        ecs.register_component(component)

@@ -1,6 +1,6 @@
 from cmath import e
 from dataclasses import dataclass
-from Components.Components import BlocksMovement, Inventory, IsEquippable, IsItem, IsNPC, Collision, Initiative, Light, IsPlayer, PlayerInput, Position, Render, Stats, Target, Targeted, UIPosition, LeftHand, RightHand
+from Components.Components import BlocksMovement, Body, Inventory, IsEquippable, IsItem, IsNPC, Collision, Initiative, Light, IsPlayer, PlayerInput, Position, Render, Stats, Target, Targeted, UIPosition, LeftHand, RightHand
 from Controllers import controllers
 import csv
 
@@ -97,8 +97,6 @@ class EntityManager:
         if row[0] == "PLAYER":
             entity.add(IsPlayer)
             entity.add(PlayerInput, {"controller": controllers[0]})
-            entity.add(LeftHand)
-            entity.add(RightHand)
             entity.add(UIPosition, {
                 'sideX': self.level.width - 30,
                 'sideY': self.level.sideY,
@@ -106,6 +104,8 @@ class EntityManager:
                 'bottomY': self.level.height - 10
                 })
             entity.add(Inventory)
+            entity.add(Body)
+            
             self.level.sideY += 14
             self.level.bottomX += 16
 

@@ -1,7 +1,7 @@
 from Actions.BaseActions import EntityAction
 
 
-class GetSelectionInput(EntityAction):
+class GetSelectionInputAction(EntityAction):
     def perform(self):
         dy = 0
         if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce("up"):

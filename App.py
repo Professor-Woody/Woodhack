@@ -5,7 +5,7 @@ from Levels.Level import GameLevel
 from Screen import Screen
 from Clock import Clock
 from Levels.Level import GameLevel
-from Components.Components import registerComponents
+from Components.ComponentRegister import registerComponents
 from Flags import FPS
 
 class App:
