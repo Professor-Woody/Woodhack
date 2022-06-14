@@ -90,7 +90,8 @@ class GetTargetAction(EntityAction):
         currentTargetIndex = -1
         for entity in self.entity.world.create_query(all_of=['Is' + self.targetType]).result:
             if entity["Position"].level.map.checkIsVisible(entity):
-                targetRange = max(abs(self.entity['Position'].x - entity['Position'].x), abs(self.entity['Position'].y - entity['Position'].y))
+                # targetRange = max(abs(self.entity['Position'].x - entity['Position'].x), abs(self.entity['Position'].y - entity['Position'].y))
+                targetRange = self.entity['Position'].getRange(entity)
                 targets.append((entity, targetRange))
 
 
@@ -123,6 +124,35 @@ class GetTargetAction(EntityAction):
                 self.entity.target.targettedBy.remove(self.entity)
             self.entity.target = None
 
+class MeleeAttackAction(EntityAction):
+    def perform(self):
+        # check if the targetted monster is within melee range
+        target = self.entity['Target'].target
+        if target and self.entity['Position'].getRange(target) == 1:
+            for slot in ['lefthand', 'righthand']:
+                item = self.entity['Body'].equipmentSlots[key]
+
+                if item and item.has('Melee') and item.has('IsReady'):
+                    # do something attacky
+                    # check if hit
+                    hitRoll = random.randint(-9, 10) + item['Melee'].attack + self.entity['Stats'].attack
+
+                    # if hit, roll damage
+                    if hitRoll >= target['Stats'].defence:
+                        damage = sum( [ random.randint(1, item['Melee'].diceType) for x in range(item['Melee'].diceAmount) ] ) + item['Melee'].damageBonus + self.entity['Stats'].bonusDamage
+                        self.entity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed})
+                        self.entity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed + 1})
+                        # apply damage
+                        target.fire_event('damage', {"damage": damage})
+                        #  PRINT SOMETHING PITHY HERE!
+
+                    
+                    
+
+
+            
+
+
 
 class CalculateStatsAction(EntityAction):
     def perform(self):
@@ -130,7 +160,26 @@ class CalculateStatsAction(EntityAction):
         stats = self.entity['stats']
         body = self.entity['body'].equipmentSlots
 
-        
+        maxHp = stats.baseMaxHp
+        moveSpeed = stats.baseMoveSpeed
+        defence = stats.baseDefence
+        attack = stats.baseAttack
+
+        for item in self.entity['Body'].equipmentSlots.values():
+            if item:
+                if item.has('Defence'):
+                    defence += item['Defence'].armour
+                if item.has('MoveSpeedModifier'):
+                    moveSpeed += item['MoveSpeedModifier'].modifier
+                if item.has('AttackModifier'):
+                    attack += item['AttackModifier'].modifier
+                if item.has('HPModifier'):
+                    maxHp += item['HPModifier'].modifier
+
+        stats.maxHp = maxHp
+        stats.moveSpeed = moveSpeed
+        stats.defence = defence
+        stats.attack = attack
 
 
 

@@ -1,5 +1,4 @@
-import pandas as pd
+import json
 
-
-class App:
-    def __init__(self):
+with open("objects.json", 'r') as f:
+    print (json.loads(f.read()))

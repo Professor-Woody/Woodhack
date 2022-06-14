@@ -1,9 +1,8 @@
-from cmath import e
 from dataclasses import dataclass
 from Components.Components import BlocksMovement, Body, Inventory, IsEquippable, IsItem, IsNPC, Collision, Initiative, Light, IsPlayer, PlayerInput, Position, Render, Stats, Target, Targeted, UIPosition, LeftHand, RightHand
 from Controllers import controllers
 import csv
-
+import json
 
 
 @dataclass
@@ -51,8 +50,30 @@ class EntityManager:
         entity[Position].level = None
 
 
-
     def loadEntities(self, filename):
+        with open(filename, 'r') as objectFile:
+            objects = json.loads(objectFile.read())
+    
+        for obj in objects:
+            if obj['type'] not in self.level.app.entityDefs.keys():
+                self.level.app.entityDefs[obj['type']] = {}
+            self.level.app.entityDefs[obj['type']][obj['name']] = obj
+    
+
+    def spawn(self, entityType, entityName, x, y):
+        entityDef = self.level.app.entityDefs[entityType][entityName]
+        entity = self.level.world.create_entity()
+        for component in entityDef['components'].keys():
+            entity.add(component, entityDef['components'][component])
+        
+        entity['Position'].level = self.level
+        entity['Position'].x = x
+        entity['Position'].y = y
+
+        
+
+
+    def loadEntitiesOLD(self, filename):
         with open(filename) as entityDefs:
             reader = csv.reader(entityDefs, delimiter=',', quotechar='"')
             next(reader, None)
@@ -61,7 +82,7 @@ class EntityManager:
 
 
     
-    def spawn(self, entityName, x, y):
+    def spawnOLD(self, entityName, x, y):
         row = self.level.app.entityDefs[entityName]
         entity = self.level.world.create_entity()
         
@@ -79,9 +100,9 @@ class EntityManager:
         if row[0] == "OBJECT":
             entity.add(IsItem)
             entity.add(Collision)
-            if row[9]:
-                print (f"{row[1]} is equippable in {row[9]}")
-                entity.add(IsEquippable, {'equipmentSlot': row[9]})
+            if row[11]:
+                print (f"{row[1]} is equippable in {row[11]}")
+                entity.add(IsEquippable, {'equipmentSlot': row[11]})
 
         if row[0] == "NPC" or row[0] == "PLAYER":
             entity.add(Collision)

@@ -19,6 +19,9 @@ class Position(Component):
     def on_move(self, event):
         self.x = event.data.x
         self.y = event.data.y
+    
+    def getRange(self, other):
+        return max(abs(self.entity['Position'].x - other['Position'].x), abs(self.entity['Position'].y - other['Position'].y))
 
 class Collision(Component):
     def areaCollides(self, other):
@@ -59,13 +62,19 @@ class Target(Component):
 
 
 class Stats(Component):
-    def __init__(self, hp, moveSpeed):
+    def __init__(self, hp, moveSpeed, defence, attack, bonusDamage):
         self.hp = hp
         self.maxHp = hp
         self.baseMaxHp = hp
         self.baseMoveSpeed = moveSpeed
         self.moveSpeed = moveSpeed
-
+        self.baseDefence = defence
+        self.defence = defence
+        self.baseAttack = attack
+        self.attack = attack
+        self.baseAttack = attack
+        self.bonusDamage = bonusDamage
+        self.baseBonusDamage = bonusDamage
 
 @dataclass
 class Light(Component):
@@ -73,7 +82,6 @@ class Light(Component):
 
 @dataclass
 class Render(Component):
-    map: GameMap = None
     entityName: str = "Bob"
     char: str = "@"
     fg: Tuple = colour.WHITE
@@ -82,7 +90,7 @@ class Render(Component):
 
     def on_draw(self, event):
         if self.entity.has(Position):
-            if (self.map.checkIsVisible(self.entity) and self.needsVisibility):
+            if (self.entity[Position].level.map.checkIsVisible(self.entity) and self.needsVisibility):
                 event.data.screen.draw(self)
             if not self.needsVisibility:
                 event.data.screen.draw(self)
@@ -101,23 +109,30 @@ class Render(Component):
     def on_clear_bg(self, event=None):
         self.bg = None
 
-
+class IsReady(Component):
+    pass
 
 class Initiative(Component):
-    ready: bool = False
     speed: int = 0
 
     def on_add_initiative(self, event):
-        self.speed += event.data.speed
-        self.ready = False
+        if self.entity.has(IsReady):
+            self.entity.remove(IsReady)
+        if not self.entity.has(Cooldown):
+            self.entity.add(Cooldown, {'speed': event.data.speed})
+        else:
+            self.entity[Cooldown] += event.data.speed
 
+
+class Cooldown(Component):
+    speed: int = 0
     def on_tick(self, event):
         if self.speed > 0:
             self.speed -= 1
             return
         if not self.ready:
-            self.ready = True
-
+            self.entity.add(IsReady)
+            self.entity.remove(self)
 
 
 class Targeted(Component):
@@ -168,14 +183,13 @@ class IsNPC(Component):
 class IsItem(Component):
     pass
 
+@dataclass
 class IsEquipped(Component):
-    pass
+    parentEntity: Entity
 
 @dataclass
 class IsEquippable(Component):
     equipmentSlot: str
-
-
 
 class Inventory(Component):
     def __init__(self):
@@ -184,11 +198,9 @@ class Inventory(Component):
 class EffectControlsLocked(Component):
     pass
 
-
-
 class Body(Component):
     def __init__(self):
-        self.slots = {
+        self.equipmentSlots = {
             'head': None,
             'lefthand': None,
             'righthand': None,

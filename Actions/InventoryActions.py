@@ -18,7 +18,8 @@ class OpenInventoryAction(EntityAction):
                     'items': items,
                     'actions': {
                         'inventory': SwapEquippedItemAction(selectionUI, None),
-                        'use': InventoryDropAction(selectionUI),
+                        'nearestEnemy': InventoryDropAction(selectionUI),
+                        'use': InventoryUseItemAction(selectionUI),
                         'cancel': CancelSelectionUIAction(selectionUI),
                         'lefthand': SwapEquippedItemAction(selectionUI, 'lefthand'),
                         'righthand': SwapEquippedItemAction(selectionUI, 'righthand')
@@ -43,7 +44,20 @@ class InventoryDropAction(EntityAction):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
         self.entity['SelectionUI'].parentEntity['Inventory'].contents.remove(item)
         item.add('Position', {'x': self.entity['SelectionUI'].parentEntity['Position'].x, 'y': self.entity['SelectionUI'].parentEntity['Position'].y})
+        
+        if item.has('IsEquipped'):
+            item.remove('IsEquipped')
+            CalculateStatsAction(self.entity['SelectionUI'].parentEntity).perform()       
+
         DestroyUIAction(self.entity).perform()
+
+class InventoryUseItemAction(EntityAction):
+    def perform(self):
+        item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
+        for action in item['Use'].actions:
+            action.perform(self.entity['SelectionUI'].parentEntity)
+        
+
 
 class SwapEquippedItemAction(EntityAction):
     def __init__(self, entity, equipmentSlot):
@@ -52,6 +66,7 @@ class SwapEquippedItemAction(EntityAction):
 
     def perform(self):
         item = self.entity['SelectionUI'].items[self.entity['SelectionUI'].choice]
+        entity = self.entity['SelectionUI'].parentEntity
         body = self.entity['SelectionUI'].parentEntity['Body'].equipmentSlots
 
         # confirm the item is equippable
@@ -72,7 +87,11 @@ class SwapEquippedItemAction(EntityAction):
         # swap the item into the slot
         if body[self.equipmentSlot]:
             body[self.equipmentSlot].remove('IsEquipped')
+
         body[self.equipmentSlot] = item
-        item.add('IsEquipped')
+        item.add('IsEquipped', {'parentEntity': entity})
+
+        CalculateStatsAction(self.entity['SelectionUI'].parentEntity).perform()
+        
         DestroyUIAction(self.entity).perform()
 
