@@ -5,9 +5,35 @@ from Actions.UIActions import CancelSelectionUIAction
 
 class GetPlayerInputAction(EntityAction):
     def perform(self):
-            # check menu
+            #  ----------------------
+            # start by checking any controls that are not speed dependent
+            # check targetting
+            target = None
+            if self.entity['PlayerInput'].controller.getPressedOnce("next"):
+                target = "next"
+            elif self.entity['PlayerInput'].controller.getPressedOnce("previous"):
+                target = "previous"
+            elif self.entity['PlayerInput'].controller.getPressedOnce("nearestEnemy"):
+                target = "nearestEnemy"
+            if target:
+                GetTargetAction(self.entity, target).perform()
 
-            
+
+            # check use actions (IE equipment)
+            if self.entity['PlayerInput'].controller.getPressedOnce('inventory'):
+                OpenInventoryAction(self.entity).perform()
+            if self.entity['PlayerInput'].controller.getPressedOnce('use'):
+                PickupItemAction(self.entity).perform()
+
+
+
+            # now check all those that require the player to be ready
+            # if required, do one of these (in order of importance)
+            #   Move
+            #   melee attack
+            #   use equipped item
+
+            #  ----------------------
             # check movement
             dx = 0
             dy = 0
@@ -21,27 +47,20 @@ class GetPlayerInputAction(EntityAction):
                 dx += 1
 
             if dx or dy:
-                MovementAction(self.entity['Position'], dx, dy, self.entity['Stats'].moveSpeed).perform()            
+                return MovementAction(self.entity['Position'], dx, dy, self.entity['Stats'].moveSpeed).perform()
 
-            # check use actions (IE equipment)
-            if self.entity['PlayerInput'].controller.getPressedOnce('inventory'):
-                OpenInventoryAction(self.entity).perform()
-            if self.entity['PlayerInput'].controller.getPressedOnce('use'):
-                PickupItemAction(self.entity).perform()
-            # print (3)
+            #  ----------------------
+            #  melee attack
+            # check if the targetted monster is within melee range
+            target = self.entity['Target'].target
+            if target and self.entity['Position'].getRange(target) == 1:            
+                return MeleeAttackAction(self).perform()
 
-            # check targetting
-            target = None
-            if self.entity['PlayerInput'].controller.getPressedOnce("next"):
-                target = "next"
-            elif self.entity['PlayerInput'].controller.getPressedOnce("previous"):
-                target = "previous"
-            elif self.entity['PlayerInput'].controller.getPressedOnce("nearestEnemy"):
-                target = "nearestEnemy"
-            # print (target)
-            if target:
-                GetTargetAction(self.entity, target).perform()
-            # print (4)
+            #  ----------------------
+            #  use equipped item
+            elif self.entity['PlayerInput'].controller.getPressed('lefthand') and self.entity['Body'].equipmentSlots['lefthand']:
+                self.entity['Body'].equipmentSlots['lefthand'].fire_event('use')
+
 
 class PickupItemAction(EntityAction):
     def perform(self):

@@ -100,6 +100,7 @@
             },
             "Collision": {},
             "IsItem": {},
+            "Use": {},
             "IsEquippable": {"equipmentSlot": "anyhand"},
             "Melee": {
                 "attack": 1,
@@ -125,6 +126,7 @@
             "Collision": {},
             "IsItem": {},
             "IsEquippable": {"equipmentSlot": "anyhand"},
+            "Use": {},
             "Ranged": {
                 "attack": 1,
                 "attackSpeed": 10,

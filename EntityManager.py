@@ -27,7 +27,7 @@ class EntityManager:
             action.perform()
 
         for entity in self.deferred_entities:
-            self.add(entity)
+            self.addToLevel(entity)
         self.deferred_entities = []
 
     def draw(self, screen):
@@ -39,13 +39,12 @@ class EntityManager:
         print (f"adding {entity}")
         self.deferred_entities.append(entity)
 
-    def add(self, entity):
+
+    def addToLevel(self, entity):
         self.level.world.add(entity)
         entity[Position].level = self.level
 
-
-
-    def remove(self, entity):
+    def removeFromLevel(self, entity):
         self.level.world.remove(entity)
         entity[Position].level = None
 
@@ -71,6 +70,16 @@ class EntityManager:
         entity['Position'].y = y
 
         
+
+
+
+
+
+
+
+
+
+
 
 
     def loadEntitiesOLD(self, filename):

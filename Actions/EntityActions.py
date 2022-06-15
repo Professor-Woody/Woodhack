@@ -126,28 +126,67 @@ class GetTargetAction(EntityAction):
 
 class MeleeAttackAction(EntityAction):
     def perform(self):
-        # check if the targetted monster is within melee range
-        target = self.entity['Target'].target
-        if target and self.entity['Position'].getRange(target) == 1:
-            for slot in ['lefthand', 'righthand']:
-                item = self.entity['Body'].equipmentSlots[key]
+        target = self.entity['IsEquipped'].parentEntity['Target'].target
 
-                if item and item.has('Melee') and item.has('IsReady'):
-                    # do something attacky
-                    # check if hit
-                    hitRoll = random.randint(-9, 10) + item['Melee'].attack + self.entity['Stats'].attack
+        for slot in ['lefthand', 'righthand']:
+            item = self.entity['IsEquipped'].parentEntity['Body'].equipmentSlots[key]
 
-                    # if hit, roll damage
-                    if hitRoll >= target['Stats'].defence:
-                        damage = sum( [ random.randint(1, item['Melee'].diceType) for x in range(item['Melee'].diceAmount) ] ) + item['Melee'].damageBonus + self.entity['Stats'].bonusDamage
-                        self.entity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed})
-                        self.entity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed + 1})
+            if item and item.has('Melee') and item.has('IsReady'):
+                # do something attacky
+                # check if hit
+                hitRoll = random.randint(-9, 10) + item['Melee'].attack + self.entity['IsEquipped'].parentEntity['Stats'].attack
+
+                # if hit, roll damage
+                if hitRoll >= target['Stats'].defence:
+                    damage = sum( [ random.randint(1, item['Melee'].diceType) for x in range(item['Melee'].diceAmount) ] ) + item['Melee'].damageBonus + self.entity['Stats'].bonusDamage
+                    self.entity['IsEquipped'].parentEntity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed})
+                    self.entity.fire_event('add_initiative', {'speed': item['Melee'].attackSpeed + 1})
+                    # apply damage
+                    target.fire_event('damage', {"damage": damage})
+                    #  PRINT SOMETHING PITHY HERE!
+
+                    
+
+class RangedAttackAction(EntityAction):
+    def perform(self):
+        # confirm target
+        # confirm ammo TODO
+        # confirm visible
+        # confirm in range TODO
+        # confirm LOS
+        
+        # roll attack
+        # roll damage
+        # apply damage
+        # spawn effect TODO
+        # add speed
+    
+        parent = self.entity['IsEquipped'].parentEntity
+        target = parent['Target'].target
+        
+        # confirm target
+        if target:
+            # confirm ammo TODO
+            # confirm visible
+            if parent['Position'].level.map.checkIsVisible(target):
+                # confirm range TODO
+                # confirm LOS
+                if parent['Position'].getLOS(target):
+                    # roll attack
+                    print (f"{parent}  is ranged attacking  {target}")
+                    attack = random.randint(-9,10) + self.entity['Ranged'].attack + parent['stats'].attack
+                    if attack >= target['stats'].defence:
+                        # roll damage
+                        damage = sum( [ random.randint(1, self.entity['Ranged'].diceType) for x in range(item['Ranged'].diceAmount) ] ) + self.entity['Ranged'].damageBonus + parent['Stats'].bonusDamage
+                        parent.fire_event('add_initiative', {'speed': item['Ranged'].attackSpeed})
+                        self.entity.fire_event('add_initiative', {'speed': item['Ranged'].attackSpeed + 1})
                         # apply damage
                         target.fire_event('damage', {"damage": damage})
                         #  PRINT SOMETHING PITHY HERE!
+                        return
+        self.entity['Use'].cancelUse = True
 
-                    
-                    
+
 
 
             

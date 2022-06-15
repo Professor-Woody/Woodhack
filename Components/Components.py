@@ -6,7 +6,7 @@ import Colours as colour
 from Flags import FPS
 from Controllers import BaseController
 from Actions.PlayerActions import GetPlayerInputAction
-
+import tcod
 
 @dataclass
 class Position(Component):
@@ -21,7 +21,18 @@ class Position(Component):
         self.y = event.data.y
     
     def getRange(self, other):
-        return max(abs(self.entity['Position'].x - other['Position'].x), abs(self.entity['Position'].y - other['Position'].y))
+        return max(abs(self.x - other[Position].x), abs(self.y - other[Position].y))
+
+    def getLOS(self, other):
+        path = tcod.los.bresenham(
+            (self.x, self.y),
+            (other[Position].x, other[Position].y)
+        ).toList()
+
+        for x, y in path:
+            if not self.level.map.checkIsPassable(x,y) or self.level.map.checkIsBlocked(x, y):
+                return False
+        return True
 
 class Collision(Component):
     def areaCollides(self, other):
@@ -171,7 +182,7 @@ class PlayerInput(Component):
 
     def on_update(self, event):
         self.controller.update()
-        if self.entity[Initiative].ready and not self.entity.has(EffectControlsLocked):
+        if self.entity.has(EffectControlsLocked):
             event.data.actions.append(GetPlayerInputAction(self.entity))
 
 class IsPlayer(Component):

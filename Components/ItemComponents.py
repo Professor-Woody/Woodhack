@@ -1,5 +1,11 @@
 from dataclasses import dataclass
 from ecstremity import Component
+from Actions.EntityActions import RangedAttackAction
+
+@dataclass
+class IsEquipped(Component):
+    parentEntity: Entity
+
 
 @dataclass
 class Melee(Component):
@@ -16,6 +22,16 @@ class Ranged(Component):
     diceAmount: int
     diceType: int
     ammoType: str
+    
+    def __init__(self, attack, attackSpeed, damageBonus, diceAmount, diceType, ammoType):
+        self.attack = attack
+        self.attackSpeed = attackSpeed
+        self.damageBonus = damageBonus
+        self.diceAmount = diceAmount
+        self.diceType = diceType
+        self.ammoType = ammoType
+        
+        self.entity['Use'].addAction(RangedAttackAction)
 
 @dataclass
 class Defence(Component):
@@ -33,7 +49,25 @@ class AttackModifier(Component):
 class HPModifier(Component):
     modifier: int
 
-@dataclass
 class Use(Component):
     actions: list
-    destroyAfterUse: bool = False
+    cancelUse: bool = False
+    destroyAfterUse: bool
+
+    def __init__(self, actions=[], destroyAfterUse=False):
+        self.actions = actions
+        self.destroyAfterUse = destroyAfterUse
+    
+
+    def addAction(self, action):
+        actions.append(action(self))
+
+    def on_use(self, event):
+        for action in self.actions:
+            action.perform()
+            if self.cancelUse:
+                self.cancelUse = False
+                break
+
+        if self.destroyAfterUse:
+            self.entity.remove(self.entity)
