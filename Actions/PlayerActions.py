@@ -61,6 +61,9 @@ class GetPlayerInputAction(EntityAction):
             elif self.entity['PlayerInput'].controller.getPressed('lefthand') and self.entity['Body'].equipmentSlots['lefthand']:
                 self.entity['Body'].equipmentSlots['lefthand'].fire_event('use')
 
+            elif self.entity['PlayerInput'].controller.getPressed('righthand') and self.entity['Body'].equipmentSlots['righthand']:
+                self.entity['Body'].equipmentSlots['righthand'].fire_event('use')
+
 
 class PickupItemAction(EntityAction):
     def perform(self):

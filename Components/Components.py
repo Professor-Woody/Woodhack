@@ -87,6 +87,14 @@ class Stats(Component):
         self.bonusDamage = bonusDamage
         self.baseBonusDamage = bonusDamage
 
+    def on_damage(self, event):
+        damage = max(event.data.damage, 0)
+        self.hp -= damage
+        print (f"{self.entity['Render'].entityName} took {damage} damage")
+        if self.hp <= 0:
+            print (f"oh snap, {self.entity['Render'].entityName} is dead")
+            self.entity.add(EffectControlsLocked)
+
 @dataclass
 class Light(Component):
     radius: int = 0
