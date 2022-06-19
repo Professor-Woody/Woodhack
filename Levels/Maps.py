@@ -20,31 +20,36 @@ class GameMap:
     def checkIsPassable(self, x, y):
         return self.tiles["passable"][x, y]
 
-
     def checkInBounds(self, x, y):
         return 0 <= x < self.width and 0 <= y < self.height
 
     def checkIsVisible(self, entity):
-        return self.visible[entity.x, entity.y] and self.lit[entity.x, entity.y]
+        return self.visible[entity['Position'].x, entity['Position'].y] and self.lit[entity['Position'].x, entity['Position'].y]
+
+    def checkIsBlocked(self, x, y):
+        for entity in self.level.world.create_query(all_of = ["Collision", "BlocksMovement"]).result:
+            if entity["Collision"].pointCollides(x, y):
+                return entity
 
 
     def update(self):
-        # update FOV
+        # calculate lit squares
         self.lit[:] = False
-        for light in self.level.entityManager.lights:
+        for entity in self.level.world.create_query(all_of=['Position', 'Light']).result:
             self.lit = np.logical_or(self.lit, compute_fov(
                 self.tiles["transparent"],
-                (light.x, light.y),
-                radius=light.lightRadius,
+                (entity['Position'].x, entity['Position'].y),
+                radius=entity['Light'].radius,
                 algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                 )
             )
 
+        # calculate visible squares from lit
         self.visible[:] = False
-        for player in self.level.entityManager.players:
+        for entity in self.level.world.create_query(all_of=['IsPlayer']).result:
             self.visible[:] = np.logical_or(self.visible, np.logical_and(self.lit, compute_fov(
                         self.tiles["transparent"],
-                        (player.x, player.y),
+                        (entity['Position'].x, entity['Position'].y),
                         radius=40,
                         algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                     )

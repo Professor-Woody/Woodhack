@@ -1,5 +1,4 @@
-from Actions.Actions import Action
-from Entity import Player
+from Actions.BaseActions import Action
 
 class MenuAction(Action):
     def __init__(self, app):

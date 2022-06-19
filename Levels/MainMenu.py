@@ -1,5 +1,5 @@
 from Levels.Level import BaseLevel, GameLevel
-from Actions.Actions import QuitAction
+from Actions.BaseActions import QuitAction
 from Actions.MenuActions import ChangeLevelAction, NewGameAction
 from UI import Button, Text
 from Controllers import controllers

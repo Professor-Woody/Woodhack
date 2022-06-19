@@ -1,0 +1,143 @@
+[
+    {
+        "name": "player",
+        "type": "PLAYER",
+        "components": {
+            "Render": {
+                "entityName": "Bob",
+                "char": "@",
+                "fg": [255, 255, 255]
+            },
+            "Light": {
+                "radius": 1
+            },
+            "Position": {},
+            "Collision": {},
+            "BlocksMovement": {},
+            "Initiative": {},
+            "IsPlayer": {},
+            "Target": {},
+            "UIPosition": {},
+            "Inventory": {},
+            "Body": {},
+            "Stats": {
+                "hp": 10,
+                "moveSpeed": 6,
+                "attack": 0,
+                "defence": 0,
+                "bonusDamage": 0
+            }
+        }        
+    },
+    {
+        "name": "orc",
+        "type": "NPC",
+        "components": {
+            "Render": {
+                "entityName": "orc",
+                "char": "o",
+                "fg": [127, 255, 127]
+            },
+            "Light": {
+                "radius": 1
+            },
+            "Position": {},
+            "Collision": {},
+            "BlocksMovement": {},
+            "Initiative": {},
+            "Target": {},
+            "IsNPC": {},
+            "Targeted": {}
+        },
+        "Stats": {
+            "hp": 10,
+            "moveSpeed": 6,
+            "attack": 0,
+            "defence": 0,
+            "bonusDamage": 0
+        }
+    },
+    {
+        "name": "torch",
+        "type": "ITEM",
+        "components": {
+            "Render": {
+                "entityName": "torch",
+                "char": "i",
+                "fg": [255, 255, 0]
+            },
+            "Light": {
+                "radius": 3
+            },
+            "Collision": {},
+            "IsItem": {},
+            "IsEquippable": {"equipmentSlot": "anyhand"}
+        }
+    },
+    {
+        "name": "helmet",
+        "type": "ARMOUR",
+        "components": {
+            "Render": {
+                "entityName": "helmet",
+                "char": "[",
+                "fg": [200, 200, 200]
+            },
+            "Collision": {},
+            "IsItem": {},
+            "IsEquippable": {"equipmentSlot": "head"},
+            "Defence": {"armour": 2}
+        }
+    },
+    {
+        "name": "sword",
+        "type": "WEAPON",
+        "components": {
+            "Render": {
+                "entityName": "sword",
+                "char": "(",
+                "fg": [150,150,150]
+            },
+            "Collision": {},
+            "IsItem": {},
+            "Use": {},
+            "IsEquippable": {"equipmentSlot": "anyhand"},
+            "Melee": {
+                "attack": 1,
+                "attackSpeed": 10,
+                "diceAmount": 1,
+                "diceType": 6,
+                "damageBonus": 0,
+                "useActions": []
+            },
+            "IsReady": {},
+            "Initiative": {}
+        }
+    },
+    {
+        "name": "bow",
+        "type": "WEAPON",
+        "components": {
+            "Render": {
+                "entityName": "bow",
+                "char": ")",
+                "fg": [150,150,150]
+            },
+            "Collision": {},
+            "IsItem": {},
+            "IsEquippable": {"equipmentSlot": "anyhand"},
+            "Use": {},
+            "Ranged": {
+                "attack": 1,
+                "attackSpeed": 10,
+                "diceAmount": 1,
+                "diceType": 6,
+                "damageBonus": 0,
+                "ammoType": "ARROW",
+                "useActions": []
+            },
+            "IsReady": {},
+            "Initiative": {}
+        }
+    }
+]

@@ -1,3 +1,7 @@
-Entity Type, Name, character, R,G,B, blocks movement, light radius
-"NPC","orc","o",63,127,63,True,0
-"NPC","troll","T",0,127,0,True,0
+Entity Type, Name, character, R,G,B, blocks movement, light radius, move speed(higher=slower), equipment slot
+"NPC","orc","o",63,255,63,True,0,20
+"NPC","troll","T",0,127,0,True,0,30
+"PLAYER","Woody","@",200,200,200,True,5,6
+"OBJECT","torch","i",255,255,0,False,2,0,""
+"OBJECT","sword",")",200,200,200,False,0,0,"lefthand"
+"OBJECT","chainmail","[",200,200,200,False,0,0,"body"

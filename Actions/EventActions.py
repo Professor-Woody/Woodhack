@@ -1,4 +1,4 @@
-from Actions.Actions import Action
+from Actions.BaseActions import Action
 import Controllers
 
 class EventAction(Action):
@@ -24,8 +24,8 @@ class MouseMotionAction(EventAction):
         self.y = y
 
     def perform(self):
-        for uiElement in self.app.level.entityManager.ui:
-            uiElement.mouseMotion(self.x, self.y)
+        for uiElement in self.app.level.world.create_query(all_of=['UI']).result:
+            uiElement.fire_event('mouse_motion', {'x': self.x, 'y': self.y})
 
 class MouseClickAction(EventAction):
     def __init__(self, app, button, x, y):
@@ -35,5 +35,5 @@ class MouseClickAction(EventAction):
         self.y = y
 
     def perform(self):
-        for uiElement in self.app.level.entityManager.ui:
-            uiElement.mouseClick(self.button, self.x, self.y)
+        for uiElement in self.app.level.world.create_query(all_of=['UI']).result:
+            uiElement.fire_event('mouse_click', {'button': self.button, 'x': self.x, 'y':self.y})

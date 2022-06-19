@@ -1,0 +1,23 @@
+{
+    "name": "orc", 
+    "components": [
+        {
+            "type": "Position"
+        }, 
+        {
+            "type": "Collision"
+        }, 
+        {
+            "type": "Stats", 
+            "properties": {
+                "hp": 10
+                }
+        }, 
+        {
+            "type": "Initiative"
+        }, 
+        {
+            "type": "Render", 
+            "properties": {
+                "entityName": "orc", 
+                "char": "o"}}, {"type": "Light", "properties": {"radius": 2}}]}

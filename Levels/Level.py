@@ -6,7 +6,10 @@ class BaseLevel:
         self.app = app
         self.width = width
         self.height = height
+        self.bottomX = 0
+        self.sideY = 0
 
+        self.world = self.app.ecs.create_world()
         self.entityManager = EntityManager(self)
 
     def update(self):
@@ -24,14 +27,16 @@ class GameLevel(BaseLevel):
         super().__init__(app, width, height)
         print ("GameLevel")
 
-        self.map=LevelCreator.generateBasicLevel(self, self.width-40, self.height-10)
+        self.map=LevelCreator.generateBasicLevel(self, self.width-30, self.height-10)
 
         self.entityManager.loadEntities("npcs.csv")
+        self.entityManager.spawn("orc", self.map.start[0]-1, self.map.start[1])
         self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1])
-        self.entityManager.spawn("orc", self.map.start[0]+3, self.map.start[1])
-        self.entityManager.spawn("orc", self.map.start[0]+5, self.map.start[1])
-        self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
-        self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
+        self.entityManager.spawn("Woody", self.map.start[0], self.map.start[1])
+        self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
+        # self.entityManager.spawn("orc", self.map.start[0]+5, self.map.start[1])
+        # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
+        # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
 
     def update(self):
         self.map.update()
@@ -39,4 +44,5 @@ class GameLevel(BaseLevel):
 
     def draw(self, screen):
         self.map.draw(screen)
+        # screen.drawFrame(0,0,self.width-30, self.height-10)
         super().draw(screen)

@@ -2,8 +2,10 @@ import pygame
 pygame.joystick.init()
 import tcod
 
+class BaseController:
+    pass
 
-class KeyboardController:
+class KeyboardController(BaseController):
     parent = None
 
     def __init__(self):
@@ -21,8 +23,8 @@ class KeyboardController:
             "nearestEnemy":  tcod.event.K_r,
             "inventory": tcod.event.K_i
         }
-        self.keysPressed = []
-        self.keysChecked = []
+        self.keysPressed = set()
+        self.keysChecked = set()
 
     def update(self):
         for check in self.keysChecked:
@@ -43,7 +45,7 @@ class KeyboardController:
     def getPressedOnce(self, cmd):
         result = self.getPressed(cmd)
         if result and cmd not in self.keysChecked:
-            self.keysChecked.append(cmd)
+            self.keysChecked.add(cmd)
             return True
         return False
 
@@ -52,7 +54,7 @@ class KeyboardController:
         if not pressed and key in self.keysPressed:
             self.keysPressed.remove(key)
         elif pressed:
-            self.keysPressed.append(key)
+            self.keysPressed.add(key)
 
             
             
@@ -60,7 +62,7 @@ class KeyboardController:
             
 
 
-class JoystickController:
+class JoystickController(BaseController):
     parent = None
     
     def __init__(self, joystick):

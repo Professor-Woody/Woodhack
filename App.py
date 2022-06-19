@@ -1,12 +1,16 @@
 import tcod
+from ecstremity import Engine
 from EventHandler import EventHandler
+from Levels.Level import GameLevel
 from Screen import Screen
 from Clock import Clock
-from Levels.MainMenu import MainMenu
+from Levels.Level import GameLevel
+from Components.ComponentRegister import registerComponents
+from Flags import FPS
 
 class App:
-    width = 150
-    height = 100
+    width = 100
+    height = 80
     previousLevel = None
 
     def __init__(self):
@@ -14,8 +18,14 @@ class App:
         self.eventHandler = EventHandler(self)
         self.isRunning = True
 
-        self.level = MainMenu(self, self.width, self.height)
-        self.clock = Clock(60)
+        self.ecs = Engine()
+        self.entityDefs = {}
+        registerComponents(self.ecs)
+
+        self.level = GameLevel(self, self.width, self.height)
+        self.clock = Clock(FPS)
+
+
 
 
     def run(self):
