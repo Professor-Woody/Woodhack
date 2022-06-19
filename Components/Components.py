@@ -90,10 +90,12 @@ class Stats(Component):
     def on_damage(self, event):
         damage = max(event.data.damage, 0)
         self.hp -= damage
-        print (f"{self.entity['Render'].entityName} took {damage} damage")
+        print (f"{self.entity[Render].entityName} took {damage} damage")
         if self.hp <= 0:
-            print (f"oh snap, {self.entity['Render'].entityName} is dead")
+            print (f"oh snap, {self.entity[Render].entityName} is dead")
             self.entity.add(EffectControlsLocked)
+        if not self.entity[Target].target:
+            self.entity[Target].target = event.data.entity
 
 @dataclass
 class Light(Component):
@@ -190,7 +192,7 @@ class PlayerInput(Component):
 
     def on_update(self, event):
         self.controller.update()
-        if self.entity.has(EffectControlsLocked):
+        if not self.entity.has(EffectControlsLocked):
             event.data.actions.append(GetPlayerInputAction(self.entity))
 
 class IsPlayer(Component):

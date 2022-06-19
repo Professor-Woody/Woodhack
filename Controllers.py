@@ -23,8 +23,8 @@ class KeyboardController(BaseController):
             "nearestEnemy":  tcod.event.K_r,
             "inventory": tcod.event.K_i
         }
-        self.keysPressed = []
-        self.keysChecked = []
+        self.keysPressed = set()
+        self.keysChecked = set()
 
     def update(self):
         for check in self.keysChecked:
@@ -45,7 +45,7 @@ class KeyboardController(BaseController):
     def getPressedOnce(self, cmd):
         result = self.getPressed(cmd)
         if result and cmd not in self.keysChecked:
-            self.keysChecked.append(cmd)
+            self.keysChecked.add(cmd)
             return True
         return False
 
@@ -54,7 +54,7 @@ class KeyboardController(BaseController):
         if not pressed and key in self.keysPressed:
             self.keysPressed.remove(key)
         elif pressed:
-            self.keysPressed.append(key)
+            self.keysPressed.add(key)
 
             
             
