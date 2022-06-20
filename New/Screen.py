@@ -1,5 +1,6 @@
 import tcod
 import Colours as colour
+from Components.Components import Position, Render
 
 class Screen:
     def __init__(self, width, height):
@@ -20,7 +21,7 @@ class Screen:
         self.console.clear()
 
     def draw(self, entity):
-        self.console.print(x=entity.x, y=entity.y, string=entity.char, fg=entity.fg, bg=entity.bg)
+        self.console.print(x=entity[Position].x, y=entity[Position].y, string=entity[Render].char, fg=entity[Render].fg, bg=entity[Render].bg)
 
     def drawRect(self, x, y, width, height, ch, background):
         self.console.draw_rect(x=x, y=y, width=width, height=height, ch=ch, bg=background)

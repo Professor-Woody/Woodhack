@@ -1,0 +1,19 @@
+[
+    {
+        "name": "Woody",
+        "type": "PLAYER",
+        "components": {
+            "Render": {
+                "entityName": "Bob",
+                "char": "@",
+                "fg": [255, 255, 255],
+                "needsVisibility": false
+            },
+            "Position": {},
+            "Light": {
+                "radius": 3
+            },
+            "IsPlayer": {}
+        }
+    }        
+]
