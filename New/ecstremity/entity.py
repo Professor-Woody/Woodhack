@@ -143,16 +143,21 @@ class Entity:
             "components": components
         }
 
-    def fire_event(self, name: str, data: Optional[Union[Dict[str, Any], EventData]] = None) -> EntityEvent:
+    def fire_event(self, name: str, data: Optional[Union[Dict[str, Any], EventData]] = None, tryFirst = False) -> EntityEvent:
         """Fire an event to all Components attached to this Entity."""
         if isinstance(data, EventData):
             data = data.get_record()
         if not data:
             data = {}
-
+            
+        if tryFirst:
+            name = 'try_' + name
+        
         evt = EntityEvent(name, data)
-        for component in self.components.values():
-            component._on_event(evt)
-            if evt.prevented:
-                return evt
+        for i in range(1+int(tryFirst)):
+            for component in self.components.values():
+                component._on_event(evt)
+                if evt.prevented:
+                    return evt
+            evt.name = name        
         return evt

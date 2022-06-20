@@ -1,6 +1,4 @@
 import tcod
-from Systems.RenderSystem import RenderSystem
-from Systems.UpdateSystem import UpdateSystem
 from ecstremity import Engine
 from EventHandler import EventHandler
 from Levels.Level import GameLevel
@@ -17,9 +15,6 @@ class App:
     previousLevel = None
 
     def __init__(self):
-        print ("------------")
-        print (os.getcwd())
-
         self.screen = Screen(self.width, self.height)
         self.eventHandler = EventHandler(self)
         self.isRunning = True
@@ -31,9 +26,7 @@ class App:
         self.level = GameLevel(self, self.width, self.height)
         self.clock = Clock(FPS)
 
-        self.systems = set()
-        self.systems.add(RenderSystem())
-        self.systems.add(UpdateSystem())
+
 
     def run(self):
         while self.isRunning:
@@ -49,8 +42,7 @@ class App:
                     action.perform()
             # eventually loop this through each level too when we have
             # multiple levels
-            for system in self.systems:
-                system.run(level=self.level)
+            self.level.runSystems()
 
             self.screen.flip()
 

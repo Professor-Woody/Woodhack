@@ -1,5 +1,7 @@
 from EntityManager import EntityManager
 from Levels.LevelCreator import LevelCreator
+from Systems.RenderSystem import RenderSystem
+from Systems.UpdateSystem import UpdateSystem
 
 class BaseLevel:
     def __init__(self, app, width, height):
@@ -14,6 +16,10 @@ class BaseLevel:
 
         self.map = None
 
+
+
+    def runSystems(self):
+        self.systemsManager.runSystems()
 
 
 class GameLevel(BaseLevel):
