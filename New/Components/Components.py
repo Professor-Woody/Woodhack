@@ -108,4 +108,6 @@ class Stats(Component):
     def baseMoveSpeed(self, value):
         self._baseMoveSpeed = max(2, value)        
 
-
+    def on_recalculate_stats(self, event):
+        
+        self.maxHp = 

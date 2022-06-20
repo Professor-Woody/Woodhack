@@ -34,11 +34,27 @@ class UseMelee(Component):
 
         
 
-@dataclass
+
 class UseFlashlight(Component):
-    on = True
+    def __init__(self, on=True, radius=3):
+        self.on = on
+        if not self.entity.has(Light):
+            self.entity.add(Light, {'radius': radius})
+        self.setLight()
 
     def on_use(self, event):
         self.on = not self.on
+        self.setLight()
+
+    def on_equip(self, event):
+        event.data.parentEntity.fire_event('recalculate_stats', tryFirst = True)
+
+    def setLight(self):
         self.entity[Light].radius = self.entity[Light].baseRadius * int(self.on)
-        
+
+@dataclass        
+class AmuletOfYendor(Component):
+    maxHp:int = 5
+
+    def on_try_recalculate_stats(self, event):
+        event.data.statblock.maxHp += self.maxHp
