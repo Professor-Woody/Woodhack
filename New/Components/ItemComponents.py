@@ -1,5 +1,6 @@
 from ecstremity import Component
 from Components.Components import Position, Target, Stats, Initiative
+from Components.EventData import stats
 
 @dataclass
 class UseMelee(Component):
@@ -33,8 +34,6 @@ class UseMelee(Component):
                     self.entity[Initiative].speed += self.speed + 1
 
         
-
-
 class UseFlashlight(Component):
     def __init__(self, on=True, radius=3):
         self.on = on
@@ -45,16 +44,18 @@ class UseFlashlight(Component):
     def on_use(self, event):
         self.on = not self.on
         self.setLight()
+        event.parentEntity.add(RecalculateStats)
 
     def on_equip(self, event):
-        event.data.parentEntity.fire_event('recalculate_stats', tryFirst = True)
+        event.parentEntity.add(RecalculateStats)
 
     def setLight(self):
         self.entity[Light].radius = self.entity[Light].baseRadius * int(self.on)
 
+
 @dataclass        
 class AmuletOfYendor(Component):
-    maxHp:int = 5
+    maxHp: int = 5
 
     def on_try_recalculate_stats(self, event):
-        event.data.statblock.maxHp += self.maxHp
+        event.data.stats['maxHp'] += self.maxHp
