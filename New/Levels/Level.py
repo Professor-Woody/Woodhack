@@ -1,7 +1,6 @@
 from EntityManager import EntityManager
 from Levels.LevelCreator import LevelCreator
-from Systems.RenderSystem import RenderSystem
-from Systems.UpdateSystem import UpdateSystem
+from Systems.SystemsManager import SystemsManager
 
 class BaseLevel:
     def __init__(self, app, width, height):
@@ -13,9 +12,8 @@ class BaseLevel:
 
         self.world = self.app.ecs.create_world()
         self.entityManager = EntityManager(self)
-
+        self.systemsManager = SystemsManager(self)
         self.map = None
-
 
 
     def runSystems(self):

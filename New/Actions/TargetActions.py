@@ -1,6 +1,4 @@
-
-class TargetAction(EntityAction):
-    pass
+from Actions.BaseActions import TargetAction
 
 
 class GetTargetAction(TargetAction):

@@ -1,5 +1,7 @@
 from Systems.RenderSystem import RenderSystem
 from Systems.UpdateSystem import UpdateSystem
+from Systems.MoveSystem import MoveSystem
+from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem
 
@@ -14,7 +16,7 @@ class SystemsManager:
         self.decideActionSystem = DecideActionSystem(self)
         self.targetSystem = TargetSystem(self)
         self.moveSystem = MoveSystem(self)
-        self.useSystem = MeleeSystem(self)
+        self.useSystem = UseSystem(self)
         
 
     def post(self, action):
@@ -36,7 +38,7 @@ class SystemsManager:
         # now perform the actions
         self.moveSystem.run()
         self.targetSystem.run()
-        self.meleeSystem.run()
+        self.useSystem.run()
 
         # and draw
         self.renderSystem.run()

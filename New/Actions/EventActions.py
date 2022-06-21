@@ -1,10 +1,5 @@
-from New.Actions.BaseActions import Action
+from New.Actions.BaseActions import EventAction
 import Controllers
-
-class EventAction(Action):
-    def __init__(self, app):
-        super().__init__()
-        self.app = app
 
 
 class KeyAction(EventAction):

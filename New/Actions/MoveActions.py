@@ -1,8 +1,4 @@
-from Actions.BaseActions import EntityAction
-
-class MoveAction(EntityAction):
-    pass
-
+from Actions.BaseActions import MoveAction
 
 class MovementAction(MoveAction):
     def __init__(self, entity, position, dx, dy, speed):

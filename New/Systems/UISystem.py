@@ -1,5 +1,5 @@
 from Systems.BaseSystem import BaseSystem
-from Actions.TargetActtions import GetTargetAction
+from Actions.TargetActions import GetTargetAction
 
 class TargetSystem(BaseSystem):
     def run(self):
@@ -17,7 +17,7 @@ class TargetSystem(BaseSystem):
 
         targets = []
         currentTargetIndex = -1
-        for otherEntity in self.level.world.create_query(all_of=['Is' + self.targetType, Targeted]).result:
+        for otherEntity in self.level.world.create_query(all_of=['Is' + self.targetType, 'Targeted']).result:
             if self.level.map.checkIsVisible(otherEntity):
                 targetRange = entity[Position].getRange(otherEntity)
                 targets.append((otherEntity, targetRange))

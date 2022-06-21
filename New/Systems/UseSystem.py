@@ -1,5 +1,5 @@
-from BaseSystem import BaseSystem
-from Components.Components import IsReady
+from Systems.BaseSystem import BaseSystem
+from Components.FlagComponents import IsReady
 
 class UseSystem(BaseSystem):
     def run(self):

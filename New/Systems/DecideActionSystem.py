@@ -9,7 +9,7 @@ class DecideActionSystem(BaseSystem):
             # dispatch actions to their event handlers to queue up
 
 
-        entities = self.level.world.create_query(all_of=[IsPlayer, IsReady]).result
+        entities = self.level.world.create_query(all_of=['IsPlayer', 'IsReady']).result
         
         for entity in entities:
             #  ----------------------

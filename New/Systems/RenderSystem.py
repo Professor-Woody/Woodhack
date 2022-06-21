@@ -6,7 +6,7 @@ class RenderSystem(BaseSystem):
         self.level.map.draw(self.level.app.screen)
         
         # in theory we'll do this for each render level
-        entities = self.level.world.create_query(all_of=[Render, Position]).result
+        entities = self.level.world.create_query(all_of=['Render', 'Position']).result
 
         for entity in entities:
             if entity[Render].needsVisibility and self.level.map.checkIsVisible(entity):
