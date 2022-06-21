@@ -12,3 +12,8 @@ class IsNPC(Component):
 class IsItem(Component):
     pass
 
+class IsMelee(Component):
+    pass
+
+class BlocksMovement(Component):
+    pass

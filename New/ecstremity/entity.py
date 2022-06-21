@@ -84,7 +84,7 @@ class Entity:
         if self._qeligible:
             self.world.candidate(self)
 
-    def add(self, component: Union[Component, str], properties: Dict[str, Any]) -> None:
+    def add(self, component: Union[Component, str], properties: Dict[str, Any] = {}) -> None:
         """Create and add a registered component to the entity initialized with
         the specified properties.
         A component instance can be supplied instead.

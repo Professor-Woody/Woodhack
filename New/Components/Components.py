@@ -2,6 +2,7 @@ from ecstremity import Component
 import Colours as colour
 from typing import Tuple
 from dataclasses import dataclass
+import tcod
 
 @dataclass
 class Render(Component):
@@ -40,7 +41,7 @@ class Collision(Component):
     @staticmethod
     def areaCollides(entity, other):
         return (
-            self.entity[Position].x < other.x + other.width
+            entity[Position].x < other.x + other.width
                 and entity[Position].x + entity[Position].width >= other.x
                 and entity[Position].y < other.y + other.height
                 and entity[Position].y + entity[Position].height >= other.y
@@ -131,3 +132,7 @@ class Body(Component):
             'lefthand': None,
             'righthand': None
         }
+
+@dataclass
+class PlayerInput(Component):
+    controller: any = None

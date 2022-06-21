@@ -1,9 +1,11 @@
 from Actions.BaseActions import MoveAction
+from Components.Components import Position, Initiative
 
 class MovementAction(MoveAction):
-    def __init__(self, entity, position, dx, dy, speed):
+    def __init__(self, entity, dx, dy, speed):
         super().__init__(entity)
-        self.position = position
+        self.position = entity[Position]
         self.dx = dx
         self.dy = dy
         self.speed = speed
+        self.initiative = entity[Initiative]

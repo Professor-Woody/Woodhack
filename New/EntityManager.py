@@ -1,4 +1,5 @@
-from Components.Components import Position
+from Components.Components import PlayerInput, Position
+from Controllers import controllers
 import json
 
 
@@ -28,3 +29,5 @@ class EntityManager:
         entity[Position].x = x
         entity[Position].y = y
 
+        if entityType == "PLAYER":
+            entity.add(PlayerInput, {'controller': controllers[0]})

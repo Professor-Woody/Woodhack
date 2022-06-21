@@ -1,5 +1,6 @@
 import numpy as np
 from Levels.Rooms import wall, SHROUD
+from Components.Components import Collision
 import tcod
 from tcod.map import compute_fov
 

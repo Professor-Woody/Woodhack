@@ -7,7 +7,7 @@ from Clock import Clock
 from Levels.Level import GameLevel
 from Components.ComponentRegister import registerComponents
 from Flags import FPS
-import os
+
 
 class App:
     width = 100

@@ -1,3 +1,4 @@
+from Actions.MoveActions import MovementAction
 from Systems.RenderSystem import RenderSystem
 from Systems.UpdateSystem import UpdateSystem
 from Systems.MoveSystem import MoveSystem
@@ -6,6 +7,11 @@ from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem
 
 from Actions.BaseActions import MoveAction, TargetAction
+from Actions.UseActions import UseAction
+
+moveActions = [MoveAction, MovementAction]
+targetActions = [TargetAction]
+useActions = [UseAction]
 
 class SystemsManager:
     def __init__(self, level):
@@ -20,12 +26,16 @@ class SystemsManager:
         
 
     def post(self, action):
-        if type(action) == MoveAction:
+        print (action)
+        if type(action) in moveActions:
             self.moveSystem.post(action)
-        elif type(action) == TargetAction:
+            print ("moveaction")
+        elif type(action) in targetActions:
             self.targetSystem.post(action)
-        elif type(action) == UseAction:
+            print ("targetaction")
+        elif type(action) in useActions:
             self.useSystem.post(action)
+            print ("useaction")
 
 
     def runSystems(self):

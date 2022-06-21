@@ -13,7 +13,16 @@
             "Light": {
                 "radius": 3
             },
-            "IsPlayer": {}
+            "IsPlayer": {},
+            "Initiative": {"speed": 0},
+            "Body": {},
+            "Stats": {
+                "hp": 10,
+                "moveSpeed": 12,
+                "defence": 0,
+                "attack": 0,
+                "bonusDamage": 0
+            }
         }
     }        
 ]

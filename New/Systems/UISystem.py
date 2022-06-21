@@ -1,14 +1,18 @@
 from Systems.BaseSystem import BaseSystem
 from Actions.TargetActions import GetTargetAction
+from Components.Components import Position
+from Components.UIComponents import Target, Targeted
 
 class TargetSystem(BaseSystem):
     def run(self):
         # ----------------------
         # perform any actions
+        # print ("target start")
         for action in self.actionQueue:
             if type(action) == GetTargetAction:
                     self.getTarget(action)
         self.actionQueue.clear()
+        # print ("target end")
 
     def getTarget(self, action):
         entity = action.entity

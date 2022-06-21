@@ -1,3 +1,5 @@
+from ecstremity import Component
+
 class Target(Component):
     target = None
 

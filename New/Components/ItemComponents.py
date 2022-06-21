@@ -1,6 +1,9 @@
 from ecstremity import Component
-from Components.Components import Position, Target, Stats, Initiative
-from Components.EventData import stats
+from Components.Components import Position, Stats, Initiative, Light
+from Components.UIComponents import Target
+from Components.FlagComponents import IsReady
+from random import randint
+from dataclasses import dataclass
 
 @dataclass
 class UseMelee(Component):
@@ -30,8 +33,13 @@ class UseMelee(Component):
                     if attackRoll >= target[Stats].defence:
                         damageRoll = sum([randint(1, self.diceType) for dice in range(self.diceAmount)]) + parentEntity[Stats].bonusDamage + self.bonusDamage
                         target.fire_event('damage', {'damage': damageRoll})
+                    print ("place 2")
                     parentEntity[Initiative].speed += self.speed
                     self.entity[Initiative].speed += self.speed + 1
+                    if parentEntity.has(IsReady):
+                        parentEntity.remove(IsReady)
+                    if self.entity.has(IsReady):
+                        self.entity.remove(IsReady)
 
         
 class UseFlashlight(Component):
@@ -44,10 +52,10 @@ class UseFlashlight(Component):
     def on_use(self, event):
         self.on = not self.on
         self.setLight()
-        event.parentEntity.add(RecalculateStats)
+        event.parentEntity.fire_event('recalculate_stats')
 
     def on_equip(self, event):
-        event.parentEntity.add(RecalculateStats)
+        event.parentEntity.fire_event('recalculate_stats')
 
     def setLight(self):
         self.entity[Light].radius = self.entity[Light].baseRadius * int(self.on)

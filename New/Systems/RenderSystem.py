@@ -3,6 +3,7 @@ from Systems.BaseSystem import BaseSystem
 
 class RenderSystem(BaseSystem):
     def run(self):
+        # print ("render start")
         self.level.map.draw(self.level.app.screen)
         
         # in theory we'll do this for each render level
@@ -13,4 +14,5 @@ class RenderSystem(BaseSystem):
                 self.level.app.screen.draw(entity)
             elif not entity[Render].needsVisibility:
                 self.level.app.screen.draw(entity)
+        # print ("render end")
 
