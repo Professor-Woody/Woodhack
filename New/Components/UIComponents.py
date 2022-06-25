@@ -5,4 +5,6 @@ class Target(Component):
 
 class Targeted(Component):
     def __init__(self):
-        self.targetedBy = set()
+        self.targetedBy = []
+        self.targetIndex = 0
+        self.cooldown = 0

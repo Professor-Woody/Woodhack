@@ -28,9 +28,9 @@ class GameLevel(BaseLevel):
         self.map=LevelCreator.generateBasicLevel(self, self.width-30, self.height-10)
 
         self.entityManager.loadEntities("objects.json")
-        self.entityManager.spawn("PLAYER", "Woody", self.map.start[0], self.map.start[1])
-        # self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
-        # self.entityManager.spawn("orc", self.map.start[0]+5, self.map.start[1])
-        # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
+        self.entityManager.spawn("PLAYER", self.map.start[0], self.map.start[1])
+        self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
+        self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
+        self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
 

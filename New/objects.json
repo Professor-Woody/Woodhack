@@ -1,19 +1,27 @@
 [
     {
-        "name": "Woody",
-        "type": "PLAYER",
+        "type": "ITEM",
         "components": {
             "Render": {
-                "entityName": "Bob",
+                "entityName": "SomeItem",
+                "char": ";",
+                "fg": [200, 200, 200],
+                "needsVisibility": true
+            },
+            "IsItem": {}
+        }
+    },
+    {
+        "type": "ACTOR",
+        "components": {
+            "Render": {
+                "entityName": "SomeActor",
                 "char": "@",
                 "fg": [255, 255, 255],
-                "needsVisibility": false
+                "needsVisibility": true
             },
-            "Position": {},
-            "Light": {
-                "radius": 3
-            },
-            "IsPlayer": {},
+            "Collision": {},
+            "BlocksMovement": {},
             "Initiative": {"speed": 0},
             "Body": {},
             "Stats": {
@@ -22,7 +30,79 @@
                 "defence": 0,
                 "attack": 0,
                 "bonusDamage": 0
+            }            
+        }
+    },
+
+    {
+        "type": "NPC",
+        "inherits": "ACTOR",
+        "components": {
+            "IsNPC": {}
+        }
+    },
+
+    {
+        "type": "PLAYER",
+        "inherits": "ACTOR",
+        "components": {
+            "Render": {
+                "entityName": "Woody",
+                "char": "@",
+                "fg": [255, 255, 255],
+                "needsVisibility": false
+            },
+            "Light": {
+                "radius": 3
+            },
+            "IsPlayer": {},
+            "Stats": {
+                "hp": 10,
+                "moveSpeed": 6,
+                "defence": 0,
+                "attack": 0,
+                "bonusDamage": 0
+            },
+            "Target": {}
+        }
+    },
+
+    {
+        "type": "orc",
+        "inherits": "NPC",
+        "components": {
+            "Light": {
+                "radius": 2
+            },
+            "Render": {
+                "entityName": "orc",
+                "char": "o",
+                "fg": [50, 255, 50]
+            },
+            "Targeted": {}
+        }
+    },
+
+    {
+        "type": "torch",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "entityName": "torch",
+                "char": "i",
+                "fg": [200, 255, 50]
+            },
+            "Light": {
+                "radius": 5
             }
         }
-    }        
+    },
+
+    {
+        "type": "shortsword",
+        "inherits": "ITEM",
+        "components": {
+            "UseMelee": {}
+        }
+    }
 ]

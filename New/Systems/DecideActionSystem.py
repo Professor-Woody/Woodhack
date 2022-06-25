@@ -1,5 +1,5 @@
 from Systems.BaseSystem import BaseSystem
-from Components.Components import Position, Stats, Initiative, PlayerInput, Body
+from Components.Components import Position, Stats, PlayerInput, Body
 from Components.FlagComponents import IsReady, IsMelee
 from Actions.TargetActions import GetTargetAction
 from Actions.MoveActions import MovementAction
@@ -8,11 +8,17 @@ from Actions.UseActions import UseAction
 
 class DecideActionSystem(BaseSystem):
     def run(self):
-        # for each player
-            # check inputs
-            # dispatch actions to their event handlers to queue up
+        self.runPlayerActions()
+        self.runNPCActions()
 
-        # print ("decideaction start")
+
+
+    def runNPCActions(self):
+        pass
+
+
+
+    def runPlayerActions(self):
         entities = self.level.world.create_query(all_of=['IsPlayer', 'IsReady']).result
         
         for entity in entities:
@@ -26,12 +32,15 @@ class DecideActionSystem(BaseSystem):
             elif entity[PlayerInput].controller.getPressedOnce("nearestEnemy"):
                 target = "nearestEnemy"
             if target:
-                self.systemsManager.post(GetTargetAction(entity, "IsNPC", target))
+                self.systemsManager.post(GetTargetAction(entity, "NPC", target))
 
             #  ----------------------
             # check if they attempt to pick something up or open their inventory
 
 
+
+            #  ----------------------
+            # don't allow them to do anything else unless they are ready to
             if not entity.has(IsReady):
                 continue
             #  ----------------------

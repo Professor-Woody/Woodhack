@@ -57,10 +57,6 @@ class Collision(Component):
         )
 
 
-@dataclass
-class Collision(Component):
-    pass
-
 
 class Light(Component):
     def __init__(self, radius = 3):

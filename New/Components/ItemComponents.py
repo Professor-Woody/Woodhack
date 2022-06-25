@@ -30,10 +30,12 @@ class UseMelee(Component):
             if target:
                 if Position.getRange(parentEntity, target) <= 1:
                     attackRoll = randint(-9, 10) + parentEntity[Stats].attack + self.attack
+                    print (f"{parentEntity['Render'].entityName} is attacking {target['Render'].entityName}\n{parentEntity['Render'].entityName} rolled {attackRoll} to hit")
+
                     if attackRoll >= target[Stats].defence:
                         damageRoll = sum([randint(1, self.diceType) for dice in range(self.diceAmount)]) + parentEntity[Stats].bonusDamage + self.bonusDamage
                         target.fire_event('damage', {'damage': damageRoll})
-                    print ("place 2")
+                        print (f"{parentEntity['Render'].entityName} rolled {damageRoll} damage")
                     parentEntity[Initiative].speed += self.speed
                     self.entity[Initiative].speed += self.speed + 1
                     if parentEntity.has(IsReady):

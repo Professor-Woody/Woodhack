@@ -6,11 +6,12 @@ from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem
 
-from Actions.BaseActions import MoveAction, TargetAction
+from Actions.BaseActions import MoveAction
 from Actions.UseActions import UseAction
+from Actions.TargetActions import GetTargetAction
 
 moveActions = [MoveAction, MovementAction]
-targetActions = [TargetAction]
+targetActions = [GetTargetAction]
 useActions = [UseAction]
 
 class SystemsManager:
