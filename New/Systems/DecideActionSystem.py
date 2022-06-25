@@ -5,6 +5,7 @@ from Actions.TargetActions import GetTargetAction
 from Actions.MoveActions import MovementAction
 from Components.UIComponents import Target
 from Actions.UseActions import UseAction
+from Actions.InventoryActions import PickupItemAction
 
 class DecideActionSystem(BaseSystem):
     def run(self):
@@ -36,7 +37,8 @@ class DecideActionSystem(BaseSystem):
 
             #  ----------------------
             # check if they attempt to pick something up or open their inventory
-
+            if entity[PlayerInput].controller.getPressedOnce("use"):
+                self.systemsManager.post(PickupItemAction(entity))
 
 
             #  ----------------------

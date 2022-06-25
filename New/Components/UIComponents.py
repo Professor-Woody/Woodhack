@@ -8,3 +8,7 @@ class Targeted(Component):
         self.targetedBy = []
         self.targetIndex = 0
         self.cooldown = 0
+
+
+class SelectionWindow(Component):
+    pass

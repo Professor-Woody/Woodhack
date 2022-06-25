@@ -7,12 +7,12 @@ from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem
 
 from Actions.BaseActions import MoveAction
-from Actions.UseActions import UseAction
+from Actions.UseActions import PickupItemAction, UseAction
 from Actions.TargetActions import GetTargetAction
 
 moveActions = [MoveAction, MovementAction]
 targetActions = [GetTargetAction]
-useActions = [UseAction]
+useActions = [UseAction, PickupItemAction]
 
 class SystemsManager:
     def __init__(self, level):

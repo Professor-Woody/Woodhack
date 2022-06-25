@@ -132,3 +132,7 @@ class Body(Component):
 @dataclass
 class PlayerInput(Component):
     controller: any = None
+
+class Inventory(Component):
+    def __init__(self, contents = []):
+        self.contents = contents
