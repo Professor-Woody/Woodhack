@@ -1,11 +1,12 @@
 from Systems.BaseSystem import BaseSystem
-from Components.Components import Position, Stats, PlayerInput, Body
+from Components.Components import Inventory, Position, Stats, PlayerInput, Body
 from Components.FlagComponents import IsReady, IsMelee
 from Actions.TargetActions import GetTargetAction
 from Actions.MoveActions import MovementAction
 from Components.UIComponents import Target
 from Actions.UseActions import UseAction
 from Actions.InventoryActions import PickupItemAction
+from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SwapEquippedAction, UpdateUIInputAction, UseItemInInventoryAction
 
 class DecideActionSystem(BaseSystem):
     def run(self):
@@ -23,6 +24,9 @@ class DecideActionSystem(BaseSystem):
         entities = self.level.world.create_query(all_of=['IsPlayer', 'IsReady']).result
         
         for entity in entities:
+            # if control is elsewhere then pass control to the last thing added to the controlFocus
+            if entity[PlayerInput].controlFocus:
+                return self.systemsManager.post(UpdateUIInputAction(entity[PlayerInput].controlFocus[-1]))
             #  ----------------------
             # check targeting
             target = None
@@ -40,7 +44,9 @@ class DecideActionSystem(BaseSystem):
             if entity[PlayerInput].controller.getPressedOnce("use"):
                 self.systemsManager.post(PickupItemAction(entity))
 
-
+            if entity[PlayerInput.controller.getPressedOnce("inventory")]:
+                self.systemsManager.post(self.openInventory(entity))
+                return
             #  ----------------------
             # don't allow them to do anything else unless they are ready to
             if not entity.has(IsReady):
@@ -83,3 +89,13 @@ class DecideActionSystem(BaseSystem):
                         self.systemsManager.post(UseAction(item, 'trigger', entity))
                         return
         # print ("decideaction end")
+
+    def openInventory(self, entity):
+        selectionList = entity[Inventory].contents
+        actions = {
+            "cancel": CloseSelectionUIAction(entity),
+            "lefthand": SwapEquippedAction(entity, slot="lefthand"),
+            "righthand": SwapEquippedAction(entity, slot="righthand"),
+            "use": UseItemInInventoryAction(entity)
+        }
+        return OpenSelectionUIAction(entity, selectionList, actions)

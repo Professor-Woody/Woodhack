@@ -17,3 +17,6 @@ class IsMelee(Component):
 
 class BlocksMovement(Component):
     pass
+
+class IsUI(Component):
+    pass

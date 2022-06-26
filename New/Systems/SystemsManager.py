@@ -1,17 +1,20 @@
 from Actions.MoveActions import MovementAction
+from Actions.UIActions import OpenSelectionUIAction
 from Systems.RenderSystem import RenderSystem
 from Systems.UpdateSystem import UpdateSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
-from Systems.UISystem import TargetSystem
+from Systems.UISystem import TargetSystem, UISystem
 
 from Actions.BaseActions import MoveAction
-from Actions.UseActions import PickupItemAction, UseAction
+from Actions.UseActions import UseAction
 from Actions.TargetActions import GetTargetAction
+from Actions.InventoryActions import PickupItemAction
 
 moveActions = [MoveAction, MovementAction]
 targetActions = [GetTargetAction]
+uiActions = [OpenSelectionUIAction]
 useActions = [UseAction, PickupItemAction]
 
 class SystemsManager:
@@ -24,10 +27,15 @@ class SystemsManager:
         self.targetSystem = TargetSystem(self)
         self.moveSystem = MoveSystem(self)
         self.useSystem = UseSystem(self)
+        self.uiSystem = UISystem(self)
         
 
     def post(self, action):
         print (action)
+        if type(action) == list:
+            for a in action:
+                self.post(a)
+
         if type(action) in moveActions:
             self.moveSystem.post(action)
             print ("moveaction")
@@ -37,6 +45,8 @@ class SystemsManager:
         elif type(action) in useActions:
             self.useSystem.post(action)
             print ("useaction")
+        elif type(action) in uiActions:
+            self.uiSystem.post(action)
 
 
     def runSystems(self):

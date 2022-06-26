@@ -129,9 +129,10 @@ class Body(Component):
             'righthand': None
         }
 
-@dataclass
 class PlayerInput(Component):
-    controller: any = None
+    def __init__(self, controller = None):
+        self.controller = controller
+        self.controlFocus = []
 
 class Inventory(Component):
     def __init__(self, contents = []):

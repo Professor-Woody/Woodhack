@@ -1,7 +1,8 @@
 from lib2to3.pytree import Base
+from Actions.UIActions import SwapEquippedAction
 from Systems.BaseSystem import BaseSystem
 from Actions.InventoryActions import PickupItemAction
-from Components.Components import Position, Inventory
+from Components.Components import Body, Position, Inventory
 
 
 
@@ -10,6 +11,8 @@ class InventorySystem(BaseSystem):
         for action in self.actionQueue:
             if type(action) == PickupItemAction:
                 self.pickupItem(action.entity)
+            elif type(action) == SwapEquippedAction:
+                self.swapEquipped(action)
     
         self.actionQueue.clear()
 
@@ -27,3 +30,14 @@ class InventorySystem(BaseSystem):
             if len(itemsToPickup) == 1:
                 parentEntity[Inventory].contents.append(itemsToPickup[0])
             # if it's more than one then we'll need to open up a GUI. TODO
+
+    def swapEquipped(self, action):
+        slot = action.slot
+        entity = action.entity
+        item = action.item
+
+        if entity[Body].slots[slot]:
+            entity[Inventory].contents.append(entity[Body].slots[slot])
+        entity[Body].slots[slot] = item
+        entity[Inventory].contents.remove(item)
+    
