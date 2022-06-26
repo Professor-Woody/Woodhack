@@ -27,6 +27,13 @@ class UISystem(BaseSystem):
             "actions": action.actions
             })
         selectionUI.add(IsUI)
+        selectionUI.add(Position, {
+            "x": self.level.width+1,
+            "y": 1,
+            "width": 20,
+            "height": len(action.selectionList) + 2,
+            "entityName": "Inventory"
+         })
         action.entity[PlayerInput].controlFocus.append(selectionUI)
     
     def closeSelectionUI(self, action):

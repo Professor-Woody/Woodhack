@@ -29,6 +29,7 @@ class InventorySystem(BaseSystem):
         if itemsToPickup:
             if len(itemsToPickup) == 1:
                 parentEntity[Inventory].contents.append(itemsToPickup[0])
+                itemsToPickup[0].remove(Position)
             # if it's more than one then we'll need to open up a GUI. TODO
 
     def swapEquipped(self, action):
