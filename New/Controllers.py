@@ -1,9 +1,46 @@
 import pygame
-pygame.joystick.init()
-import tcod
+pygame.init()
+
 
 class BaseController:
     pass
+
+class KeyboardController(BaseController):
+    def __init__(self):
+        self.commands = {
+            "up": pygame.K_UP,
+            "down": pygame.K_DOWN,
+            "left": pygame.K_LEFT,
+            "right": pygame.K_RIGHT,
+            "lefthand": pygame.K_a,
+            "righthand": pygame.K_d,
+            "use": pygame.K_w,
+            "cancel": pygame.K_x,
+            "next": pygame.K_e,
+            "previous": pygame.K_q,
+            "nearestEnemy": pygame.K_r,
+            "inventory": pygame.K_i,
+        }
+        self.checked = []
+
+    def update(self):
+        self.pressed = pygame.key.get_pressed()
+        for check in self.checked:
+            key = self.commands[check]
+            if not self.pressed[key]:
+                self.checked.remove[key]
+
+    def getPressed(self, action):
+        return self.pressed[self.commands[action]]
+
+    def getPressedOnce(self, action):
+        key = self.commands[action]
+        pressed = self.pressed[key]
+        if pressed and key not in self.checked:
+            self.checked.append(key)
+            return True
+        return False
+
 
 class JoystickController(BaseController):
     parent = None
@@ -95,3 +132,4 @@ class JoystickController(BaseController):
         return False
         
 controllers = [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]
+controllers.append(KeyboardController())

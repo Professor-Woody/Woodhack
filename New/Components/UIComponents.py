@@ -1,5 +1,4 @@
 from ecstremity import Component
-from ecstremity import Entity
 
 class Target(Component):
     target = None
@@ -14,7 +13,7 @@ class Targeted(Component):
 
 class SelectionWindowUI(Component):
     def __init__(self, parentEntity, selectionList, actions):
-        self.parentEntity: Entity = parentEntity
+        self.parentEntity = parentEntity
         self.selectionList: list = selectionList
         self.selectionIndex: int = 0
         self.actions: list = actions
