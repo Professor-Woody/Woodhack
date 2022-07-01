@@ -1,5 +1,6 @@
 from Actions.MoveActions import MovementAction
-from Actions.UIActions import OpenSelectionUIAction
+from Actions.UIActions import OpenSelectionUIAction, SelectionUISwapEquippedAction
+from Systems.InventorySystem import InventorySystem
 from Systems.RenderSystem import RenderSystem
 from Systems.UpdateSystem import UpdateSystem
 from Systems.MoveSystem import MoveSystem
@@ -14,8 +15,9 @@ from Actions.InventoryActions import PickupItemAction
 
 moveActions = [MoveAction, MovementAction]
 targetActions = [GetTargetAction]
-uiActions = [OpenSelectionUIAction]
-useActions = [UseAction, PickupItemAction]
+uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction]
+useActions = [UseAction]
+inventoryActions = [PickupItemAction]
 
 class SystemsManager:
     def __init__(self, level):
@@ -28,7 +30,7 @@ class SystemsManager:
         self.moveSystem = MoveSystem(self)
         self.useSystem = UseSystem(self)
         self.uiSystem = UISystem(self)
-        
+        self.inventorySystem = InventorySystem(self)
 
     def post(self, action):
         print (action)
@@ -47,7 +49,8 @@ class SystemsManager:
             print ("useaction")
         elif type(action) in uiActions:
             self.uiSystem.post(action)
-
+        elif type(action) in inventoryActions:
+            self.inventorySystem.post(action)
 
     def runSystems(self):
         # do the base updates for anything that needs updating
@@ -57,6 +60,7 @@ class SystemsManager:
         self.decideActionSystem.run()
         
         # now perform the actions
+        self.inventorySystem.run()
         self.moveSystem.run()
         self.targetSystem.run()
         self.useSystem.run()

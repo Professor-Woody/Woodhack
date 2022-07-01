@@ -28,7 +28,7 @@ class KeyboardController(BaseController):
         for check in self.checked:
             key = self.commands[check]
             if not self.pressed[key]:
-                self.checked.remove[key]
+                self.checked.remove(check)
 
     def getPressed(self, action):
         return self.pressed[self.commands[action]]
@@ -36,8 +36,8 @@ class KeyboardController(BaseController):
     def getPressedOnce(self, action):
         key = self.commands[action]
         pressed = self.pressed[key]
-        if pressed and key not in self.checked:
-            self.checked.append(key)
+        if pressed and action not in self.checked:
+            self.checked.append(action)
             return True
         return False
 

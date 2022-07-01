@@ -1,5 +1,6 @@
 from Actions.BaseActions import EntityAction
 from dataclasses import dataclass
+from ecstremity import entity
 
 from ecstremity.entity import Entity
 
@@ -9,22 +10,23 @@ class OpenSelectionUIAction(EntityAction):
         self.selectionList = selectionList
         self.actions = actions
 
-@dataclass
+
 class UpdateUIInputAction(EntityAction):
     pass
 
 
-@dataclass
 class CloseSelectionUIAction(EntityAction):
-    pass
+    selectionUI: any = None
 
-@dataclass
+
 class SelectionUISwapEquippedAction(EntityAction):
-    slot: str
+    selectionUI: any = None
+    def __init__(self, entity, slot):
+        super().__init__(entity)
+        self.slot = slot
 
-@dataclass
 class UseItemInInventoryAction(EntityAction):
-    pass
+    selectionUI: any = None
 
 @dataclass
 class SwapEquippedAction(EntityAction):

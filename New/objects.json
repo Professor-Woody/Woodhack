@@ -30,7 +30,7 @@
                 "defence": 0,
                 "attack": 0,
                 "bonusDamage": 0
-            }            
+            }      
         }
     },
 
@@ -63,7 +63,8 @@
                 "attack": 0,
                 "bonusDamage": 0
             },
-            "Target": {}
+            "Target": {},
+            "Inventory": {}
         }
     },
 

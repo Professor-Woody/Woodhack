@@ -6,7 +6,7 @@ from Actions.MoveActions import MovementAction
 from Components.UIComponents import Target
 from Actions.UseActions import UseAction
 from Actions.InventoryActions import PickupItemAction
-from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SwapEquippedAction, UpdateUIInputAction, UseItemInInventoryAction
+from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SwapEquippedAction, UpdateUIInputAction, UseItemInInventoryAction, SelectionUISwapEquippedAction
 
 class DecideActionSystem(BaseSystem):
     def run(self):
@@ -44,7 +44,7 @@ class DecideActionSystem(BaseSystem):
             if entity[PlayerInput].controller.getPressedOnce("use"):
                 self.systemsManager.post(PickupItemAction(entity))
 
-            if entity[PlayerInput.controller.getPressedOnce("inventory")]:
+            if entity[PlayerInput].controller.getPressedOnce("inventory"):
                 self.systemsManager.post(self.openInventory(entity))
                 return
             #  ----------------------
@@ -94,8 +94,8 @@ class DecideActionSystem(BaseSystem):
         selectionList = entity[Inventory].contents
         actions = {
             "cancel": CloseSelectionUIAction(entity),
-            "lefthand": SwapEquippedAction(entity, slot="lefthand"),
-            "righthand": SwapEquippedAction(entity, slot="righthand"),
+            "lefthand": SelectionUISwapEquippedAction(entity, slot="lefthand"),
+            "righthand": SelectionUISwapEquippedAction(entity, slot="righthand"),
             "use": UseItemInInventoryAction(entity)
         }
         return OpenSelectionUIAction(entity, selectionList, actions)

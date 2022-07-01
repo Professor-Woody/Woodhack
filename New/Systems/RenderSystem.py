@@ -10,10 +10,7 @@ class RenderSystem(BaseSystem):
         # in theory we'll do this for each render level. for now do map, items, npcs, player, UI
         self.level.map.draw(self.level.app.screen)
         
-        entities = []
-        entityTypes = ['IsItem', 'IsNPC', 'IsPlayer'] # render order
-        for entityType in entityTypes:
-            entities.append(self.level.world.create_query(all_of=['Render', entityType, 'Position']).result)            
+        entities = (self.level.world.create_query(all_of=['Render', 'Position'], any_of=['IsItem', 'IsNPC', 'IsPlayer']).result)
 
         for entity in entities:
             self.entityDraw(entity)

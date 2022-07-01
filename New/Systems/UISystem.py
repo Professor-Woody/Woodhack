@@ -21,6 +21,8 @@ class UISystem(BaseSystem):
 
     def openSelectionUI(self, action: OpenSelectionUIAction):
         selectionUI = self.level.world.create_entity()
+        for a in action.actions.keys():
+            action.actions[a].selectionUI = selectionUI
         selectionUI.add(SelectionWindowUI, {
             "parentEntity": action.entity,
             "selectionList": action.selectionList,
