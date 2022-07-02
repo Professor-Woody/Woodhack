@@ -4,7 +4,7 @@ from Components.Components import PlayerInput, Position, Render
 from Components.UIComponents import SelectionWindowUI, Target, Targeted
 from Components.FlagComponents import IsUI
 from Flags import FPS
-from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SwapEquippedAction, UpdateUIInputAction
+from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SelectionUISwapEquippedAction, SwapEquippedAction, UpdateUIInputAction
 
 class UISystem(BaseSystem):
     def run(self):
@@ -17,12 +17,14 @@ class UISystem(BaseSystem):
                 self.updateUIInput(action)
             elif type(action) == CloseSelectionUIAction:
                 self.closeSelectionUI(action)
+            elif type(action) == SelectionUISwapEquippedAction:
+                self.selectionUISwapEquipped(action)
+        self.actionQueue.clear()
 
 
     def openSelectionUI(self, action: OpenSelectionUIAction):
         selectionUI = self.level.world.create_entity()
-        for a in action.actions.keys():
-            action.actions[a].selectionUI = selectionUI
+
         selectionUI.add(SelectionWindowUI, {
             "parentEntity": action.entity,
             "selectionList": action.selectionList,
@@ -30,15 +32,20 @@ class UISystem(BaseSystem):
             })
         selectionUI.add(IsUI)
         selectionUI.add(Position, {
-            "x": self.level.width+1,
+            "x": self.level.width-20,
             "y": 1,
             "width": 20,
             "height": len(action.selectionList) + 2,
-            "entityName": "Inventory"
          })
+        selectionUI.add(Render, {
+                        "entityName": "Inventory",
+                        "needsVisibility": False
+
+        })
         action.entity[PlayerInput].controlFocus.append(selectionUI)
     
     def closeSelectionUI(self, action):
+        print (f"looking at {action.entity}")
         selectionUI = action.entity[PlayerInput].controlFocus.pop()
         selectionUI.destroy()
 
@@ -47,16 +54,18 @@ class UISystem(BaseSystem):
         if action.entity.has(SelectionWindowUI):
             return self.updateSelectionWindowUI(action.entity)
 
+
     def selectionUISwapEquipped(self, action):
         slot = action.slot
         entity = action.entity
         selectionUI = entity[PlayerInput].controlFocus[-1]
         item = selectionUI[SelectionWindowUI].selectionList[selectionUI[SelectionWindowUI].selectionIndex]
         
-        return [
+        return self.systemsManager.post([
             SwapEquippedAction(entity, slot=slot, item=item),
-            CloseSelectionUIAction(selectionUI)
-        ]
+            CloseSelectionUIAction(entity)
+        ])
+
 
     def updateSelectionWindowUI(self, entity):
         dy = 0
@@ -79,7 +88,8 @@ class UISystem(BaseSystem):
                 # return action
         for action in entity[SelectionWindowUI].actions.keys():
             if entity[SelectionWindowUI].parentEntity[PlayerInput].controller.getPressedOnce(action):
-                return (entity[SelectionWindowUI].selectionIndex.actions[action])
+                print (f"action: {action}")
+                return self.systemsManager.post(entity[SelectionWindowUI].actions[action])
 
     
 
@@ -91,13 +101,11 @@ class TargetSystem(BaseSystem):
     def run(self):
         # ----------------------
         # perform any actions
-        # print ("target start")
 
         for action in self.actionQueue:
             if type(action) == GetTargetAction:
                     self.getTarget(action)
         self.actionQueue.clear()
-        # print ("target end")
 
         # now update all the backgrounds of targeted individuals
         self.updateTargeted()
@@ -118,7 +126,6 @@ class TargetSystem(BaseSystem):
 
 
     def getTarget(self, action):
-        print ("getting target")
         entity = action.entity
         targetType = action.targetType
         targetSelectionOrder = action.targetSelectionOrder

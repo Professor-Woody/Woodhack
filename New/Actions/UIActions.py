@@ -16,19 +16,18 @@ class UpdateUIInputAction(EntityAction):
 
 
 class CloseSelectionUIAction(EntityAction):
-    selectionUI: any = None
-
+    pass
 
 class SelectionUISwapEquippedAction(EntityAction):
-    selectionUI: any = None
     def __init__(self, entity, slot):
         super().__init__(entity)
         self.slot = slot
 
 class UseItemInInventoryAction(EntityAction):
-    selectionUI: any = None
+    pass
 
 @dataclass
 class SwapEquippedAction(EntityAction):
+    entity: Entity
     slot: str
     item: Entity

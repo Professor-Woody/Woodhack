@@ -1,4 +1,4 @@
-from New.Actions.BaseActions import EventAction
+from Actions.BaseActions import EventAction
 import Controllers
 
 

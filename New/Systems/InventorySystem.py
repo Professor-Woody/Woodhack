@@ -40,5 +40,7 @@ class InventorySystem(BaseSystem):
         if entity[Body].slots[slot]:
             entity[Inventory].contents.append(entity[Body].slots[slot])
         entity[Body].slots[slot] = item
+        print (entity[Body].slots[slot])
         entity[Inventory].contents.remove(item)
+        entity.fire_event("recalculate_stats")
     

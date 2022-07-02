@@ -1,5 +1,5 @@
 from Actions.MoveActions import MovementAction
-from Actions.UIActions import OpenSelectionUIAction, SelectionUISwapEquippedAction
+from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SelectionUISwapEquippedAction, SwapEquippedAction, UpdateUIInputAction
 from Systems.InventorySystem import InventorySystem
 from Systems.RenderSystem import RenderSystem
 from Systems.UpdateSystem import UpdateSystem
@@ -8,16 +8,17 @@ from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem, UISystem
 
-from Actions.BaseActions import MoveAction
+from Actions.BaseActions import MoveAction, UpdateLightingAction
 from Actions.UseActions import UseAction
 from Actions.TargetActions import GetTargetAction
 from Actions.InventoryActions import PickupItemAction
 
 moveActions = [MoveAction, MovementAction]
+updateActions = [UpdateLightingAction]
 targetActions = [GetTargetAction]
-uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction]
+uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction, UpdateUIInputAction, CloseSelectionUIAction]
 useActions = [UseAction]
-inventoryActions = [PickupItemAction]
+inventoryActions = [PickupItemAction, SwapEquippedAction]
 
 class SystemsManager:
     def __init__(self, level):
@@ -40,20 +41,20 @@ class SystemsManager:
 
         if type(action) in moveActions:
             self.moveSystem.post(action)
-            print ("moveaction")
         elif type(action) in targetActions:
             self.targetSystem.post(action)
-            print ("targetaction")
         elif type(action) in useActions:
             self.useSystem.post(action)
-            print ("useaction")
         elif type(action) in uiActions:
             self.uiSystem.post(action)
         elif type(action) in inventoryActions:
             self.inventorySystem.post(action)
+        elif type(action in updateActions):
+            self.updateSystem.post(action)
 
     def runSystems(self):
         # do the base updates for anything that needs updating
+        self.moveSystem.run()
         self.updateSystem.run()
         
         # for anything that's now ready, find out if it's performing an action
@@ -61,8 +62,8 @@ class SystemsManager:
         
         # now perform the actions
         self.inventorySystem.run()
-        self.moveSystem.run()
         self.targetSystem.run()
+        self.uiSystem.run()
         self.useSystem.run()
 
         # and draw

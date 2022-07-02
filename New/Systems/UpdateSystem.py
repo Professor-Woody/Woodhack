@@ -1,3 +1,4 @@
+from Actions.BaseActions import UpdateLightingAction
 from Components.Components import Initiative
 from Components.FlagComponents import IsReady
 from Systems.BaseSystem import BaseSystem
@@ -5,9 +6,6 @@ from Controllers import controllers
 
 class UpdateSystem(BaseSystem):
     def run(self):
-        # print ("update start")
-        self.level.map.update()
-
         for controller in controllers:
             controller.update()
 
@@ -16,4 +14,11 @@ class UpdateSystem(BaseSystem):
             if not entity[Initiative].speed:
                 entity.add(IsReady)
                 print ("readying")
-        # print ("update end")
+        
+        lightingUpdated = False
+        for action in self.actionQueue:
+            if type(action) == UpdateLightingAction and not lightingUpdated:
+                print ("updated lighting")
+                self.level.map.update()
+                lightingUpdated = True
+        self.actionQueue.clear()

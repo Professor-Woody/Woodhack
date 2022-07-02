@@ -88,7 +88,6 @@ class DecideActionSystem(BaseSystem):
                     if item and item.has(IsReady):
                         self.systemsManager.post(UseAction(item, 'trigger', entity))
                         return
-        # print ("decideaction end")
 
     def openInventory(self, entity):
         selectionList = entity[Inventory].contents
