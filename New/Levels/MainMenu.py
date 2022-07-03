@@ -40,8 +40,6 @@ class OptionsLevel(BaseLevel):
         button = Button(" Go Back ", action)
         button.place(self, 20, 60)
 
-        print (f"options menu {self.entityManager}")
-
 
 
 class NewGameLevel(BaseLevel):

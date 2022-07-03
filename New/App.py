@@ -8,6 +8,7 @@ from Levels.Level import GameLevel
 from Components.ComponentRegister import registerComponents
 from Flags import FPS
 
+
 class App:
     width = 100
     height = 80
@@ -27,7 +28,6 @@ class App:
 
 
 
-
     def run(self):
         while self.isRunning:
             # framerate
@@ -40,14 +40,13 @@ class App:
                 action = self.eventHandler.dispatch(event)
                 if action:
                     action.perform()
-            
-            # update
-            self.level.update()
+            # eventually loop this through each level too when we have
+            # multiple levels
+            self.level.runSystems()
 
-            #draw
-            self.level.draw(self.screen)
             self.screen.flip()
 
+    
         
 if __name__ == "__main__":
     app = App()

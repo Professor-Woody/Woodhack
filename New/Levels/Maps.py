@@ -1,5 +1,6 @@
 import numpy as np
 from Levels.Rooms import wall, SHROUD
+from Components.Components import Collision
 import tcod
 from tcod.map import compute_fov
 
@@ -28,7 +29,7 @@ class GameMap:
 
     def checkIsBlocked(self, x, y):
         for entity in self.level.world.create_query(all_of = ["Collision", "BlocksMovement"]).result:
-            if entity["Collision"].pointCollides(x, y):
+            if Collision.pointCollides(entity, x, y):
                 return entity
 
 

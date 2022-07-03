@@ -188,7 +188,7 @@ class Targeted(Component):
 
 @dataclass
 class PlayerInput(Component):
-    controller: BaseController
+    controller: any
 
     def on_update(self, event):
         self.controller.update()
