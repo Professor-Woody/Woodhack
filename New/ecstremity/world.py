@@ -116,7 +116,7 @@ class World:
             _none_of = []
 
         query = Query(self, _any_of, _all_of, _none_of)  # type: ignore
-        self._queries.append(query)
+        # self._queries.append(query)
         return query
 
     def candidate(self, entity: Entity) -> None:

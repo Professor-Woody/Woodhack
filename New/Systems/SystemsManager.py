@@ -39,7 +39,7 @@ class SystemsManager:
             for a in action:
                 self.post(a)
 
-        if type(action) in moveActions:
+        elif type(action) in moveActions:
             self.moveSystem.post(action)
         elif type(action) in targetActions:
             self.targetSystem.post(action)

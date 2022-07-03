@@ -103,7 +103,9 @@
         "type": "shortsword",
         "inherits": "ITEM",
         "components": {
-            "UseMelee": {}
+            "UseMelee": {},
+            "IsMelee": {},
+            "Initiative": {"speed": 0}
         }
     }
 ]

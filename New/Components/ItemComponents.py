@@ -23,23 +23,23 @@ class UseMelee(Component):
         # roll to hit
         # roll damage
 
-        parentEntity = event.data.parentEntity
-        target = parentEntity[Target].target
+        entity = event.data.entity
+        target = entity[Target].target
 
         if event.data.useType == 'meleeattack':
             if target:
-                if Position.getRange(parentEntity, target) <= 1:
-                    attackRoll = randint(-9, 10) + parentEntity[Stats].attack + self.attack
-                    print (f"{parentEntity['Render'].entityName} is attacking {target['Render'].entityName}\n{parentEntity['Render'].entityName} rolled {attackRoll} to hit")
+                if Position.getRange(entity, target) <= 1:
+                    attackRoll = randint(-9, 10) + entity[Stats].attack + self.attack
+                    print (f"{entity['Render'].entityName} is attacking {target['Render'].entityName}\n{entity['Render'].entityName} rolled {attackRoll} to hit")
 
                     if attackRoll >= target[Stats].defence:
-                        damageRoll = sum([randint(1, self.diceType) for dice in range(self.diceAmount)]) + parentEntity[Stats].bonusDamage + self.bonusDamage
+                        damageRoll = sum([randint(1, self.diceType) for dice in range(self.diceAmount)]) + entity[Stats].bonusDamage + self.bonusDamage
                         target.fire_event('damage', {'damage': damageRoll})
-                        print (f"{parentEntity['Render'].entityName} rolled {damageRoll} damage")
-                    parentEntity[Initiative].speed += self.speed
+                        print (f"{entity['Render'].entityName} rolled {damageRoll} damage")
+                    entity[Initiative].speed += self.speed
                     self.entity[Initiative].speed += self.speed + 1
-                    if parentEntity.has(IsReady):
-                        parentEntity.remove(IsReady)
+                    if entity.has(IsReady):
+                        entity.remove(IsReady)
                     if self.entity.has(IsReady):
                         self.entity.remove(IsReady)
 

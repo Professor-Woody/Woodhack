@@ -76,17 +76,17 @@ class DecideActionSystem(BaseSystem):
                 item = entity[Body].slots[hand] 
                 if item and item.has(IsMelee) and item.has(IsReady):
                     if entity[Target].target and Position.getRange(entity, entity[Target].target) <= 1:
-                        self.systemsManager.post(UseAction(item, 'meleeattack', entity))
+                        self.systemsManager.post(UseAction(entity, item, 'meleeattack'))
                         meleed = True
             if meleed:
                 return
 
             # check use
             for hand in hands:
-                if entity[PlayerInput].controller.getPressed(hand):
+                if entity[PlayerInput].controller.getPressedOnce(hand):
                     item = entity[Body].slots[hand] 
                     if item and item.has(IsReady):
-                        self.systemsManager.post(UseAction(item, 'trigger', entity))
+                        self.systemsManager.post(UseAction(entity, item, 'trigger'))
                         return
 
     def openInventory(self, entity):

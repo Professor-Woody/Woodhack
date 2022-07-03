@@ -6,10 +6,10 @@ class UseSystem(BaseSystem):
         for action in self.actionQueue:
             item = action.item
             useType = action.useType
-            parentEntity = action.parentEntity
+            entity = action.entity
             
             if item.has(IsReady):
-                item.fire_event('use', {'useType': useType, 'parentEntity': parentEntity})
+                item.fire_event('use', {'useType': useType, 'entity': entity})
     
         self.actionQueue.clear()
 
