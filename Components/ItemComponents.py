@@ -1,73 +1,71 @@
-from dataclasses import dataclass
 from ecstremity import Component
-from Actions.EntityActions import RangedAttackAction
+from Components.Components import Position, Stats, Initiative, Light
+from Components.UIComponents import Target
+from Components.FlagComponents import IsReady
+from random import randint
+from dataclasses import dataclass
 
 @dataclass
-class IsEquipped(Component):
-    parentEntity: Entity
+class UseMelee(Component):
+    attack: int = 0
+    diceType: int = 6
+    diceAmount: int = 1
+    bonusDamage: int = 0
+    speed: int = 10
 
-
-@dataclass
-class Melee(Component):
-    attack: int
-    attackSpeed: int
-    damageBonus: int
-    diceAmount: int
-    diceType: int
-
-class Ranged(Component):
-    attack: int
-    attackSpeed: int
-    damageBonus: int
-    diceAmount: int
-    diceType: int
-    ammoType: str
-    
-    def __init__(self, attack, attackSpeed, damageBonus, diceAmount, diceType, ammoType):
-        self.attack = attack
-        self.attackSpeed = attackSpeed
-        self.damageBonus = damageBonus
-        self.diceAmount = diceAmount
-        self.diceType = diceType
-        self.ammoType = ammoType
-        
-        self.entity['Use'].addAction(RangedAttackAction)
-
-@dataclass
-class Defence(Component):
-    armour: int
-
-@dataclass
-class MoveSpeedModifier(Component):
-    modifier: int
-
-@dataclass
-class AttackModifier(Component):
-    modifier: int
-
-@dataclass
-class HPModifier(Component):
-    modifier: int
-
-class Use(Component):
-    actions: list
-    cancelUse: bool = False
-    destroyAfterUse: bool
-
-    def __init__(self, actions=[], destroyAfterUse=False):
-        self.actions = actions
-        self.destroyAfterUse = destroyAfterUse
-    
-
-    def addAction(self, action):
-        actions.append(action(self))
 
     def on_use(self, event):
-        for action in self.actions:
-            action.perform()
-            if self.cancelUse:
-                self.cancelUse = False
-                break
+        # perform a melee attack
+        
+        # check if melee attack
+        # check if target
+        # target in range
+        # roll to hit
+        # roll damage
 
-        if self.destroyAfterUse:
-            self.entity.remove(self.entity)
+        entity = event.data.entity
+        target = entity[Target].target
+
+        if event.data.useType == 'meleeattack':
+            if target:
+                if Position.getRange(entity, target) <= 1:
+                    attackRoll = randint(-9, 10) + entity[Stats].attack + self.attack
+                    print (f"{entity['Render'].entityName} is attacking {target['Render'].entityName}\n{entity['Render'].entityName} rolled {attackRoll} to hit")
+
+                    if attackRoll >= target[Stats].defence:
+                        damageRoll = sum([randint(1, self.diceType) for dice in range(self.diceAmount)]) + entity[Stats].bonusDamage + self.bonusDamage
+                        target.fire_event('damage', {'damage': damageRoll})
+                        print (f"{entity['Render'].entityName} rolled {damageRoll} damage")
+                    entity[Initiative].speed += self.speed
+                    self.entity[Initiative].speed += self.speed + 1
+                    if entity.has(IsReady):
+                        entity.remove(IsReady)
+                    if self.entity.has(IsReady):
+                        self.entity.remove(IsReady)
+
+        
+class UseFlashlight(Component):
+    def __init__(self, on=True, radius=3):
+        self.on = on
+        if not self.entity.has(Light):
+            self.entity.add(Light, {'radius': radius})
+        self.setLight()
+
+    def on_use(self, event):
+        self.on = not self.on
+        self.setLight()
+        event.parentEntity.fire_event('recalculate_stats')
+
+    def on_equip(self, event):
+        event.parentEntity.fire_event('recalculate_stats')
+
+    def setLight(self):
+        self.entity[Light].radius = self.entity[Light].baseRadius * int(self.on)
+
+
+@dataclass        
+class AmuletOfYendor(Component):
+    maxHp: int = 5
+
+    def on_try_recalculate_stats(self, event):
+        event.data.stats['maxHp'] += self.maxHp

@@ -1,37 +1,33 @@
 from Actions.BaseActions import EntityAction
+from dataclasses import dataclass
+from ecstremity import entity
+
+from ecstremity.entity import Entity
+
+class OpenSelectionUIAction(EntityAction):
+    def __init__(self, entity, selectionList, actions):
+        super().__init__(entity)
+        self.selectionList = selectionList
+        self.actions = actions
 
 
-class GetSelectionInputAction(EntityAction):
-    def perform(self):
-        dy = 0
-        if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce("up"):
-            dy -= 1
-        if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce("down"):
-            dy += 1
-        if dy:
-            self.entity['SelectionUI'].choice += dy
-            if self.entity['SelectionUI'].choice < 0:
-                self.entity['SelectionUI'].choice = len(self.entity['SelectionUI'].items)-1
-            elif self.entity['SelectionUI'].choice >= len(self.entity['SelectionUI'].items):
-                self.entity['SelectionUI'].choice = 0
-
-        for action in self.entity['SelectionUI'].actions.keys():
-            if self.entity['SelectionUI'].parentEntity['PlayerInput'].controller.getPressedOnce(action):
-                self.entity['SelectionUI'].parentEntity.remove('EffectControlsLocked')
-                self.entity['SelectionUI'].actions[action].perform()
-                break
-                
-
-class CancelSelectionUIAction(EntityAction):
-    def perform(self):
-        print ("cancelling (no action)")
-        DestroyUIAction(self.entity).perform()
+class UpdateUIInputAction(EntityAction):
+    pass
 
 
+class CloseSelectionUIAction(EntityAction):
+    pass
 
-class DestroyUIAction(EntityAction):
-    def perform(self):
-        if self.entity.has('UI'):
-            self.entity.destroy()
-        else:
-            print (f"!!!!! Why are you trying to destroy {self.entity} !!!!!")
+class SelectionUISwapEquippedAction(EntityAction):
+    def __init__(self, entity, slot):
+        super().__init__(entity)
+        self.slot = slot
+
+class UseItemInInventoryAction(EntityAction):
+    pass
+
+@dataclass
+class SwapEquippedAction(EntityAction):
+    entity: Entity
+    slot: str
+    item: Entity

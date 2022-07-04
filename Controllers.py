@@ -1,65 +1,45 @@
 import pygame
-pygame.joystick.init()
-import tcod
+pygame.init()
+
 
 class BaseController:
     pass
 
 class KeyboardController(BaseController):
-    parent = None
-
     def __init__(self):
         self.commands = {
-            "up": tcod.event.K_UP,
-            "down": tcod.event.K_DOWN,
-            "left": tcod.event.K_LEFT,
-            "right": tcod.event.K_RIGHT,
-            "lefthand": tcod.event.K_z,
-            "righthand": tcod.event.K_x,
-            "use":  tcod.event.K_v,
-            "cancel":  tcod.event.K_c,
-            "next":  tcod.event.K_d,
-            "previous":  tcod.event.K_s,
-            "nearestEnemy":  tcod.event.K_r,
-            "inventory": tcod.event.K_i
+            "up": pygame.K_UP,
+            "down": pygame.K_DOWN,
+            "left": pygame.K_LEFT,
+            "right": pygame.K_RIGHT,
+            "lefthand": pygame.K_a,
+            "righthand": pygame.K_d,
+            "use": pygame.K_w,
+            "cancel": pygame.K_x,
+            "next": pygame.K_e,
+            "previous": pygame.K_q,
+            "nearestEnemy": pygame.K_r,
+            "inventory": pygame.K_i,
         }
-        self.keysPressed = set()
-        self.keysChecked = set()
+        self.checked = []
 
     def update(self):
-        for check in self.keysChecked:
-            if not self.getPressed(check):
-                self.keysChecked.remove(check)
+        self.pressed = pygame.key.get_pressed()
+        for check in self.checked:
+            key = self.commands[check]
+            if not self.pressed[key]:
+                self.checked.remove(check)
 
+    def getPressed(self, action):
+        return self.pressed[self.commands[action]]
 
-    def getButton(self, button):
-        return self.keysPressed[button]
-
-
-    def getPressed(self, cmd):
-        if cmd in self.commands.keys():
-            return self.commands[cmd] in self.keysPressed
-        return False
-
-
-    def getPressedOnce(self, cmd):
-        result = self.getPressed(cmd)
-        if result and cmd not in self.keysChecked:
-            self.keysChecked.add(cmd)
+    def getPressedOnce(self, action):
+        key = self.commands[action]
+        pressed = self.pressed[key]
+        if pressed and action not in self.checked:
+            self.checked.append(action)
             return True
         return False
-
-
-    def setKeyPressed(self, key, pressed=False):
-        if not pressed and key in self.keysPressed:
-            self.keysPressed.remove(key)
-        elif pressed:
-            self.keysPressed.add(key)
-
-            
-            
-        
-            
 
 
 class JoystickController(BaseController):
@@ -151,9 +131,5 @@ class JoystickController(BaseController):
             return True
         return False
         
-
-
 controllers = [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]
-keyboardController = KeyboardController()
-controllers.append(keyboardController)
-
+controllers.append(KeyboardController())

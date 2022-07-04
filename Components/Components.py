@@ -1,105 +1,8 @@
-from dataclasses import dataclass
-from typing import Tuple
-from ecstremity import Component, Engine, Entity
-from Levels.Maps import GameMap
+from ecstremity import Component
 import Colours as colour
-from Flags import FPS
-from Controllers import BaseController
-from Actions.PlayerActions import GetPlayerInputAction
+from typing import Tuple
+from dataclasses import dataclass
 import tcod
-
-@dataclass
-class Position(Component):
-    x: int = -1
-    y: int = -1
-    width: int = 1
-    height: int = 1
-    level: any = None
-
-    def on_move(self, event):
-        self.x = event.data.x
-        self.y = event.data.y
-    
-    def getRange(self, other):
-        return max(abs(self.x - other[Position].x), abs(self.y - other[Position].y))
-
-    def getLOS(self, other):
-        path = tcod.los.bresenham(
-            (self.x, self.y),
-            (other[Position].x, other[Position].y)
-        ).toList()
-
-        for x, y in path:
-            if not self.level.map.checkIsPassable(x,y) or self.level.map.checkIsBlocked(x, y):
-                return False
-        return True
-
-class Collision(Component):
-    def areaCollides(self, other):
-        return (
-            self.entity[Position].x < other.x + other.width
-                and self.entity[Position].x + self.entity[Position].width >= other.x
-                and self.entity[Position].y < other.y + other.height
-                and self.entity[Position].y + self.entity[Position].height >= other.y
-        )
-    
-    def pointCollides(self, x, y):
-        return (
-            x >= self.entity[Position].x
-            and x < self.entity[Position].x + self.entity[Position].width
-            and y >= self.entity[Position].y
-            and y < self.entity[Position].y + self.entity[Position].height
-        )
-
-class BlocksMovement(Component):
-    pass
-
-@dataclass
-class UIPosition(Component):
-    sideX: int
-    sideY: int
-    bottomX: int
-    bottomY: int
-
-
-class Target(Component):
-    target: Entity = None
-    def on_set_target(self, event):
-        self.target = event.data.target
-
-    def on_clear_target(self, event):
-        if self.target:
-            self.target.fire_event("remove_targeter", {"entity": self.entity})
-
-
-class Stats(Component):
-    def __init__(self, hp, moveSpeed, defence, attack, bonusDamage):
-        self.hp = hp
-        self.maxHp = hp
-        self.baseMaxHp = hp
-        self.baseMoveSpeed = moveSpeed
-        self.moveSpeed = moveSpeed
-        self.baseDefence = defence
-        self.defence = defence
-        self.baseAttack = attack
-        self.attack = attack
-        self.baseAttack = attack
-        self.bonusDamage = bonusDamage
-        self.baseBonusDamage = bonusDamage
-
-    def on_damage(self, event):
-        damage = max(event.data.damage, 0)
-        self.hp -= damage
-        print (f"{self.entity[Render].entityName} took {damage} damage")
-        if self.hp <= 0:
-            print (f"oh snap, {self.entity[Render].entityName} is dead")
-            self.entity.add(EffectControlsLocked)
-        if not self.entity[Target].target:
-            self.entity[Target].target = event.data.entity
-
-@dataclass
-class Light(Component):
-    radius: int = 0
 
 @dataclass
 class Render(Component):
@@ -109,127 +12,129 @@ class Render(Component):
     bg: Tuple = None
     needsVisibility: bool = True
 
-    def on_draw(self, event):
-        if self.entity.has(Position):
-            if (self.entity[Position].level.map.checkIsVisible(self.entity) and self.needsVisibility):
-                event.data.screen.draw(self)
-            if not self.needsVisibility:
-                event.data.screen.draw(self)
 
-    @property
-    def x(self):
-        return self.entity[Position].x
+@dataclass
+class Position(Component):
+    x: int = -1
+    y: int = -1
+    width: int = 1
+    height: int = 1
+    level: any = None
+
+    @staticmethod    
+    def getRange(entity, other):
+        return max(abs(entity[Position].x - other[Position].x), abs(entity[Position].y - other[Position].y))
+
+    @staticmethod   
+    def getLOS(entity, other):
+        path = tcod.los.bresenham(
+            (entity[Position].x, entity[Position].y),
+            (other[Position].x, other[Position].y)
+        ).toList()
+
+        for x, y in path:
+            if not entity[Position].level.map.checkIsPassable(x,y) or entity[Position].level.map.checkIsBlocked(x, y):
+                return False
+        return True
+
+class Collision(Component):
+    @staticmethod
+    def areaCollides(entity, other):
+        return (
+            entity[Position].x < other.x + other.width
+                and entity[Position].x + entity[Position].width >= other.x
+                and entity[Position].y < other.y + other.height
+                and entity[Position].y + entity[Position].height >= other.y
+        )
     
-    @property
-    def y(self):
-        return self.entity[Position].y
+    @staticmethod
+    def pointCollides(entity, x, y):
+        return (
+            x >= entity[Position].x
+            and x < entity[Position].x + entity[Position].width
+            and y >= entity[Position].y
+            and y < entity[Position].y + entity[Position].height
+        )
 
-    def on_set_bg(self, event):
-        self.bg = event.data.bg
 
-    def on_clear_bg(self, event=None):
-        self.bg = None
 
-class IsReady(Component):
-    pass
+class Light(Component):
+    def __init__(self, radius = 3):
+        self.radius = radius
+        self.baseRadius = radius
 
+@dataclass
 class Initiative(Component):
     speed: int = 0
 
-    def on_add_initiative(self, event):
-        if self.entity.has(IsReady):
-            self.entity.remove(IsReady)
-        if not self.entity.has(Cooldown):
-            self.entity.add(Cooldown, {'speed': event.data.speed})
-        else:
-            self.entity[Cooldown] += event.data.speed
+    @property
+    def speed(self):
+        return self._speed
 
-
-class Cooldown(Component):
-    speed: int = 0
-    def on_tick(self, event):
-        if self.speed > 0:
-            self.speed -= 1
-            return
-        if not self.ready:
-            self.entity.add(IsReady)
-            self.entity.remove(self)
-
-
-class Targeted(Component):
-    targetCycleSpeed = 0
-    targetCycleIndex = 0
-    def __init__(self):
-        self.targetedBy = []
-
-    def on_update(self, event):
-        if self.targetedBy: # we're being targeted
-            self.targetCycleSpeed -= 1
-
-            if self.targetCycleSpeed <= 0:  # change to next colour
-                self.targetCycleSpeed = FPS / 2
-                self.targetCycleIndex -= 1
-                if self.targetCycleIndex < 0:
-                    self.targetCycleIndex = len(self.targetedBy)-1
-                self.entity.fire_event('set_bg', {'bg': self.targetedBy[self.targetCycleIndex][Render].fg})
-
-    def on_add_targeter(self, event):
-        if event.data.entity not in self.targetedBy:
-            self.targetedBy.append(event.data.entity)
-            self.targetCycleSpeed = 0
-    
-    def on_remove_targeter(self, event):
-        print (f"removing {event.data.entity}")
-        if event.data.entity in self.targetedBy:
-            self.targetedBy.remove(event.data.entity)
-            self.targetCycleSpeed = 0
-            if not self.targetedBy:
-                self.entity.fire_event('set_bg', {'bg': None})
+    @speed.setter
+    def speed(self, value):
+        self._speed = max(0, value)
 
 @dataclass
-class PlayerInput(Component):
-    controller: any
+class Stats(Component):
+    def __init__(self, hp, moveSpeed, defence, attack, bonusDamage):
+        self.hp = hp
+        self.maxHp = hp
+        self.baseMaxHp = hp
+        self.moveSpeed = moveSpeed
+        self.baseMoveSpeed = moveSpeed
+        self.defence = defence
+        self.baseDefence = defence
+        self.attack = attack
+        self.baseAttack = attack
+        self.bonusDamage = bonusDamage
+        self.baseBonusDamage = bonusDamage
 
-    def on_update(self, event):
-        self.controller.update()
-        if not self.entity.has(EffectControlsLocked):
-            event.data.actions.append(GetPlayerInputAction(self.entity))
+    @property
+    def moveSpeed(self):
+        return self._moveSpeed
+    @moveSpeed.setter
+    def moveSpeed(self, value):
+        self._moveSpeed = max(2, value)
 
-class IsPlayer(Component):
-    pass
+    @property   
+    def baseMoveSpeed(self):
+        return self._baseMoveSpeed
+    @baseMoveSpeed.setter
+    def baseMoveSpeed(self, value):
+        self._baseMoveSpeed = max(2, value)        
 
-class IsNPC(Component):
-    pass
+    def on_recalculate_stats(self, event):
+        print ("recalculating stats")
 
-class IsItem(Component):
-    pass
 
-@dataclass
-class IsEquipped(Component):
-    parentEntity: Entity
+        self.entity[Light].radius = self.entity[Light].baseRadius
+        print (self.entity[Body].slots)
+        for key in self.entity[Body].slots.keys():
+            slot = self.entity[Body].slots[key]
+            print (key, slot)
+            if slot and slot.has(Light) and slot[Light].radius > self.entity[Light].radius:
+                self.entity[Light].radius = slot[Light].radius
+                print (f"new radius: {self.entity[Light].radius}")
 
-@dataclass
-class IsEquippable(Component):
-    equipmentSlot: str
 
-class Inventory(Component):
-    def __init__(self):
-        self.contents = []
-
-class EffectControlsLocked(Component):
-    pass
 
 class Body(Component):
     def __init__(self):
-        self.equipmentSlots = {
+        self.slots = {
             'head': None,
-            'lefthand': None,
-            'righthand': None,
             'body': None,
             'legs': None,
-            'Feet': None
+            'feet': None,
+            'lefthand': None,
+            'righthand': None
         }
 
+class PlayerInput(Component):
+    def __init__(self, controller = None):
+        self.controller = controller
+        self.controlFocus = []
 
-
-
+class Inventory(Component):
+    def __init__(self, contents = []):
+        self.contents = contents
