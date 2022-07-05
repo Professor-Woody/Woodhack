@@ -11,7 +11,7 @@ from Systems.UISystem import TargetSystem, UISystem
 from Systems.EffectsSystem import EffectsSystem
 
 from Actions.BaseActions import MoveAction, UpdateLightingAction
-from Actions.UseActions import UseAction
+from Actions.UseActions import UseAction, MeleeAction
 from Actions.TargetActions import GetTargetAction
 from Actions.InventoryActions import PickupItemAction
 
@@ -19,7 +19,7 @@ moveActions = [MoveAction, MovementAction]
 updateActions = [UpdateLightingAction]
 targetActions = [GetTargetAction]
 uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction, UpdateUIInputAction, CloseSelectionUIAction]
-useActions = [UseAction]
+useActions = [UseAction, MeleeAction]
 inventoryActions = [PickupItemAction, SwapEquippedAction]
 effectsActions = [RecalculateStatsAction]
 

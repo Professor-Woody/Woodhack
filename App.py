@@ -10,8 +10,8 @@ from Flags import FPS
 
 
 class App:
-    width = 100
-    height = 80
+    width = 80
+    height = 60
     previousLevel = None
 
     def __init__(self):

@@ -6,3 +6,9 @@ class UseAction(EntityAction):
         super().__init__(entity)
         self.item = item
         self.useType = useType
+
+
+class MeleeAction(EntityAction):
+    def __init__(self, entity, item):
+        super().__init__(entity)
+        self.item = item

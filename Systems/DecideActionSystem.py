@@ -4,7 +4,7 @@ from Components.FlagComponents import IsReady, IsMelee
 from Actions.TargetActions import GetTargetAction
 from Actions.MoveActions import MovementAction
 from Components.UIComponents import Target
-from Actions.UseActions import UseAction
+from Actions.UseActions import MeleeAction, UseAction
 from Actions.InventoryActions import PickupItemAction
 from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SwapEquippedAction, UpdateUIInputAction, UseItemInInventoryAction, SelectionUISwapEquippedAction
 
@@ -76,7 +76,7 @@ class DecideActionSystem(BaseSystem):
                 item = entity[Body].slots[hand] 
                 if item and item.has(IsMelee) and item.has(IsReady):
                     if entity[Target].target and Position.getRange(entity, entity[Target].target) <= 1:
-                        self.systemsManager.post(UseAction(entity, item, 'meleeattack'))
+                        self.systemsManager.post(MeleeAction(entity, item))
                         meleed = True
             if meleed:
                 return
