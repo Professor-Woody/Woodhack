@@ -1,12 +1,13 @@
 from Actions.UseActions import MeleeAction
 from Components.Components import Initiative, Position, Stats
-from Components.FlagComponents import IsMelee, IsReady
+from Components.FlagComponents import IsReady
 from Components.ItemComponents import UseMelee
 from Components.UIComponents import Target
 from random import randint
 
 class SubSystem:
     def __init__(self, system):
+        self.system = system
         system.register(MeleeAction, self)
 
     def run(self, action: MeleeAction):
@@ -23,7 +24,7 @@ class SubSystem:
 
                 if attackRoll >= target[Stats].defence:
                     damageRoll = sum([randint(1, item[UseMelee].diceType) for dice in range(item[UseMelee].diceAmount)]) + entity[Stats].bonusDamage + item[UseMelee].bonusDamage
-                    target.fire_event('damage', {'damage': damageRoll})
+                    self.system.systemsManager.post(DamageAction(entity, target, damageRoll))
                     print (f"{entity['Render'].entityName} rolled {damageRoll} damage")
                 entity[Initiative].speed += item[UseMelee].speed
                 item[Initiative].speed += item[UseMelee].speed + 1

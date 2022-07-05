@@ -19,12 +19,15 @@ class BaseSystem:
 
 
     def register(self, action, subSystem):
-        self.actions[action] = subSystem
+        if action not in self.actions.keys():
+            self.actions[action] = []
+        self.actions[action].append(subSystem)
 
 
     def run(self):
         for action in self.actionQueue:
-            self.actions[type(action)].run(action)
+            for subSystem in self.actions[type(action)]:
+                subSystem.run(action)
         self.actionQueue.clear()
 
 
