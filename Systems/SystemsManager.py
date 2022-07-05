@@ -1,3 +1,4 @@
+from Actions.EffectsActions import RecalculateStatsAction
 from Actions.MoveActions import MovementAction
 from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SelectionUISwapEquippedAction, SwapEquippedAction, UpdateUIInputAction
 from Systems.InventorySystem import InventorySystem
@@ -7,6 +8,7 @@ from Systems.MoveSystem import MoveSystem
 from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem, UISystem
+from Systems.EffectsSystem import EffectsSystem
 
 from Actions.BaseActions import MoveAction, UpdateLightingAction
 from Actions.UseActions import UseAction
@@ -19,6 +21,7 @@ targetActions = [GetTargetAction]
 uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction, UpdateUIInputAction, CloseSelectionUIAction]
 useActions = [UseAction]
 inventoryActions = [PickupItemAction, SwapEquippedAction]
+effectsActions = [RecalculateStatsAction]
 
 class SystemsManager:
     def __init__(self, level):
@@ -32,9 +35,11 @@ class SystemsManager:
         self.useSystem = UseSystem(self)
         self.uiSystem = UISystem(self)
         self.inventorySystem = InventorySystem(self)
+        self.effectsSystem = EffectsSystem(self)
 
     def post(self, action):
-        print (action)
+        if type(action) is not UpdateUIInputAction:
+            print (action)
         if type(action) == list:
             for a in action:
                 self.post(a)
@@ -49,8 +54,11 @@ class SystemsManager:
             self.uiSystem.post(action)
         elif type(action) in inventoryActions:
             self.inventorySystem.post(action)
-        elif type(action in updateActions):
+        elif type(action) in updateActions:
             self.updateSystem.post(action)
+        elif type(action) in effectsActions:
+            print (f"posting {action} to effectsSystem")
+            self.effectsSystem.post(action)
 
     def runSystems(self):
         # do the base updates for anything that needs updating
@@ -65,6 +73,7 @@ class SystemsManager:
         self.targetSystem.run()
         self.uiSystem.run()
         self.useSystem.run()
+        self.effectsSystem.run()
 
         # and draw
         self.renderSystem.run()
