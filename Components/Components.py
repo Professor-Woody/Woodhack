@@ -104,20 +104,6 @@ class Stats(Component):
     def baseMoveSpeed(self, value):
         self._baseMoveSpeed = max(2, value)        
 
-    def on_recalculate_stats(self, event):
-        print ("recalculating stats")
-
-
-        self.entity[Light].radius = self.entity[Light].baseRadius
-        print (self.entity[Body].slots)
-        for key in self.entity[Body].slots.keys():
-            slot = self.entity[Body].slots[key]
-            print (key, slot)
-            if slot and slot.has(Light) and slot[Light].radius > self.entity[Light].radius:
-                self.entity[Light].radius = slot[Light].radius
-                print (f"new radius: {self.entity[Light].radius}")
-
-
 
 class Body(Component):
     def __init__(self):

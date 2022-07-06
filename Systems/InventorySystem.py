@@ -2,6 +2,7 @@ from lib2to3.pytree import Base
 from Actions.UIActions import SwapEquippedAction
 from Systems.BaseSystem import BaseSystem
 from Actions.InventoryActions import PickupItemAction
+from Actions.EffectsActions import RecalculateStatsAction
 from Components.Components import Body, Position, Inventory
 
 
@@ -42,5 +43,6 @@ class InventorySystem(BaseSystem):
         entity[Body].slots[slot] = item
         print (entity[Body].slots[slot])
         entity[Inventory].contents.remove(item)
-        entity.fire_event("recalculate_stats")
+        # entity.fire_event("recalculate_stats")
+        self.systemsManager.post(RecalculateStatsAction(entity))
     

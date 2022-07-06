@@ -1,3 +1,5 @@
+from Systems.BaseSystem import BaseSystem
+from Actions.EffectsActions import RecalculateStatsAction
 from Actions.MoveActions import MovementAction
 from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SelectionUISwapEquippedAction, SwapEquippedAction, UpdateUIInputAction
 from Systems.InventorySystem import InventorySystem
@@ -7,9 +9,9 @@ from Systems.MoveSystem import MoveSystem
 from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem, UISystem
-
+from Systems.EffectsSystem import EffectsSystem
 from Actions.BaseActions import MoveAction, UpdateLightingAction
-from Actions.UseActions import UseAction
+from Actions.UseActions import UseAction, MeleeAction
 from Actions.TargetActions import GetTargetAction
 from Actions.InventoryActions import PickupItemAction
 
@@ -17,8 +19,9 @@ moveActions = [MoveAction, MovementAction]
 updateActions = [UpdateLightingAction]
 targetActions = [GetTargetAction]
 uiActions = [OpenSelectionUIAction, SelectionUISwapEquippedAction, UpdateUIInputAction, CloseSelectionUIAction]
-useActions = [UseAction]
+useActions = [UseAction, MeleeAction]
 inventoryActions = [PickupItemAction, SwapEquippedAction]
+effectsActions = [RecalculateStatsAction]
 
 class SystemsManager:
     def __init__(self, level):
@@ -32,9 +35,12 @@ class SystemsManager:
         self.useSystem = UseSystem(self)
         self.uiSystem = UISystem(self)
         self.inventorySystem = InventorySystem(self)
+        self.effectsSystem = EffectsSystem(self)
+        self.deathSystem = BaseSystem(self, 'DeathSubSystems')
 
     def post(self, action):
-        print (action)
+        if type(action) is not UpdateUIInputAction:
+            print (action)
         if type(action) == list:
             for a in action:
                 self.post(a)
@@ -43,14 +49,18 @@ class SystemsManager:
             self.moveSystem.post(action)
         elif type(action) in targetActions:
             self.targetSystem.post(action)
-        elif type(action) in useActions:
+        elif type(action) in self.useSystem.actions.keys():
             self.useSystem.post(action)
         elif type(action) in uiActions:
             self.uiSystem.post(action)
         elif type(action) in inventoryActions:
             self.inventorySystem.post(action)
-        elif type(action in updateActions):
+        elif type(action) in updateActions:
             self.updateSystem.post(action)
+        elif type(action) in self.effectsSystem.actions.keys():
+            self.effectsSystem.post(action)
+        elif type(action) in self.deathSystem.actions.keys():
+            self.deathSystem.post(action)
 
     def runSystems(self):
         # do the base updates for anything that needs updating
@@ -65,6 +75,12 @@ class SystemsManager:
         self.targetSystem.run()
         self.uiSystem.run()
         self.useSystem.run()
+        self.effectsSystem.run()
+
+        # kill things last
+        self.deathSystem.run()
 
         # and draw
         self.renderSystem.run()
+
+

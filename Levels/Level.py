@@ -34,3 +34,4 @@ class GameLevel(BaseLevel):
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
 
+        self.map.update()

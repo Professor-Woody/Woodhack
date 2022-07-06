@@ -103,9 +103,21 @@
         "type": "shortsword",
         "inherits": "ITEM",
         "components": {
-            "UseMelee": {},
+            "Render": {
+                "entityName": "shortsword",
+                "char": "/",
+                "fg": [200, 200, 200]
+            },
+            "UseMelee": {
+                "attack": 0,
+                "diceType": 6,
+                "diceAmount": 1,
+                "bonusDamage": 0,
+                "speed": 40
+            },
             "IsMelee": {},
             "Initiative": {"speed": 0}
+
         }
     }
 ]
