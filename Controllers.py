@@ -131,5 +131,6 @@ class JoystickController(BaseController):
             return True
         return False
         
-controllers = [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]
+controllers = []
 controllers.append(KeyboardController())
+controllers += [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]
