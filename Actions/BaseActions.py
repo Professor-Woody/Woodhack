@@ -17,21 +17,3 @@ class PrintAction(Action):
     def perform(self):
         print (self.msg)
         
-class EntityAction(Action):
-    def __init__(self, entity):
-        super().__init__()
-        self.entity = entity
-
-class TargetAction(EntityAction):
-    pass
-
-class MoveAction(EntityAction):
-    pass
-
-class EventAction(Action):
-    def __init__(self, app):
-        super().__init__()
-        self.app = app
-
-class UpdateLightingAction(Action):
-    pass

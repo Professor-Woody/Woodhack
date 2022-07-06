@@ -42,7 +42,7 @@ class App:
                     action.perform()
             # eventually loop this through each level too when we have
             # multiple levels
-            self.level.runSystems()
+            self.level.update()
 
             self.screen.flip()
 

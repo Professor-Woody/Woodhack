@@ -1,6 +1,6 @@
+from Components.Components import Initiative, Position, Render
 from EntityManager import EntityManager
 from Levels.LevelCreator import LevelCreator
-from Systems.SystemsManager import SystemsManager
 
 class BaseLevel:
     def __init__(self, app, width, height):
@@ -12,12 +12,21 @@ class BaseLevel:
 
         self.world = self.app.ecs.create_world()
         self.entityManager = EntityManager(self)
-        self.systemsManager = SystemsManager(self)
         self.map = None
 
+    def update(self):
+        for entity in self.world.create_query(all_of=[Initiative]).result:
+            entity.fire_event('tick')
 
-    def runSystems(self):
-        self.systemsManager.runSystems()
+        for entity in self.world.entities:
+            entity.fire_event('update')
+
+        self.map.update()
+
+        self.map.draw(self.app.screen)
+
+        for entity in self.world.create_query(all_of=[Render, Position]).result:
+            entity.fire_event('render', {'level': self})
 
 
 class GameLevel(BaseLevel):
@@ -28,10 +37,11 @@ class GameLevel(BaseLevel):
 
         self.entityManager.loadEntities("objects.json")
         self.entityManager.spawn("PLAYER", self.map.start[0], self.map.start[1])
-        self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
-        self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
-        self.entityManager.spawn("shortsword", self.map.start[0], self.map.start[1])
+        # self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
+        # self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
+        # self.entityManager.spawn("shortsword", self.map.start[0], self.map.start[1])
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)
 
         self.map.update()
+

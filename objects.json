@@ -1,17 +1,5 @@
 [
     {
-        "type": "ITEM",
-        "components": {
-            "Render": {
-                "entityName": "SomeItem",
-                "char": ";",
-                "fg": [200, 200, 200],
-                "needsVisibility": true
-            },
-            "IsItem": {}
-        }
-    },
-    {
         "type": "ACTOR",
         "components": {
             "Render": {
@@ -22,15 +10,7 @@
             },
             "Collision": {},
             "BlocksMovement": {},
-            "Initiative": {"speed": 0},
-            "Body": {},
-            "Stats": {
-                "hp": 10,
-                "moveSpeed": 12,
-                "defence": 0,
-                "attack": 0,
-                "bonusDamage": 0
-            }      
+            "Initiative": {"speed": 0}  
         }
     },
 
@@ -55,69 +35,7 @@
             "Light": {
                 "radius": 3
             },
-            "IsPlayer": {},
-            "Stats": {
-                "hp": 10,
-                "moveSpeed": 6,
-                "defence": 0,
-                "attack": 0,
-                "bonusDamage": 0
-            },
-            "Target": {},
-            "Inventory": {}
-        }
-    },
-
-    {
-        "type": "orc",
-        "inherits": "NPC",
-        "components": {
-            "Light": {
-                "radius": 2
-            },
-            "Render": {
-                "entityName": "orc",
-                "char": "o",
-                "fg": [50, 255, 50]
-            },
-            "Targeted": {}
-        }
-    },
-
-    {
-        "type": "torch",
-        "inherits": "ITEM",
-        "components": {
-            "Render": {
-                "entityName": "torch",
-                "char": "i",
-                "fg": [200, 255, 50]
-            },
-            "Light": {
-                "radius": 5
-            }
-        }
-    },
-
-    {
-        "type": "shortsword",
-        "inherits": "ITEM",
-        "components": {
-            "Render": {
-                "entityName": "shortsword",
-                "char": "/",
-                "fg": [200, 200, 200]
-            },
-            "UseMelee": {
-                "attack": 0,
-                "diceType": 6,
-                "diceAmount": 1,
-                "bonusDamage": 0,
-                "speed": 40
-            },
-            "IsMelee": {},
-            "Initiative": {"speed": 0}
-
+            "IsPlayer": {}
         }
     }
 ]

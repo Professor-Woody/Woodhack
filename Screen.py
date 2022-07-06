@@ -22,7 +22,6 @@ class Screen:
 
     def draw(self, entity):
         self.console.print(x=entity[Position].x, y=entity[Position].y, string=entity[Render].char, fg=entity[Render].fg, bg=entity[Render].bg)
-
     def drawRect(self, x, y, width, height, ch, background):
         self.console.draw_rect(x=x, y=y, width=width, height=height, ch=ch, bg=background)
     

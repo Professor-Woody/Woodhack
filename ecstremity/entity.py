@@ -35,6 +35,9 @@ class Entity:
         self.uid = uid
         self.components: OrderedDict[str, Component] = OrderedDict()
         self.is_destroyed: bool = False
+        self.componentLock: bool = False
+        self.addComponentList = []
+        self.removeComponentList = []
 
         self._cbits: int = 0
         self._qeligible: bool = True
@@ -94,6 +97,12 @@ class Entity:
         if "_entity" in properties.keys():
             del properties["_entity"]
         component = component(**properties)
+        if not self.componentLock:
+            self.attachComponent(component)
+        else:
+            self.addComponentList.append(component)
+
+    def attachComponent(self, component):
         attach_component(self, component)
 
         self._cbits = add_bit(self._cbits, component.cbit)
@@ -114,10 +123,20 @@ class Entity:
 
     def remove(self, component):
         """Remove a component from the entity."""
-        if isinstance(component, str):
-            remove_component(self, component)
+        if isinstance(component, str) and self.has(component):
+            if not self.componentLock:
+                self.removeComponent(component)
+            else:
+                self.removeComponentList.append(component)
         else:
-            remove_component(self, component.comp_id)
+            if self.has(component.comp_id):
+                if not self.componentLock:
+                    self.removeComponent(component.comp_id)
+                else:
+                    self.removeComponentList.append(component.comp_id)
+
+    def removeComponent(self, component):
+        remove_component(self, component)
 
     def destroy(self) -> None:
         """Destroy this entity and all attached components."""
@@ -149,15 +168,29 @@ class Entity:
             data = data.get_record()
         if not data:
             data = {}
-            
+        data['failed'] = False
+        
         if tryFirst:
             name = 'try_' + name
         
         evt = EntityEvent(name, data)
+        self.componentLock = True
         for i in range(1+int(tryFirst)):
             for component in self.components.values():
                 component._on_event(evt)
                 if evt.prevented:
-                    return evt
-            evt.name = name        
+                    evt.data.failed = True
+                    break
+            if evt.data.failed:
+                break
+            evt.name = name.strip("try_")
+        
+        self.componentLock = False
+        for component in self.addComponentList:
+            self.attachComponent(component)
+        self.addComponentList.clear()
+        for component in self.removeComponentList:
+            self.removeComponent(component)
+        self.removeComponentList.clear()
+
         return evt

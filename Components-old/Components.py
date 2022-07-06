@@ -1,8 +1,7 @@
-from dataclasses import dataclass
-from Components.FlagComponents import IsReady
 from ecstremity import Component
 import Colours as colour
 from typing import Tuple
+from dataclasses import dataclass
 import tcod
 
 @dataclass
@@ -13,15 +12,6 @@ class Render(Component):
     bg: Tuple = None
     needsVisibility: bool = True
 
-    def on_render(self, action):
-        if self.entity.has(Position):
-            if self.needsVisibility:
-                if action.data.level.map.checkIsVisible(self.entity):
-                    action.data.level.app.screen.draw(self.entity)
-            else:
-                action.data.level.app.screen.draw(self.entity)
-
-
 
 @dataclass
 class Position(Component):
@@ -30,10 +20,6 @@ class Position(Component):
     width: int = 1
     height: int = 1
     level: any = None
-
-    def on_move(self, action):
-        self.x += action.dx
-        self.y += action.dy
 
     @staticmethod    
     def getRange(entity, other):
@@ -49,8 +35,7 @@ class Position(Component):
         for x, y in path:
             if not entity[Position].level.map.checkIsPassable(x,y) or entity[Position].level.map.checkIsBlocked(x, y):
                 return False
-        return True                
-
+        return True
 
 class Collision(Component):
     @staticmethod
@@ -72,11 +57,11 @@ class Collision(Component):
         )
 
 
+
 class Light(Component):
     def __init__(self, radius = 3):
         self.radius = radius
         self.baseRadius = radius
-
 
 @dataclass
 class Initiative(Component):
@@ -90,17 +75,52 @@ class Initiative(Component):
     def speed(self, value):
         self._speed = max(0, value)
 
-    def on_add_speed(self, action):
-        self.speed += action.speed
-        self.entity.remove(IsReady)
+@dataclass
+class Stats(Component):
+    def __init__(self, hp, moveSpeed, defence, attack, bonusDamage):
+        self.hp = hp
+        self.maxHp = hp
+        self.baseMaxHp = hp
+        self.moveSpeed = moveSpeed
+        self.baseMoveSpeed = moveSpeed
+        self.defence = defence
+        self.baseDefence = defence
+        self.attack = attack
+        self.baseAttack = attack
+        self.bonusDamage = bonusDamage
+        self.baseBonusDamage = bonusDamage
 
-    def on_tick(self, action):
-        self.speed -= 1
-        if not self.speed and not self.entity.has(IsReady):
-            self.entity.add(IsReady)
+    @property
+    def moveSpeed(self):
+        return self._moveSpeed
+    @moveSpeed.setter
+    def moveSpeed(self, value):
+        self._moveSpeed = max(2, value)
 
+    @property   
+    def baseMoveSpeed(self):
+        return self._baseMoveSpeed
+    @baseMoveSpeed.setter
+    def baseMoveSpeed(self, value):
+        self._baseMoveSpeed = max(2, value)        
+
+
+class Body(Component):
+    def __init__(self):
+        self.slots = {
+            'head': None,
+            'body': None,
+            'legs': None,
+            'feet': None,
+            'lefthand': None,
+            'righthand': None
+        }
 
 class PlayerInput(Component):
     def __init__(self, controller = None):
         self.controller = controller
         self.controlFocus = []
+
+class Inventory(Component):
+    def __init__(self, contents = []):
+        self.contents = contents
