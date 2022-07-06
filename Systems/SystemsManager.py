@@ -1,3 +1,4 @@
+from Systems.BaseSystem import BaseSystem
 from Actions.EffectsActions import RecalculateStatsAction
 from Actions.MoveActions import MovementAction
 from Actions.UIActions import CloseSelectionUIAction, OpenSelectionUIAction, SelectionUISwapEquippedAction, SwapEquippedAction, UpdateUIInputAction
@@ -9,7 +10,6 @@ from Systems.UseSystem import UseSystem
 from Systems.DecideActionSystem import DecideActionSystem
 from Systems.UISystem import TargetSystem, UISystem
 from Systems.EffectsSystem import EffectsSystem
-
 from Actions.BaseActions import MoveAction, UpdateLightingAction
 from Actions.UseActions import UseAction, MeleeAction
 from Actions.TargetActions import GetTargetAction
@@ -36,6 +36,7 @@ class SystemsManager:
         self.uiSystem = UISystem(self)
         self.inventorySystem = InventorySystem(self)
         self.effectsSystem = EffectsSystem(self)
+        self.deathSystem = BaseSystem(self, 'DeathSubSystems')
 
     def post(self, action):
         if type(action) is not UpdateUIInputAction:
@@ -48,7 +49,7 @@ class SystemsManager:
             self.moveSystem.post(action)
         elif type(action) in targetActions:
             self.targetSystem.post(action)
-        elif type(action) in useActions:
+        elif type(action) in self.useSystem.actions.keys():
             self.useSystem.post(action)
         elif type(action) in uiActions:
             self.uiSystem.post(action)
@@ -56,9 +57,10 @@ class SystemsManager:
             self.inventorySystem.post(action)
         elif type(action) in updateActions:
             self.updateSystem.post(action)
-        elif type(action) in effectsActions:
-            print (f"posting {action} to effectsSystem")
+        elif type(action) in self.effectsSystem.actions.keys():
             self.effectsSystem.post(action)
+        elif type(action) in self.deathSystem.actions.keys():
+            self.deathSystem.post(action)
 
     def runSystems(self):
         # do the base updates for anything that needs updating
@@ -75,5 +77,10 @@ class SystemsManager:
         self.useSystem.run()
         self.effectsSystem.run()
 
+        # kill things last
+        self.deathSystem.run()
+
         # and draw
         self.renderSystem.run()
+
+

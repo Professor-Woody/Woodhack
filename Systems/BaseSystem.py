@@ -13,7 +13,8 @@ class BaseSystem:
     
     def registerSubSystems(self, path):
         for module in os.listdir(os.path.join(os.getcwd(), 'Systems/' + path)):
-            if module == '__init__.py' or module[-3:] != '.py':
+            print (f"Registering {module}")
+            if module == '__init__.py' or module =='__pycache__' or module[-3:] != '.py':
                 continue
             importlib.import_module('Systems.' + path + '.' + module[:-3]).SubSystem(self)
 
@@ -27,6 +28,7 @@ class BaseSystem:
     def run(self):
         for action in self.actionQueue:
             for subSystem in self.actions[type(action)]:
+                print (f"running {subSystem}")
                 subSystem.run(action)
         self.actionQueue.clear()
 

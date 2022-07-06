@@ -1,4 +1,4 @@
-from Actions.UseActions import MeleeAction
+from Actions.UseActions import UseAction, MeleeAction, DamageAction
 from Components.Components import Initiative, Position, Stats
 from Components.FlagComponents import IsReady
 from Components.ItemComponents import UseMelee
@@ -16,7 +16,7 @@ class SubSystem:
         target = entity[Target].target
         
         if target:
-            print ("Performing melee attack")
+            print ("===Performing melee attack===")
 
             if Position.getRange(entity, target) <= 1:
                 attackRoll = randint(-9, 10) + entity[Stats].attack + item[UseMelee].attack
@@ -28,7 +28,7 @@ class SubSystem:
                     print (f"{entity['Render'].entityName} rolled {damageRoll} damage")
                 entity[Initiative].speed += item[UseMelee].speed
                 item[Initiative].speed += item[UseMelee].speed + 1
-                print (f"=== {item[UseMelee].speed} ===")
+                self.system.systemsManager.post(UseAction(target, item))
                 if entity.has(IsReady):
                     entity.remove(IsReady)
                 if item.has(IsReady):
