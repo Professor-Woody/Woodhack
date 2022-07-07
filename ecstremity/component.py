@@ -55,6 +55,7 @@ class Component(metaclass=ComponentMeta):
     """
 
     allow_multiple: bool = False
+    multiple: int = 1
     _cbit: int = 0
     _client: Optional[Any] = None
     _entity: Optional[Entity] = None

@@ -14,18 +14,22 @@ class BaseLevel:
         self.entityManager = EntityManager(self)
         self.map = None
 
+        self.tickQuery = self.world.create_query(all_of=[Initiative], store_query=True)
+        self.renderQuery = self.world.create_query(all_of=[Render, Position], store_query=True)
+
     def update(self):
-        for entity in self.world.create_query(all_of=[Initiative]).result:
+        for entity in self.tickQuery.result:
             entity.fire_event('tick')
 
         for entity in self.world.entities:
             entity.fire_event('update')
 
+        self.entityManager.update()
         self.map.update()
 
         self.map.draw(self.app.screen)
 
-        for entity in self.world.create_query(all_of=[Render, Position]).result:
+        for entity in self.renderQuery.result:
             entity.fire_event('render', {'level': self})
 
 

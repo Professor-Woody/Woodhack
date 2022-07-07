@@ -18,7 +18,8 @@
         "type": "NPC",
         "inherits": "ACTOR",
         "components": {
-            "IsNPC": {}
+            "IsNPC": {},
+            "Targeted": {}
         }
     },
 
@@ -35,7 +36,14 @@
             "Light": {
                 "radius": 3
             },
-            "IsPlayer": {}
+            "IsPlayer": {},
+            "Target": {}
         }
+    },
+
+    {
+        "type": "orc",
+        "inherits": "NPC",
+        "components": {}
     }
 ]

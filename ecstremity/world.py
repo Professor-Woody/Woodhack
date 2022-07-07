@@ -86,6 +86,7 @@ class World:
             any_of: Optional[Deque[str]] = None,
             all_of: Optional[Deque[str]] = None,
             none_of: Optional[Deque[str]] = None,
+            store_query: bool = False
         ) -> Query:
 
         # ANY OF
@@ -116,7 +117,8 @@ class World:
             _none_of = []
 
         query = Query(self, _any_of, _all_of, _none_of)  # type: ignore
-        # self._queries.append(query)
+        if store_query:
+            self._queries.append(query)
         return query
 
     def candidate(self, entity: Entity) -> None:

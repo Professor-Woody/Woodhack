@@ -1,4 +1,5 @@
-from Components.Components import PlayerInput, Position
+from Components.Components import Position
+from Components.PlayerInputComponents import PlayerInput
 from Controllers import controllers
 import json
 
@@ -8,7 +9,10 @@ class EntityManager:
         self.level = level
         self.deferred_entities = []
 
+    def update(self):
+        self.spawnQueued()
 
+        
     def loadEntities(self, filename):
         with open(filename, 'r') as objectFile:
             objects = json.loads(objectFile.read())
@@ -20,23 +24,31 @@ class EntityManager:
     
 
     def spawn(self, entityType, x = 0, y = 0, inventory = None):
-        entity = self.level.world.create_entity()
-        self.addComponents(entity, entityType)
+        self.deferred_entities.append([entityType, x, y, inventory])
 
-        if not inventory:
-            entity.add(Position, {
-                'level': self.level,
-                'x': x,
-                'y': y
-            })
-        else:
-            inventory.inventory.add(entity)
+    def spawnQueued(self):
+        for e in self.deferred_entities:
+            entityType = e[0]
+            x = e[1]
+            y = e[2]
+            inventory = e[3]
+            print (f"spawning {entityType}")
+            entity = self.level.world.create_entity()
+            self.addComponents(entity, entityType)
 
-        if entityType == "PLAYER":
-            entity.add(PlayerInput, {'controller': controllers[0]})
+            if not inventory:
+                entity.add(Position, {
+                    'level': self.level,
+                    'x': x,
+                    'y': y
+                })
+            else:
+                inventory.inventory.add(entity)
 
-
-
+            if entityType == "PLAYER":
+                entity.add(PlayerInput, {'controller': controllers[0]})
+            print ("spawned")
+        self.deferred_entities.clear()
 
     def addComponents(self, entity, entityType):
         entityDef = self.level.app.entityDefs[entityType]

@@ -20,3 +20,6 @@ class BlocksMovement(Component):
 
 class IsUI(Component):
     pass
+
+class NeedsUpdate(Component):
+    allow_multiple: bool = True

@@ -14,14 +14,20 @@ if TYPE_CHECKING:
 
 
 def attach_component(entity: Entity, component: Component) -> None:
-    entity.components[component.comp_id] = component
+    if entity.has(component) and component.allow_multiple:
+        entity[component].multiple += 1
+    else:
+        entity.components[component.comp_id] = component
 
 
 def remove_component(entity: Entity, component_name: str) -> None:
     component = entity.components[component_name.upper()]
-    del entity.components[component_name.upper()]
-    entity.cbits = subtract_bit(entity.cbits, component.cbit)
-    entity.candidacy()
+    if component.allow_multiple:
+        component.multiple -= 1
+    if (component.allow_multiple and component.multiple <= 0) or not component.allow_multiple:
+        del entity.components[component_name.upper()]
+        entity.cbits = subtract_bit(entity.cbits, component.cbit)
+        entity.candidacy()
 
 
 def serialize_component(component: Component) -> Dict[str, Any]:
@@ -35,7 +41,7 @@ class Entity:
         self.uid = uid
         self.components: OrderedDict[str, Component] = OrderedDict()
         self.is_destroyed: bool = False
-        self.componentLock: bool = False
+        self._componentLock: int = 0
         self.addComponentList = []
         self.removeComponentList = []
 
@@ -73,6 +79,14 @@ class Entity:
     def __repr__(self) -> str:
         component_list = ", ".join(self.components.keys())
         return f"Entity [{self.uid}] with [{component_list}]"
+
+    @property
+    def componentLock(self) -> int:
+        return self._componentLock
+
+    @componentLock.setter
+    def componentLock(self, value: int) -> None:
+        self._componentLock = max(0, value)
 
     @property
     def cbits(self) -> int:
@@ -123,17 +137,18 @@ class Entity:
 
     def remove(self, component):
         """Remove a component from the entity."""
-        if isinstance(component, str) and self.has(component):
-            if not self.componentLock:
-                self.removeComponent(component)
-            else:
-                self.removeComponentList.append(component)
+        compName = ""
+        if isinstance(component, str):
+            compName = component
         else:
-            if self.has(component.comp_id):
-                if not self.componentLock:
-                    self.removeComponent(component.comp_id)
-                else:
-                    self.removeComponentList.append(component.comp_id)
+            compName = component.comp_id
+        
+        if self.has(compName):
+            if not self.componentLock:
+                self.removeComponent(compName)
+            else:
+                self.removeComponentList.append(compName)
+    
 
     def removeComponent(self, component):
         remove_component(self, component)
@@ -174,7 +189,7 @@ class Entity:
             name = 'try_' + name
         
         evt = EntityEvent(name, data)
-        self.componentLock = True
+        self.componentLock += 1
         for i in range(1+int(tryFirst)):
             for component in self.components.values():
                 component._on_event(evt)
@@ -185,12 +200,14 @@ class Entity:
                 break
             evt.name = name.strip("try_")
         
-        self.componentLock = False
-        for component in self.addComponentList:
-            self.attachComponent(component)
-        self.addComponentList.clear()
-        for component in self.removeComponentList:
-            self.removeComponent(component)
-        self.removeComponentList.clear()
+        self.componentLock -= 1
+
+        if not self.componentLock:
+            for component in self.addComponentList:
+                self.attachComponent(component)
+            self.addComponentList.clear()
+            for component in self.removeComponentList:
+                self.removeComponent(component)
+            self.removeComponentList.clear()
 
         return evt

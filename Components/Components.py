@@ -5,13 +5,20 @@ import Colours as colour
 from typing import Tuple
 import tcod
 
-@dataclass
+
 class Render(Component):
-    entityName: str = "Bob"
-    char: str = "@"
-    fg: Tuple = colour.WHITE
-    bg: Tuple = None
-    needsVisibility: bool = True
+    def __init__(self, 
+                entityName: str = "Bob", 
+                char: str = "@", 
+                fg: Tuple = colour.WHITE,
+                bg: Tuple = None,
+                needsVisibility: bool = True):
+        self.entityName = entityName
+        self.char = char
+        self.fg = fg
+        self.bg = bg
+        self.baseBG = bg
+        self.needsVisibility = needsVisibility
 
     def on_render(self, action):
         if self.entity.has(Position):
@@ -32,8 +39,30 @@ class Position(Component):
     level: any = None
 
     def on_move(self, action):
-        self.x += action.dx
-        self.y += action.dy
+        dx = action.data.dx
+        dy = action.data.dy
+        newLocationX = self.x + dx
+        newLocationY = self.y + dy
+
+        if self.checkCanMove(newLocationX, newLocationY):
+            pass
+        else:
+            if not self.checkCanMove(newLocationX, self.y):
+                dx = 0
+            if not self.checkCanMove(self.x, newLocationY):
+                dy = 0
+        if dx or dy:
+            self.x += dx
+            self.y += dy
+
+
+    def checkCanMove(self, dx, dy):
+        if not self.level.map.checkInBounds(dx, dy) or \
+            not self.level.map.checkIsPassable(dx, dy) or \
+            self.level.map.checkIsBlocked(dx, dy):
+            return False
+        return True
+
 
     @staticmethod    
     def getRange(entity, other):
@@ -91,7 +120,7 @@ class Initiative(Component):
         self._speed = max(0, value)
 
     def on_add_speed(self, action):
-        self.speed += action.speed
+        self.speed += action.data.speed
         self.entity.remove(IsReady)
 
     def on_tick(self, action):
@@ -99,8 +128,3 @@ class Initiative(Component):
         if not self.speed and not self.entity.has(IsReady):
             self.entity.add(IsReady)
 
-
-class PlayerInput(Component):
-    def __init__(self, controller = None):
-        self.controller = controller
-        self.controlFocus = []
