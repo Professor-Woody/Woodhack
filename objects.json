@@ -1,5 +1,17 @@
 [
     {
+        "type": "ITEM",
+        "components": {
+            "IsItem": {},
+            "Render": {
+                "entityName": "SomeItem",
+                "char": "%",
+                "needsVisibility": true
+            },
+            "Collision": {}
+        }
+    },
+    {
         "type": "ACTOR",
         "components": {
             "Render": {
@@ -30,14 +42,14 @@
             "Render": {
                 "entityName": "Woody",
                 "char": "@",
-                "fg": [255, 255, 255],
                 "needsVisibility": false
             },
             "Light": {
                 "radius": 3
             },
             "IsPlayer": {},
-            "Target": {}
+            "Target": {},
+            "Inventory": {}
         }
     },
 
@@ -45,5 +57,14 @@
         "type": "orc",
         "inherits": "NPC",
         "components": {}
+    },
+    {
+        "type": "torch",
+        "inherits": "ITEM",
+        "components": {
+            "Light": {
+                "radius": 5
+            }
+        }
     }
 ]

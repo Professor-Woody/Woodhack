@@ -39,9 +39,40 @@ class World:
         self._queries: List[Query] = []
         self._entities: OrderedDict[str, Entity] = OrderedDict()
 
+        self._entityLock: int = 0
+        self.addable_deferred_entities = []
+        self.removeable_deferred_entities = []
+
     @property
-    def entities(self) -> ValuesView[Entity]:
-        return self._entities.values()
+    def entities(self):
+        self.entityLock += 1
+        for entity in self._entities.values():
+            yield entity
+        self.entityLock -= 1
+        self.add_deferred_entities()
+        self.remove_deferred_entities()
+
+    @property
+    def entityLock(self) -> int:
+        return self._entityLock
+
+    @entityLock.setter
+    def entityLock(self, value) -> None:
+        self._entityLock = max(0, value)
+
+
+    def add_deferred_entities(self) -> None:
+        if not self.entityLock:
+            for entity in self.addable_deferred_entities:
+                self._entities[entity.uid] = entity
+
+    def remove_deferred_entities(self) -> None:
+        if not self.entityLock:
+            for entity in self.removeable_deferred_entities:
+                try:
+                    self._entities.pop(entity.uid)
+                except KeyError:
+                    pass
 
     @staticmethod
     def create_uid() -> str:
@@ -55,7 +86,10 @@ class World:
             uid = self.create_uid()
         assert uid is not None
         entity = Entity(self, uid)
-        self._entities[uid] = entity
+        if not self.entityLock:
+            self._entities[uid] = entity
+        else:
+            self.addable_deferred_entities.append(entity)
         return entity
 
     def destroy_entity(self, uid: str) -> None:
@@ -127,7 +161,10 @@ class World:
 
     def destroyed(self, uid: str) -> None:
         try:
-            self._entities.pop(uid)
+            if not self.entityLock:
+                self._entities.pop(uid)
+            else:
+                self.removable_deferred_entities.append(self._entities[uid])
         except KeyError:
             pass
 

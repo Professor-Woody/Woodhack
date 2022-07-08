@@ -4,13 +4,13 @@ from ecstremity import Component
 import Colours as colour
 from typing import Tuple
 import tcod
-
+from random import choice
 
 class Render(Component):
     def __init__(self, 
                 entityName: str = "Bob", 
                 char: str = "@", 
-                fg: Tuple = colour.WHITE,
+                fg: Tuple = choice(colour.COLOURS),
                 bg: Tuple = None,
                 needsVisibility: bool = True):
         self.entityName = entityName
