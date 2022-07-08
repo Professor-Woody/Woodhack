@@ -128,3 +128,8 @@ class Initiative(Component):
         if not self.speed and not self.entity.has(IsReady):
             self.entity.add(IsReady)
 
+class Stats(Component):
+    hp: int = 10
+    maxHp: int = 10
+    moveSpeed: int = 6
+    baseMoveSpeed: int = 6

@@ -14,8 +14,11 @@ class BaseLevel:
         self.entityManager = EntityManager(self)
         self.map = None
 
-        self.tickQuery = self.world.create_query(all_of=[Initiative], store_query=True)
-        self.renderQuery = self.world.create_query(all_of=[Render, Position], store_query=True)
+        self.tickQuery = self.world.create_query(all_of=['Initiative'], store_query=True)
+        self.renderItemsQuery = self.world.create_query(all_of=['IsItem', 'Render', 'Position'], store_query=True)
+        self.renderActorsQuery = self.world.create_query(all_of=['Render', 'Position'], any_of=['IsNPC', 'IsPlayer'], none_of=['IsItem'], store_query=True)
+        self.renderUIQuery = self.world.create_query(all_of=['IsUI', 'Position'], store_query=True)
+
 
     def update(self):
         for entity in self.tickQuery.result:
@@ -29,9 +32,12 @@ class BaseLevel:
 
         self.map.draw(self.app.screen)
 
-        for entity in self.renderQuery.result:
+        for entity in self.renderItemsQuery.result:
             entity.fire_event('render', {'level': self})
-
+        for entity in self.renderActorsQuery.result:
+            entity.fire_event('render', {'level': self})
+        for entity in self.renderUIQuery.result:
+            entity.fire_event('render', {'level': self})
 
 class GameLevel(BaseLevel):
     def __init__(self, app, width, height):
