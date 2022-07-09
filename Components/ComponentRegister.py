@@ -7,7 +7,7 @@ import Components.TargetComponents
 import Components.UIComponents
 import Components.InventoryComponents
 from ecstremity import Entity
-# import Components.ItemComponents
+import Components.ItemComponents
 
 components = []
 components += [obj for name,obj in inspect.getmembers(Components.Components) if inspect.isclass(obj) and name != 'Component' and issubclass(obj, Component)]
@@ -15,7 +15,7 @@ components += [obj for name,obj in inspect.getmembers(Components.FlagComponents)
 components += [obj for name,obj in inspect.getmembers(Components.TargetComponents) if inspect.isclass(obj) and name != 'Component' and issubclass(obj, Component)]
 components += [obj for name,obj in inspect.getmembers(Components.UIComponents) if inspect.isclass(obj) and name != 'Component' and issubclass(obj, Component)]
 components += [obj for name,obj in inspect.getmembers(Components.InventoryComponents) if inspect.isclass(obj) and name != 'Component' and issubclass(obj, Component)]
-# components += [obj for name,obj in inspect.getmembers(Components.ItemComponents) if inspect.isclass(obj) and name != 'Component']
+components += [obj for name,obj in inspect.getmembers(Components.ItemComponents) if inspect.isclass(obj) and name != 'Component' and issubclass(obj, Component)]
 def registerComponents(ecs: Engine):
     for component in components:
         ecs.register_component(component)

@@ -51,14 +51,22 @@
             "IsPlayer": {},
             "Target": {},
             "Inventory": {},
-            "Body": {}
+            "Body": {},
+            "Stats": {"moveSpeed": 12}
         }
     },
 
     {
         "type": "orc",
         "inherits": "NPC",
-        "components": {}
+        "components": {
+            "Render": {
+                "entityName": "orc",
+                "char": "o",
+                "fg": [100, 255, 100],
+                "needsVisibility": true
+            }
+        }
     },
     {
         "type": "torch",
@@ -88,7 +96,9 @@
                 "entityName": "shortsword",
                 "char": "/",
                 "fg": [150,150,150]
-            }
+            },
+            "Initiative": {"speed": 0},
+            "Melee": {}
         }
     }
 ]

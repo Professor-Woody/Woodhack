@@ -33,3 +33,4 @@ class NeedsUpdate(Component):
 @dataclass
 class IsEquipped(Component):
     slot: str
+    parentEntity = None

@@ -51,7 +51,7 @@ class GameLevel(BaseLevel):
         self.entityManager.spawn("PLAYER", self.map.start[0], self.map.start[1])
 
         # self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
-        # self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
+        self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
         # self.entityManager.spawn("shortsword", self.map.start[0], self.map.start[1])
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]+2)
         # self.entityManager.spawn("orc", self.map.start[0]+1, self.map.start[1]-2)

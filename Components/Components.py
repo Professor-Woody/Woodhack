@@ -121,7 +121,8 @@ class Initiative(Component):
 
     def on_add_speed(self, action):
         self.speed += action.data.speed
-        self.entity.remove(IsReady)
+        if self.entity.has(IsReady):
+            self.entity.remove(IsReady)
 
     def on_tick(self, action):
         self.speed -= 1
@@ -134,3 +135,21 @@ class Stats(Component):
     maxHp: int = 10
     moveSpeed: int = 6
     baseMoveSpeed: int = 6
+    attack: int = 0
+    defence: int = 0
+    bonusDamage: int = 0
+
+
+    def on_recalculate_stats(self, action):
+        print ("recalculating stats")
+
+        # recalculating light
+        self.entity[Light].radius = self.entity[Light].baseRadius
+        
+        for key in self.entity['Body'].slots.keys():
+            slot = self.entity['Body'].slots[key]
+            print (key, slot)
+            if slot and slot.has(Light) and slot[Light].radius > self.entity[Light].radius:
+                self.entity[Light].radius = slot[Light].radius
+                print (f"new light radius: {self.entity[Light].radius}")
+                

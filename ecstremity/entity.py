@@ -151,7 +151,10 @@ class Entity:
     
 
     def removeComponent(self, component):
-        remove_component(self, component)
+        if self.has(component):
+            remove_component(self, component)
+        else:
+            print (f"Remove Component Miss: {component}")
 
     def destroy(self) -> None:
         """Destroy this entity and all attached components."""

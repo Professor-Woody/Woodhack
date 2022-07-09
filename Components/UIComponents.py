@@ -37,12 +37,10 @@ class SelectionUI(Component):
 
         for command in self.commands.keys():
             if self.parentEntity[PlayerInput].controller.getPressedOnce(command):
-                if command == 'lefthand':
-                    print (self.commands[command])
                 self.commands[command]["target"].fire_event(
                     self.commands[command]["command"], 
-                    self.commands[command]["data"])
-                print (12)
+                    self.commands[command]["data"]
+                )
 
     def on_close_UI(self, action):
         print ("UI Closed")
@@ -146,7 +144,7 @@ class CharacterInfoUI(Component):
             righthand = body.slots['righthand'][Render].entityName
             rbg = body.slots['righthand'][Render].fg
             if body.slots['righthand'].has(Initiative):
-                if body.slots['righthand'].has(IsReady):
+                if not body.slots['righthand'].has(IsReady):
                     rbg = colour.RED
 
 

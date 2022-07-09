@@ -1,5 +1,7 @@
+from Components.ItemComponents import Melee
+from Components.TargetComponents import Target
 from ecstremity import Component
-from Components.FlagComponents import IsReady
+from Components.FlagComponents import IsMelee, IsReady
 from Components.Components import Position, Stats
 
 class PlayerInput(Component):
@@ -45,6 +47,28 @@ class PlayerInput(Component):
                 self.entity.fire_event('move', {'dx': dx, 'dy': dy})
                 self.entity.fire_event('add_speed', {'speed': self.entity[Stats].moveSpeed})
                 return
+
+# check melee
+            meleed = False
+            hands = ['lefthand', 'righthand']
+            for hand in hands:
+                item = self.entity['Body'].slots[hand] 
+                if item and item.has(Melee) and item.has(IsReady):
+                    if self.entity[Target].target and Position.getRange(self.entity, self.entity[Target].target) <= item[Melee].weaponRange:
+                        item.fire_event('melee', {'parentEntity': self.entity, 'target': self.entity[Target].target})
+                        meleed = True
+            if meleed:
+                return
+
+            # check use
+            for hand in hands:
+                if self.controller.getPressedOnce(hand):
+                    item = self.entity['Body'].slots[hand] 
+                    if item and item.has(IsReady):
+                        item.fire_event('use', {'parentEntity': self.entity})
+                        return
+
+
 
             if self.controller.getPressedOnce('cancel'):
                 self.entity[Position].level.entityManager.spawn('shortsword', self.entity[Position].x+1, self.entity[Position].y)
