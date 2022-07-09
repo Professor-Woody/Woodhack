@@ -22,7 +22,8 @@
             },
             "Collision": {},
             "BlocksMovement": {},
-            "Initiative": {"speed": 0}  
+            "Initiative": {"speed": 0},
+            "Stats": {}
         }
     },
 
@@ -73,6 +74,20 @@
                 "entityName": "torch",
                 "char": "i",
                 "fg": [200,200,50]
+            }
+        }
+    },
+    {
+        "type": "shortsword",
+        "inherits": "ITEM",
+        "components": {
+            "IsEquippable": {
+                "slots": ["lefthand", "righthand"]
+            },
+            "Render": {
+                "entityName": "shortsword",
+                "char": "/",
+                "fg": [150,150,150]
             }
         }
     }

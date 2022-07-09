@@ -1,6 +1,6 @@
 from ecstremity import Component
-from Components.FlagComponents import IsReady, NeedsUpdate
-from Components.Components import Position
+from Components.FlagComponents import IsReady
+from Components.Components import Position, Stats
 
 class PlayerInput(Component):
     def __init__(self, controller = None):
@@ -17,8 +17,8 @@ class PlayerInput(Component):
             target = "next"
         elif self.controller.getPressedOnce("previous"):
             target = "previous"
-        elif self.controller.getPressedOnce("nearestEnemy"):
-            target = "nearestEnemy"
+        # elif self.controller.getPressedOnce("nearestEnemy"):
+        #     target = "nearestEnemy"
         if target:
             print (f"attempting to target {target}")
             self.entity.fire_event('set_target', {'targetSelectionOrder': target, 'targetType': 'NPC'})
@@ -43,8 +43,10 @@ class PlayerInput(Component):
                 dx += 1
             if dx or dy:
                 self.entity.fire_event('move', {'dx': dx, 'dy': dy})
-                self.entity.fire_event('add_speed', {'speed': 6})
+                self.entity.fire_event('add_speed', {'speed': self.entity[Stats].moveSpeed})
                 return
 
             if self.controller.getPressedOnce('cancel'):
-                self.entity['Position'].level.entityManager.spawn('torch', self.entity['Position'].x+1, self.entity['Position'].y)
+                self.entity[Position].level.entityManager.spawn('shortsword', self.entity[Position].x+1, self.entity[Position].y)
+            if self.controller.getPressedOnce('nearestEnemy'):
+                self.entity[Position].level.entityManager.spawn('torch', self.entity[Position].x-1, self.entity[Position].y)

@@ -1,9 +1,8 @@
 from Components.FlagComponents import IsEquippable, IsEquipped, IsUI
 from Components.PlayerInputComponents import PlayerInput
-from Components.UIComponents import SelectionUI
+# from Components.UIComponents import SelectionUI
 from ecstremity import Component
-from Components.Components import Collision, Position, Render
-import Colours as colour
+from Components.Components import Collision, Position
 
 
 class Inventory(Component):
@@ -64,13 +63,13 @@ class Inventory(Component):
                 "data": {"UI": selectionUI}
             }
         }
-        selectionUI.add(SelectionUI, {'parentEntity': self.entity, 'selectionList': selectionList, 'commands': commands})
+        selectionUI.add('SelectionUI', {'parentEntity': self.entity, 'selectionList': selectionList, 'commands': commands})
         self.entity[PlayerInput].controlFocus.append(selectionUI)
 
     def on_swap_equipped_from_selection(self, action):
         print ("in on_swap")
         ui = action.data.UI
-        item = ui[SelectionUI].selectionList[ui[SelectionUI].selectionIndex]
+        item = ui['SelectionUI'].selectionList[ui['SelectionUI'].selectionIndex]
         slot = action.data.slot
         body = self.entity[Body]
         print (f"swapping {item} into {slot}")
@@ -106,7 +105,7 @@ class Inventory(Component):
     def on_drop_item_from_selection(self, action):
         print ("in on_drop")
         ui = action.data.UI
-        item = ui[SelectionUI].selectionList.pop(ui[SelectionUI].selectionIndex)
+        item = ui['SelectionUI'].selectionList.pop(ui['SelectionUI'].selectionIndex)
         position = self.entity[Position]
         print (f"dropping {item}")
 
@@ -122,7 +121,7 @@ class Inventory(Component):
     def on_use_item_from_selection(self, action):
         print ("in on_use")
         ui = action.data.UI
-        item = ui[SelectionUI].selectionList[ui[SelectionUI].selectionIndex]
+        item = ui['SelectionUI'].selectionList[ui['SelectionUI'].selectionIndex]
 
         print (f"using {item}")
         item.fire_event("use")

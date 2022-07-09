@@ -1,5 +1,7 @@
 from Components.Components import Position
+from Components.FlagComponents import IsUI
 from Components.PlayerInputComponents import PlayerInput
+from Components.UIComponents import CharacterInfoUI
 from Controllers import controllers
 import json
 
@@ -23,8 +25,8 @@ class EntityManager:
             self.level.app.entityDefs[obj['type']] = obj
     
 
-    def spawn(self, entityType, x = 0, y = 0, inventory = None):
-        self.deferred_entities.append([entityType, x, y, inventory])
+    def spawn(self, entityType, x = 0, y = 0, inventory = None, parentEntity = None):
+        self.deferred_entities.append([entityType, x, y, inventory, parentEntity])
 
     def spawnQueued(self):
         for e in self.deferred_entities:
@@ -47,8 +49,21 @@ class EntityManager:
 
             if entityType == "PLAYER":
                 entity.add(PlayerInput, {'controller': controllers[0]})
+                self.createUI(entity)
+
             print ("spawned")
         self.deferred_entities.clear()
+
+    def createUI(self, parentEntity):
+        entity = self.level.world.create_entity()
+        entity.add(IsUI)
+        entity.add(CharacterInfoUI, {'parentEntity': parentEntity})
+        entity.add(Position, {
+            'x': 0, 
+            'y': self.level.height - 8, 
+            'width': 22,
+            'height': 8,
+            'level': self.level})
 
     def addComponents(self, entity, entityType):
         entityDef = self.level.app.entityDefs[entityType]

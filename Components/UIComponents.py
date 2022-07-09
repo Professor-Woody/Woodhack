@@ -5,7 +5,7 @@ from Components.InventoryComponents import Body
 from ecstremity import Component
 from Components.PlayerInputComponents import PlayerInput
 import Colours as colour
-from ecstremity.entity import Entity
+from ecstremity import Entity
 
 
 class SelectionUI(Component):
@@ -21,8 +21,6 @@ class SelectionUI(Component):
 
 
     def on_update(self, action):
-        # if not self.parentEntity[PlayerInput].controlFocus:
-        #     self.entity.destroy()
         if self.entity != self.parentEntity[PlayerInput].controlFocus[-1]:
             return
         dy = 0
@@ -39,9 +37,12 @@ class SelectionUI(Component):
 
         for command in self.commands.keys():
             if self.parentEntity[PlayerInput].controller.getPressedOnce(command):
+                if command == 'lefthand':
+                    print (self.commands[command])
                 self.commands[command]["target"].fire_event(
                     self.commands[command]["command"], 
                     self.commands[command]["data"])
+                print (12)
 
     def on_close_UI(self, action):
         print ("UI Closed")
@@ -111,16 +112,21 @@ class CharacterInfoUI(Component):
             position.y+1,
             f"HP: {stats.hp} / {stats.maxHp}"
         )
+        screen.printLine(
+            position.x+1,
+            position.y+2,
+            "Stamina:"
+        )
         if speed:
             screen.printLine(
-                position.x+1,
+                position.x+10,
                 position.y+2,
-                f"Cooldown: {speed}",
+                "Resting",
                 bg=colour.RED
             )
         else:
             screen.printLine(
-                position.x+1,
+                position.x+10,
                 position.y+2,
                 f"Ready",
                 bg=colour.GREEN
@@ -129,32 +135,42 @@ class CharacterInfoUI(Component):
         lbg = colour.BLACK
         if body.slots['lefthand']:
             lefthand = body.slots['lefthand'][Render].entityName
-            if body.slots['lefthand'].has(IsReady):
-                lbg = colour.GREEN
-            else:
-                lbg = colour.RED
+            lbg = body.slots['lefthand'][Render].fg
+            if body.slots['lefthand'].has(Initiative):
+                if not body.slots['lefthand'].has(IsReady):
+                    lbg = colour.RED
 
         righthand = 'Empty'
         rbg = colour.BLACK
         if body.slots['righthand']:
             righthand = body.slots['righthand'][Render].entityName
-            if body.slots['righthand'].has(IsReady):
-                rbg = colour.GREEN
-            else:
-                rbg = colour.RED
+            rbg = body.slots['righthand'][Render].fg
+            if body.slots['righthand'].has(Initiative):
+                if body.slots['righthand'].has(IsReady):
+                    rbg = colour.RED
 
 
 
         screen.printLine(
             position.x+1,
             position.y+3,
-            f"left hand: {lefthand}",
+            "LH:",
+        )
+        screen.printLine(
+            position.x+5,
+            position.y+3,
+            lefthand,
             bg=lbg
         )
 
         screen.printLine(
             position.x+1,
-            position.y+3,
-            f"right hand: {righthand}",
+            position.y+4,
+            "RH:"
+        )
+        screen.printLine(
+            position.x+5,
+            position.y+4,
+            righthand,
             bg=rbg
         )

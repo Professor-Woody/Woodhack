@@ -39,6 +39,8 @@ class BaseLevel:
         for entity in self.renderUIQuery.result:
             entity.fire_event('render', {'level': self})
 
+
+
 class GameLevel(BaseLevel):
     def __init__(self, app, width, height):
         super().__init__(app, width, height)
@@ -47,6 +49,7 @@ class GameLevel(BaseLevel):
 
         self.entityManager.loadEntities("objects.json")
         self.entityManager.spawn("PLAYER", self.map.start[0], self.map.start[1])
+
         # self.entityManager.spawn("torch", self.map.start[0], self.map.start[1]-1)
         # self.entityManager.spawn("orc", self.map.start[0]+2, self.map.start[1])
         # self.entityManager.spawn("shortsword", self.map.start[0], self.map.start[1])
