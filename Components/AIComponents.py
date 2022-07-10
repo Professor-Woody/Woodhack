@@ -71,7 +71,7 @@ class TargeterAI(Component):
             self.speed = 60
             if not self.entity[Target].target:
                 targets = []
-                for otherEntity in self.entity.world.create_query(all_of=[self.preyType]).result:
+                for otherEntity in self.entity.world.getQuery('players').result:
                     if Position.getLOS(self.entity, otherEntity):
                         targetRange = Position.getRange(self.entity, otherEntity)
                         targets.append((otherEntity, targetRange))

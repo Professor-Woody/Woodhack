@@ -8,7 +8,7 @@ class BaseLevel:
     lastTime = time.time()*1000
     fps = 0
     lastFps = 0
-    
+    lowestFps = 60
     def __init__(self, app, width, height):
         self.app = app
         self.width = width
@@ -32,17 +32,15 @@ class BaseLevel:
         self.world.create_query(all_of=['IsNPC'], store_query='NPCs')
         self.world.create_query(all_of=['IsItem'], store_query='items')
         self.world.create_query(all_of=['IsDead'], store_query='dead')
-        
-
+        self.world.create_query(all_of=['IsItem', 'Position'], store_query='itemsOnGround')        
+        self.world.create_query(all_of=['Position', 'Light'], store_query='lightsOnGround')
     def update(self):
         self.world.post(ECSEvent('tick', target='tick'))
         self.world.post(ECSEvent('update', target='update'))
         self.world.update()
 
         self.entityManager.update()
-        if self.world.updateMap:
-            self.map.update()
-            self.world.updateMap = False
+        self.map.update()
 
         self.map.draw(self.app.screen)
 
@@ -59,9 +57,12 @@ class BaseLevel:
         if curTime >= self.lastTime + 1000:
             self.lastTime = curTime
             self.lastFps = self.fps
+            if self.lastFps < self.lowestFps:
+                self.lowestFps = self.lastFps
             self.fps = 0
         self.app.screen.printLine(0, 0, str(self.lastFps))
-        self.app.screen.printLine(0, 1, str(len(self.renderActorsQuery.result)))
+        self.app.screen.printLine(0, 1, str(self.lowestFps))
+        self.app.screen.printLine(0, 2, str(len(self.renderActorsQuery.result)))
 
 
 

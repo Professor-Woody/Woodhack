@@ -16,7 +16,7 @@ class Inventory(Component):
         y = action.data.position.y
         level = action.data.position.level
 
-        entities = level.world.create_query(all_of=['IsItem', 'Position']).result
+        entities = level.world.getQuery('itemsOnGround').result
         itemsToPickup = [entity for entity in entities if Collision.pointCollides(entity, x, y)]
         
         if itemsToPickup:

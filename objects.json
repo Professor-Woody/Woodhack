@@ -7,8 +7,7 @@
                 "entityName": "SomeItem",
                 "char": "%",
                 "needsVisibility": true
-            },
-            "Collision": {}
+            }
         }
     },
     {
@@ -100,6 +99,7 @@
                 "char": "/",
                 "fg": [150,150,150]
             },
+            "Light": {"radius": 12},
             "Initiative": {"speed": 0},
             "Melee": {}
         }

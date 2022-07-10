@@ -49,9 +49,6 @@ class World:
     # Section for managing systems
     # ----------------------------------
     def post(self, event):
-        if event.name == "updateMap":
-            self.updateMap = True
-            return
         event.world = self
         self.eventManager.post(event)
     
@@ -60,6 +57,8 @@ class World:
 
     # ----------------------------------
 
+    def getQuery(self, query):
+        return self._queries[query]
 
     @property
     def entities(self):

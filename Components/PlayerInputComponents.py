@@ -82,4 +82,5 @@ class PlayerInput(Component):
             if self.controller.getPressedOnce('cancel'):
                 self.entity[Position].level.entityManager.spawn('orc', self.entity[Position].x+1, self.entity[Position].y)
             if self.controller.getPressedOnce('nearestEnemy'):
-                self.entity[Position].level.entityManager.spawn('torch', self.entity[Position].x-1, self.entity[Position].y)
+                self.entity[Position].level.entityManager.spawn('shortsword', self.entity[Position].x-1, self.entity[Position].y)
+                self.entity[Position].level.lowestFps = 60
