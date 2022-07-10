@@ -5,7 +5,7 @@ from collections import OrderedDict
 from ecstremity.component import ComponentMeta
 
 from ecstremity.bit_util import *
-from ecstremity.entity_event import EntityEvent, EventData
+from ecstremity.entity_event import EntityEvent, EventData, ECSEvent
 
 from ecstremity.component import Component
 
@@ -21,13 +21,14 @@ def attach_component(entity: Entity, component: Component) -> None:
 
 
 def remove_component(entity: Entity, component_name: str) -> None:
+    if entity.is_destroyed:
+        print (f"Entity already destroyed: {entity}, {component_name}")
+        return
     component = entity.components[component_name.upper()]
     if component.allow_multiple:
         component.multiple -= 1
     if (component.allow_multiple and component.multiple <= 0) or not component.allow_multiple:
         del entity.components[component_name.upper()]
-        entity.cbits = subtract_bit(entity.cbits, component.cbit)
-        entity.candidacy()
 
 
 def serialize_component(component: Component) -> Dict[str, Any]:
@@ -140,30 +141,36 @@ class Entity:
         compName = ""
         if isinstance(component, str):
             compName = component
+            component = self.world.engine.components[component.upper()]
         else:
             compName = component.comp_id
         
         if self.has(compName):
             if not self.componentLock:
-                self.removeComponent(compName)
+                self.removeComponent(component)
             else:
-                self.removeComponentList.append(compName)
+                self.removeComponentList.append(component)
     
 
     def removeComponent(self, component):
         if self.has(component):
-            remove_component(self, component)
+            remove_component(self, component.comp_id)
+            self._cbits = subtract_bit(self._cbits, component.cbit)
+            self.candidacy()
+
         else:
             print (f"Remove Component Miss: {component}")
+
+
 
     def destroy(self) -> None:
         """Destroy this entity and all attached components."""
         to_destroy = []
+
         for name, component in self.components.items():
             to_destroy.append(component)
-
         for component in to_destroy:
-            self.remove(component)
+            self.removeComponent(component)
             component._on_destroyed()
 
         self.world.destroyed(self.uid)
@@ -180,8 +187,55 @@ class Entity:
             "components": components
         }
 
+
+    def post(self, event: ECSEvent):
+        event.source = self
+        self.world.post(event)
+
+    def post_event(self, name, data=None, target=None):
+        if isinstance(data, EventData):
+            data = data.get_record()
+        if not data:
+            data = {}
+
+        event = ECSEvent(name, data, target)
+
+        self.post(event)
+
+
+
+    def fire(self, event):
+        self.componentLock += 1
+        if event.tryFirst:
+            event.name = 'try_' + event.name
+
+        for i in range(1+int(event.tryFirst)):
+            for component in self.components.values():
+                component._on_event(event)
+                if event.prevented:
+                    break
+            if event.prevented:
+                break
+            if event.tryFirst:
+                event.name = event.name[4:]
+        self.componentLock -= 1
+
+        if not self.componentLock:
+            for component in self.addComponentList:
+                self.attachComponent(component)
+            self.addComponentList.clear()
+            for component in self.removeComponentList:
+                self.removeComponent(component)
+            self.removeComponentList.clear()
+
+
+
+
+
     def fire_event(self, name: str, data: Optional[Union[Dict[str, Any], EventData]] = None, tryFirst = False) -> EntityEvent:
         """Fire an event to all Components attached to this Entity."""
+        if self.is_destroyed:
+            print (f"event {name} {data} ignored. {self} already destroyed")
         if isinstance(data, EventData):
             data = data.get_record()
         if not data:

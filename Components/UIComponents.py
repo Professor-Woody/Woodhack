@@ -2,10 +2,12 @@ from dataclasses import dataclass
 from Components.Components import Initiative, Position, Render, Stats
 from Components.FlagComponents import IsEquipped, IsReady
 from Components.InventoryComponents import Body
+from Components.TargetComponents import Target
 from ecstremity import Component
 from Components.PlayerInputComponents import PlayerInput
 import Colours as colour
 from ecstremity import Entity
+from ecstremity.entity_event import ECSEvent
 
 
 class SelectionUI(Component):
@@ -37,12 +39,13 @@ class SelectionUI(Component):
 
         for command in self.commands.keys():
             if self.parentEntity[PlayerInput].controller.getPressedOnce(command):
-                self.commands[command]["target"].fire_event(
-                    self.commands[command]["command"], 
-                    self.commands[command]["data"]
-                )
+                # self.commands[command]["target"].fire_event(
+                #     self.commands[command]["command"], 
+                #     self.commands[command]["data"]
+                # )
+                self.entity.post(self.commands[command])
 
-    def on_close_UI(self, action):
+    def on_close_UI(self, action): #
         print ("UI Closed")
         self.parentEntity[PlayerInput].controlFocus.remove(self.entity)
         self.entity.destroy()
@@ -172,3 +175,16 @@ class CharacterInfoUI(Component):
             righthand,
             bg=rbg
         )
+
+        screen.printLine(
+            position.x+1,
+            position.y+5,
+            "Target:"
+        )
+        if self.parentEntity[Target].target:
+            screen.printLine(
+                position.x+9,
+                position.y+5,
+                self.parentEntity[Target].target[Render].entityName,
+                bg=self.parentEntity[Target].target[Render].fg
+            )

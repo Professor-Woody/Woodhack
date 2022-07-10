@@ -3,6 +3,8 @@ from typing import *
 from types import SimpleNamespace
 from dataclasses import dataclass
 
+from numpy import source
+
 if TYPE_CHECKING:
     from ecstremity.entity import Entity
 
@@ -30,7 +32,7 @@ class EventData(SimpleNamespace):
 
 class EntityEvent:
 
-    def __init__(self, name: str, data: Dict[str, Any] = None):
+    def __init__(self, name: str, data: Dict[str, Any] = None, tryFirst: bool = False):
         """An event to be broadcast to all of an Entity's components.
 
         All events must be given a name so that they can be accessed inside
@@ -59,6 +61,7 @@ class EntityEvent:
         """
         self.name = name
         self._data = EventData(**data)
+        self.tryFirst = tryFirst
 
         self._prevented: bool = False
         self._handled: bool = False
@@ -108,3 +111,15 @@ class EntityEvent:
             raise ValueError("Routed events require a target entity!")
         else:
             return target.fire_event(new_event, self.data)
+
+
+class ECSEvent(EntityEvent):
+    source = None
+    world = None
+    def __init__(self, name, data: Dict[str, Any] = None, target = None):
+        if isinstance(data, EventData):
+            data = data.get_record()
+        if not data:
+            data = {}
+        super().__init__(name, data)
+        self.target = target

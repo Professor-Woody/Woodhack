@@ -3,6 +3,7 @@ from Components.PlayerInputComponents import PlayerInput
 # from Components.UIComponents import SelectionUI
 from ecstremity import Component
 from Components.Components import Collision, Position
+from ecstremity.entity_event import ECSEvent
 
 
 class Inventory(Component):
@@ -37,38 +38,18 @@ class Inventory(Component):
         })
         selectionList = self.contents
         commands = {
-            "cancel": {
-                "command": "close_UI", 
-                "target": selectionUI, 
-                "data": {"UI": selectionUI}
-            },
-            "lefthand": {
-                "command": "swap_equipped_from_selection",
-                "target": self.entity,
-                "data": {"UI": selectionUI, "slot": "lefthand"}
-            },
-            "righthand": {
-                "command": "swap_equipped_from_selection",
-                "target": self.entity,
-                "data": {"UI": selectionUI, "slot": "righthand"}
-            },
-            "inventory": {
-                "command": "drop_item_from_selection",
-                "target": self.entity,
-                "data": {"UI": selectionUI}
-            },
-            "use": {
-                "command": "use_item_from_selection",
-                "target": self.entity,
-                "data": {"UI": selectionUI}
-            }
+            'cancel': ECSEvent('close_UI', target=selectionUI),
+            'lefthand': ECSEvent('swap_equipped_from_selection', {'slot': 'lefthand'}, target=self.entity),
+            'righthand': ECSEvent('swap_equipped_from_selection', {'slot': 'righthand'}, target=self.entity),
+            'inventory': ECSEvent('drop_item_from_selection', target=self.entity),
+            'use': ECSEvent('use_item_from_selection', target=self.entity)
         }
         selectionUI.add('SelectionUI', {'parentEntity': self.entity, 'selectionList': selectionList, 'commands': commands})
         self.entity[PlayerInput].controlFocus.append(selectionUI)
 
-    def on_swap_equipped_from_selection(self, action):
+    def on_swap_equipped_from_selection(self, action): #
         print ("in on_swap")
-        ui = action.data.UI
+        ui = action.source
         item = ui['SelectionUI'].selectionList[ui['SelectionUI'].selectionIndex]
         slot = action.data.slot
         body = self.entity[Body]
@@ -76,7 +57,8 @@ class Inventory(Component):
 
         if not item.has(IsEquippable):
             print (f"unable to equip: {item} not IsEquippable")
-            ui.fire_event('close_UI')
+            # ui.fire_event('close_UI')
+            ui.post(ECSEvent('close_UI'))
             return
 
         if slot in body.slots.keys():
@@ -95,16 +77,18 @@ class Inventory(Component):
             # equip it
             body.slots[slot] = item
             item.add(IsEquipped, {"slot": slot})
-            self.entity.fire_event('recalculate_stats')
+            # self.entity.fire_event('recalculate_stats')
+            self.entity.post(ECSEvent('recalculate_stats'))
             print (f"{item} equipped")
         else:
             print (f"unable to equip: {item}. Body doesn't have {slot}")
-        ui.fire_event('close_UI')
+        # ui.fire_event('close_UI')
+        ui.post(ECSEvent('close_UI'))
         print ("done")
 
-    def on_drop_item_from_selection(self, action):
+    def on_drop_item_from_selection(self, action): #
         print ("in on_drop")
-        ui = action.data.UI
+        ui = action.source
         item = ui['SelectionUI'].selectionList.pop(ui['SelectionUI'].selectionIndex)
         position = self.entity[Position]
         print (f"dropping {item}")
@@ -112,20 +96,24 @@ class Inventory(Component):
         if item.has(IsEquipped):
             self.entity[Body].slots[item[IsEquipped].slot] = None
             item.remove(IsEquipped)
-            self.entity.fire_event('recalculate_stats')
+            # self.entity.fire_event('recalculate_stats')
+            self.entity.post(ECSEvent('recalculate_stats'))
         
         item.add(Position, {"x": position.x, "y": position.y, "level": position.level})
-        ui.fire_event("close_UI")
+        # ui.fire_event("close_UI")
+        ui.post(ECSEvent("close_UI"))
         print ("done")
 
-    def on_use_item_from_selection(self, action):
+    def on_use_item_from_selection(self, action): #
         print ("in on_use")
-        ui = action.data.UI
+        ui = action.source
         item = ui['SelectionUI'].selectionList[ui['SelectionUI'].selectionIndex]
 
         print (f"using {item}")
-        item.fire_event("use")
-        ui.fire_event("close_UI")
+        # item.fire_event("use")
+        item.post(ECSEvent('use'))
+        # ui.fire_event("close_UI")
+        ui.post(ECSEvent('close_UI'))
         print ("done")
 
 class Body(Component):

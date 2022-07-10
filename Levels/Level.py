@@ -1,6 +1,8 @@
 from Components.Components import Initiative, Position, Render
 from EntityManager import EntityManager
 from Levels.LevelCreator import LevelCreator
+from ecstremity import ECSEvent
+
 
 class BaseLevel:
     def __init__(self, app, width, height):
@@ -14,18 +16,22 @@ class BaseLevel:
         self.entityManager = EntityManager(self)
         self.map = None
 
-        self.tickQuery = self.world.create_query(all_of=['Initiative'], store_query=True)
-        self.renderItemsQuery = self.world.create_query(all_of=['IsItem', 'Render', 'Position'], store_query=True)
-        self.renderActorsQuery = self.world.create_query(all_of=['Render', 'Position'], any_of=['IsNPC', 'IsPlayer'], none_of=['IsItem'], store_query=True)
-        self.renderUIQuery = self.world.create_query(all_of=['IsUI', 'Position'], store_query=True)
+        self.tickQuery = self.world.create_query(all_of=['Initiative'], store_query='tick')
+        self.renderItemsQuery = self.world.create_query(all_of=['IsItem', 'Render', 'Position'], store_query='renderItems')
+        self.renderActorsQuery = self.world.create_query(all_of=['Render', 'Position'], any_of=['IsNPC', 'IsPlayer'], none_of=['IsItem'], store_query='renderActors')
+        self.renderUIQuery = self.world.create_query(all_of=['IsUI', 'Position'], store_query='renderUI')
 
+        self.world.create_query(store_query='update')
+        self.world.create_query(any_of=['IsPlayer', 'IsNPC'], store_query='actors')
+        self.world.create_query(all_of=['IsPlayer'], store_query='players')
+        self.world.create_query(all_of=['IsNPC'], store_query='NPCs')
+        self.world.create_query(all_of=['IsItem'], store_query='items')
+        self.world.create_query(all_of=['IsDead'], store_query='dead')
 
     def update(self):
-        for entity in self.tickQuery.result:
-            entity.fire_event('tick')
-
-        for entity in self.world.entities:
-            entity.fire_event('update')
+        self.world.post(ECSEvent('tick', target='tick'))
+        self.world.post(ECSEvent('update', target='update'))
+        self.world.update()
 
         self.entityManager.update()
         self.map.update()

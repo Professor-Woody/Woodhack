@@ -22,6 +22,9 @@ class BlocksMovement(Component):
 class IsUI(Component):
     pass
 
+class IsDead(Component):
+    pass
+
 class IsEquippable(Component):
     def __init__(self, slots):
         # {"slotname": "actual_slotname"}

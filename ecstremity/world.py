@@ -6,6 +6,7 @@ from collections import OrderedDict, deque
 from collections.abc import ValuesView
 
 from ecstremity.entity import Entity
+from ecstremity.event_manager import EventManager
 from ecstremity.query import Query
 from ecstremity.component import Component
 
@@ -32,16 +33,29 @@ def deque_filter(
 
 
 class World:
-
     def __init__(self, engine: Engine) -> None:
         self.engine = engine
         self._id = 0
-        self._queries: List[Query] = []
+        self._queries: Dict[str: Query] = {}
         self._entities: OrderedDict[str, Entity] = OrderedDict()
 
         self._entityLock: int = 0
         self.addable_deferred_entities = []
         self.removeable_deferred_entities = []
+
+        self.eventManager = EventManager(self._queries)
+
+    # Section for managing systems
+    # ----------------------------------
+    def post(self, event):
+        event.world = self
+        self.eventManager.post(event)
+    
+    def update(self):
+        self.eventManager.update()
+
+    # ----------------------------------
+
 
     @property
     def entities(self):
@@ -65,6 +79,7 @@ class World:
         if not self.entityLock:
             for entity in self.addable_deferred_entities:
                 self._entities[entity.uid] = entity
+            self.addable_deferred_entities.clear()
 
     def remove_deferred_entities(self) -> None:
         if not self.entityLock:
@@ -73,6 +88,7 @@ class World:
                     self._entities.pop(entity.uid)
                 except KeyError:
                     pass
+            self.removeable_deferred_entities.clear()
 
     @staticmethod
     def create_uid() -> str:
@@ -112,7 +128,7 @@ class World:
         """Muahahaha!"""
         self.destroy_entities()
         self._id = 0
-        self._queries = []
+        self._queries = {}
         self._entities = OrderedDict()
 
     def create_query(
@@ -120,7 +136,7 @@ class World:
             any_of: Optional[Deque[str]] = None,
             all_of: Optional[Deque[str]] = None,
             none_of: Optional[Deque[str]] = None,
-            store_query: bool = False
+            store_query: str = None
         ) -> Query:
 
         # ANY OF
@@ -152,19 +168,24 @@ class World:
 
         query = Query(self, _any_of, _all_of, _none_of)  # type: ignore
         if store_query:
-            self._queries.append(query)
+            self._queries[store_query] = query
         return query
 
     def candidate(self, entity: Entity) -> None:
-        for query in self._queries:
+        for query in self._queries.values():
             query.candidate(entity)
 
     def destroyed(self, uid: str) -> None:
         try:
+            print (9)
             if not self.entityLock:
+                print (10)
                 self._entities.pop(uid)
+                print (11)
             else:
-                self.removable_deferred_entities.append(self._entities[uid])
+                print (12)
+                self.removeable_deferred_entities.append(self._entities[uid])
+                print (13)
         except KeyError:
             pass
 

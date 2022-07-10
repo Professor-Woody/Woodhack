@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from Components.FlagComponents import IsReady
-from ecstremity import Component
+from Components.FlagComponents import IsNPC, IsReady
+from ecstremity import Component, ECSEvent
 import Colours as colour
 from typing import Tuple
 import tcod
@@ -127,6 +127,7 @@ class Initiative(Component):
     def on_tick(self, action):
         self.speed -= 1
         if not self.speed and not self.entity.has(IsReady):
+            print (f"{self.entity} is now ready")
             self.entity.add(IsReady)
 
 @dataclass
@@ -152,4 +153,21 @@ class Stats(Component):
             if slot and slot.has(Light) and slot[Light].radius > self.entity[Light].radius:
                 self.entity[Light].radius = slot[Light].radius
                 print (f"new light radius: {self.entity[Light].radius}")
-                
+
+    def on_damage(self, action):
+        print ("taking damage")
+        self.hp -= action.data.damage
+        if self.hp <= 0:
+            print (f"{self.entity[Render].entityName} has been killed")        
+            # self.entity.fire_event('died')
+            self.entity.post(ECSEvent('died'))
+    
+    def on_died(self, action):
+        # TODO: Notify all players and NPCs this actor has been killed
+        # for now just remove the target
+        print ("in died")
+        if self.entity.has('Targeted'):
+            for targeter in self.entity['Targeted'].targetedBy:
+                # targeter.fire_event('killed', {'entity': self.entity})
+                self.entity.post(ECSEvent('killed', target='actors'))
+                self.entity.add('IsDead')

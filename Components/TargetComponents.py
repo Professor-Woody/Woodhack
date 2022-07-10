@@ -1,11 +1,12 @@
 from Components.Components import Position, Render
 from ecstremity import Component
 from Flags import FPS
+from ecstremity.entity_event import ECSEvent
 
 class Target(Component):
     target = None
 
-    def on_set_target(self, action):
+    def on_set_target(self, action): #
         targetType = action.data.targetType
         targetSelectionOrder = action.data.targetSelectionOrder
         targets = []
@@ -33,16 +34,27 @@ class Target(Component):
             else:
                 currentTargetIndex = 0
             finalTarget = targets[currentTargetIndex][0]
+
+            # tell the previous target we're no longer looking at them
             if self.target:
-                self.target.fire_event('remove_targeter', {"targeter": self.entity})
+                # self.target.fire_event('remove_targeter', {"targeter": self.entity})
+                self.entity.post(ECSEvent('remove_targeter', target=self.target))
+
+            #  now make the new target our official target
             self.target = finalTarget
-            self.target.fire_event('add_targeter', {'targeter': self.entity})
+            # self.target.fire_event('add_targeter', {'targeter': self.entity})
+            self.entity.post(ECSEvent('add_targeter', target=self.target))
             print (f"now targeting {self.target}")
         else:
             if self.target:
-                self.target.fire_event('remove_targeter', {'targeter': self.entity})
+                # self.target.fire_event('remove_targeter', {'targeter': self.entity})
+                self.entity.post(ECSEvent('remove_targeter', target=self.target))
                 self.target = None
             print ("No targets")
+            
+    def on_killed(self, action): #
+        if action.source == self.target:
+            self.target = None
 
 class Targeted(Component):
     def __init__(self):
@@ -50,14 +62,14 @@ class Targeted(Component):
         self.targetIndex = 0
         self.cooldown = 0
     
-    def on_add_targeter(self, action):
-        if action.data.targeter not in self.targetedBy:
-            self.targetedBy.append(action.data.targeter)
+    def on_add_targeter(self, action): #
+        if action.source not in self.targetedBy:
+            self.targetedBy.append(action.source)
             self.cooldown = 0
 
-    def on_remove_targeter(self, action):
-        if action.data.targeter in self.targetedBy:
-            self.targetedBy.remove(action.data.targeter)
+    def on_remove_targeter(self, action): #
+        if action.source in self.targetedBy:
+            self.targetedBy.remove(action.source)
             self.cooldown = 0
         if not self.targetedBy:
             self.entity[Render].bg = self.entity[Render].baseBG
