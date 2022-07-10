@@ -11,7 +11,7 @@ class Target(Component):
         targetSelectionOrder = action.data.targetSelectionOrder
         targets = []
         currentTargetIndex = -1
-        for otherEntity in self.entity[Position].level.world.create_query(all_of=['Is' + targetType]).result:
+        for otherEntity in self.entity.world.create_query(all_of=['Is' + targetType]).result:
             if self.entity[Position].level.map.checkIsVisible(otherEntity):
                 targetRange = Position.getRange(self.entity, otherEntity)
                 targets.append((otherEntity, targetRange))

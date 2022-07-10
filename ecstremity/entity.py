@@ -188,19 +188,15 @@ class Entity:
         }
 
 
-    def post(self, event: ECSEvent):
+    def post(self, event: Union[ECSEvent, str], data=None, target=None):
+        if not isinstance(event, ECSEvent):
+            if isinstance(data, EventData):
+                data = data.get_record()
+            if not data:
+                data = {}
+            event = ECSEvent(event, data, target)
         event.source = self
         self.world.post(event)
-
-    def post_event(self, name, data=None, target=None):
-        if isinstance(data, EventData):
-            data = data.get_record()
-        if not data:
-            data = {}
-
-        event = ECSEvent(name, data, target)
-
-        self.post(event)
 
 
 

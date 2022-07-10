@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from Components.FlagComponents import IsNPC, IsReady
+from Components.FlagComponents import IsNPC, IsPlayer, IsReady
 from ecstremity import Component, ECSEvent
 import Colours as colour
 from typing import Tuple
@@ -49,12 +49,20 @@ class Position(Component):
         else:
             if not self.checkCanMove(newLocationX, self.y):
                 dx = 0
-            if not self.checkCanMove(self.x, newLocationY):
+            if not self.checkCanMove(newLocationX, newLocationY):
                 dy = 0
         if dx or dy:
             self.x += dx
             self.y += dy
+            if self.entity.has(Light) or self.entity.has(IsPlayer):
+                self.entity.post("updateMap")
 
+    def on_move_ip(self, action):
+        if self.checkCanMove(action.data.dx, action.data.dy):
+            self.x = action.data.dx
+            self.y = action.data.dy
+            if self.entity.has(Light) or self.entity.has(IsPlayer):
+                self.entity.post("updateMap")
 
     def checkCanMove(self, dx, dy):
         if not self.level.map.checkInBounds(dx, dy) or \
@@ -73,10 +81,10 @@ class Position(Component):
         path = tcod.los.bresenham(
             (entity[Position].x, entity[Position].y),
             (other[Position].x, other[Position].y)
-        ).toList()
-
-        for x, y in path:
-            if not entity[Position].level.map.checkIsPassable(x,y) or entity[Position].level.map.checkIsBlocked(x, y):
+        ).tolist()
+        for x, y in path[1:-1]:
+            if not entity[Position].level.map.checkIsPassable(x,y) \
+                or entity[Position].level.map.checkIsBlocked(x, y):
                 return False
         return True                
 
@@ -127,7 +135,6 @@ class Initiative(Component):
     def on_tick(self, action):
         self.speed -= 1
         if not self.speed and not self.entity.has(IsReady):
-            print (f"{self.entity} is now ready")
             self.entity.add(IsReady)
 
 @dataclass

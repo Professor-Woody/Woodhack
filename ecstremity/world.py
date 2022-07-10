@@ -44,10 +44,14 @@ class World:
         self.removeable_deferred_entities = []
 
         self.eventManager = EventManager(self._queries)
+        self.updateMap = False
 
     # Section for managing systems
     # ----------------------------------
     def post(self, event):
+        if event.name == "updateMap":
+            self.updateMap = True
+            return
         event.world = self
         self.eventManager.post(event)
     

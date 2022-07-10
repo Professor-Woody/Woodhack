@@ -52,7 +52,7 @@
             "Target": {},
             "Inventory": {},
             "Body": {},
-            "Stats": {"moveSpeed": 12}
+            "Stats": {"moveSpeed": 8}
         }
     },
 
@@ -65,7 +65,10 @@
                 "char": "o",
                 "fg": [100, 255, 100],
                 "needsVisibility": true
-            }
+            },
+            "Target": {},
+            "TargeterAI": {},
+            "HostileAI": {}
         }
     },
     {
