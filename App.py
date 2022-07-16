@@ -1,11 +1,8 @@
 import tcod
-from ecstremity import Engine
 from EventHandler import EventHandler
-from Levels.Level import GameLevel
 from Screen import Screen
 from Clock import Clock
-from Levels.Level import GameLevel
-from Components.ComponentRegister import registerComponents
+from Levels.BaseLevel import TestLevel
 from Flags import FPS
 
 
@@ -19,11 +16,7 @@ class App:
         self.eventHandler = EventHandler(self)
         self.isRunning = True
 
-        self.ecs = Engine()
-        self.entityDefs = {}
-        registerComponents(self.ecs)
-
-        self.level = GameLevel(self, self.width, self.height)
+        self.level = TestLevel(self, self.width, self.height)
         self.clock = Clock(FPS)
 
 

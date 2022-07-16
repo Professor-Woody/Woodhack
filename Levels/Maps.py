@@ -1,8 +1,8 @@
 import numpy as np
 from Levels.Rooms import wall, SHROUD
-from Components.Components import Collision
 import tcod
 from tcod.map import compute_fov
+from Components import *
 
 class GameMap:
     def __init__(self, level, width, height):
@@ -24,40 +24,47 @@ class GameMap:
     def checkInBounds(self, x, y):
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def checkIsVisible(self, entity):
-        return self.visible[entity['Position'].x, entity['Position'].y] and self.lit[entity['Position'].x, entity['Position'].y]
+    def checkIsVisible(self, x, y):
+        return self.visible[x, y] and self.lit[x, y]
 
     def checkIsBlocked(self, x, y):
-        for entity in self.level.world.getQuery('collidable').result:
-            if Collision.pointCollides(entity, x, y):
-                return entity
-
+        # for entity in self.level.world.getQuery('collidable').result:
+        #     if Collision.pointCollides(entity, x, y):
+        #         return entity
+        # TODO: This
+        return False
 
     def update(self):
         # calculate lit squares
         self.lit[:] = False
-        for entity in self.level.world.getQuery('lightsOnGround').result:
+        entities = self.level.lightsQuery.result
+        positionComponents = self.level.e.component.filter(Position, entities)
+        lightComponents = self.level.e.component.filter(Light, entities)
+
+        for entity in entities:
             self.lit = np.logical_or(self.lit, compute_fov(
                 self.tiles["transparent"],
-                (entity['Position'].x, entity['Position'].y),
-                radius=entity['Light'].radius,
+                (positionComponents[entity]['x'], positionComponents[entity]['y']),
+                radius=lightComponents[entity]['radius'],
                 algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                 )
             )
 
         # calculate visible squares from lit
+        entities = self.level.playersQuery.result
+        positionComponents = self.level.e.component.filter(Position, entities)
+
         self.visible[:] = False
-        for entity in self.level.world.getQuery('players').result:
+        for entity in entities:
             self.visible[:] = np.logical_or(self.visible, np.logical_and(self.lit, compute_fov(
                         self.tiles["transparent"],
-                        (entity['Position'].x, entity['Position'].y),
+                        (positionComponents[entity]['x'], positionComponents[entity]['y']),
                         radius=40,
                         algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                     )
                 )
             )
         self.explored |= self.visible
-
 
     def draw(self, screen):
         screen.drawArray(
