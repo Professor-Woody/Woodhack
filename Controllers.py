@@ -22,6 +22,7 @@ class KeyboardController(BaseController):
             "inventory": pygame.K_i,
         }
         self.checked = []
+        self.pressed = pygame.key.get_pressed()
 
     def update(self):
         self.pressed = pygame.key.get_pressed()

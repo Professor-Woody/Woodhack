@@ -9,9 +9,12 @@ class RenderEntitiesSystem(BaseSystem):
         screen = self.level.app.screen
 
         for entity in entities:
-            screen.draw(
-                positionComponents[entity]['x'], 
-                positionComponents[entity]['y'],
-                renderComponents[entity]['char'],
-                renderComponents[entity]['fg'])
+            if (renderComponents[entity]['needsVisibility'] and self.level.map.checkIsVisible(positionComponents[entity]['x'], positionComponents[entity]['y'])) \
+            or not renderComponents[entity]['needsVisibility']:
+                screen.draw(
+                    positionComponents[entity]['x'], 
+                    positionComponents[entity]['y'],
+                    renderComponents[entity]['char'],
+                    renderComponents[entity]['fg'],
+                    renderComponents[entity]['bg'])
             

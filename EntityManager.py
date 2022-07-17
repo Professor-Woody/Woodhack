@@ -1,5 +1,6 @@
 from functools import reduce
 from Components import *
+import json
 
 def subtract_bit(num: int, bit: int) -> int:
     return num & ~(1 << bit)
@@ -15,6 +16,41 @@ def has_bit(num: int, bit: int) -> bool:
 
 def bit_intersection(n1: int, n2: int) -> int:
     return n1 & n2
+
+
+
+class Component:
+    defaults = {}
+
+    def __init__(self):
+        self.components = {}
+
+    def registerComponent(self, component: int, defaults: dict={}):
+        self.components[component] = {}
+        self.defaults[component] = defaults
+
+    def filter(self, component, entities):
+        return {key: self.components[component][key] for key in entities}
+
+    def addComponent(self, entity, component, data):
+        if not data:
+            data = self.defaults[component]
+        self.components[component][entity] = data
+
+    def removeComponent(self, entity, component):
+        if entity in self.components[component].keys():
+            self.components[component].pop(entity)
+
+
+class Entity:
+    uidCounter = 1000
+    entityDefs = {}
+    
+    @classmethod
+    def createEntity(cls):
+        cls.uidCounter += 1
+        return cls.uidCounter
+    
 
 
 
@@ -52,11 +88,12 @@ class Query:
         isTracking = idx >= 0
         if self.matches(self.entityManager.entities[entity]):
             if not isTracking:
-                print (f"entity {entity} is candidate for {self.name}")
+                # print (f"entity {entity} is candidate for {self.name}")
                 self._cache.append(entity)
             return True
         
         if isTracking:
+            # print (f"entity {entity} is no longer candidate for {self.name}"")
             del self._cache[idx]
         return False
 
@@ -65,38 +102,8 @@ class Query:
     def result(self):
         return self._cache
 
-    
 
 
-class Component:
-    defaults = {}
-    def __init__(self):
-        self.components = {}
-
-    def registerComponent(self, component: int, defaults: dict={}):
-        self.components[component] = {}
-        self.defaults[component] = defaults
-
-    def filter(self, component, entities):
-        return {key: self.components[component][key] for key in entities}
-
-    def addComponent(self, entity, component, data):
-        if not data:
-            data = self.defaults[component]
-        self.components[component][entity] = data
-
-    def removeComponent(self, entity, component):
-        self.components[component].pop(entity)
-
-
-class Entity:
-    uidCounter = 1000
-
-    @classmethod
-    def createEntity(cls):
-        cls.uidCounter += 1
-        return cls.uidCounter
-    
 
 
 class EntityManager:
@@ -123,11 +130,13 @@ class EntityManager:
         self.component.registerComponent(component, data)
 
     def addComponent(self, entity, component, data = {}):
+        print (f"--{entity} adding component {component}")
         self.component.addComponent(entity, component, data)
         self.entities[entity] = add_bit(self.entities[entity], component)
         self.candidacy(entity)
 
     def removeComponent(self, entity, component):
+        print (f"--{entity} removing component {component}")
         self.component.removeComponent(entity, component)
         self.entities[entity] = subtract_bit(self.entities[entity], component)
         self.candidacy(entity)
@@ -138,3 +147,43 @@ class EntityManager:
     def candidacy(self, entity):
         for query in self.queries.values():
             query.candidate(entity)
+
+
+    def loadEntities(self, filename):
+        with open(filename, 'r') as objectFile:
+            objects = json.loads(objectFile.read())
+    
+        for obj in objects:
+            eType = obj['type']
+            Entity.entityDefs[eType] = {
+                'type': eType
+            }
+            if 'inherits' in obj.keys():
+                Entity.entityDefs[eType]['inherits'] = obj['inherits']
+            
+            Entity.entityDefs[eType]['components'] = {}
+            if 'components' in obj.keys():
+                for component in obj['components'].keys():
+                    cId = componentMap[component]
+                    Entity.entityDefs[eType]['components'][cId] = self.component.defaults[cId].copy()
+                    for key, value in obj['components'][component].items():
+                        Entity.entityDefs[eType]['components'][cId][key] = value
+
+
+
+    def addComponents(self, entity, entityType):
+        entityDef = Entity.entityDefs[entityType]
+        
+        if 'inherits' in entityDef.keys():
+            self.addComponents(entity, entityDef['inherits'])
+        
+        for component in entityDef['components'].keys():
+            self.addComponent(entity, component, entityDef['components'][component].copy())
+            print (f"adding: {component} / {entityDef['components'][component]}")
+
+
+    def spawn(self, entityType, x, y):
+        entity = self.createEntity()
+        self.addComponents(entity, entityType)
+        self.addComponent(entity, Position, {'x': x, 'y': y})
+        return entity

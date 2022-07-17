@@ -4,7 +4,7 @@
         "components": {
             "IsItem": {},
             "Render": {
-                "entityName": "SomeItem",
+                "name": "SomeItem",
                 "char": "%",
                 "needsVisibility": true
             }
@@ -14,15 +14,12 @@
         "type": "ACTOR",
         "components": {
             "Render": {
-                "entityName": "SomeActor",
+                "name": "SomeActor",
                 "char": "@",
                 "fg": [255, 255, 255],
                 "needsVisibility": true
             },
-            "Collision": {},
-            "BlocksMovement": {},
-            "Initiative": {"speed": 0},
-            "Stats": {}
+            "Init": {"speed": 0}
         }
     },
 
@@ -30,8 +27,7 @@
         "type": "NPC",
         "inherits": "ACTOR",
         "components": {
-            "IsNPC": {},
-            "Targeted": {}
+            "IsNPC": {}
         }
     },
 
@@ -40,7 +36,7 @@
         "inherits": "ACTOR",
         "components": {
             "Render": {
-                "entityName": "Woody",
+                "name": "Woody",
                 "char": "@",
                 "needsVisibility": false
             },
@@ -48,10 +44,7 @@
                 "radius": 3
             },
             "IsPlayer": {},
-            "Target": {},
-            "Inventory": {},
-            "Body": {},
-            "Stats": {"moveSpeed": 8}
+            "Target": {}
         }
     },
 
@@ -60,48 +53,25 @@
         "inherits": "NPC",
         "components": {
             "Render": {
-                "entityName": "orc",
+                "name": "orc",
                 "char": "o",
                 "fg": [100, 255, 100],
                 "needsVisibility": true
-            },
-            "Target": {},
-            "TargeterAI": {},
-            "HostileAI": {}
+            }
         }
     },
+
     {
         "type": "torch",
         "inherits": "ITEM",
         "components": {
-            "Light": {
-                "radius": 5
-            },
-            "IsEquippable": {
-                "slots": ["lefthand", "righthand"]
-            },
             "Render": {
-                "entityName": "torch",
+                "name": "torch",
                 "char": "i",
-                "fg": [200,200,50]
-            }
-        }
-    },
-    {
-        "type": "shortsword",
-        "inherits": "ITEM",
-        "components": {
-            "IsEquippable": {
-                "slots": ["lefthand", "righthand"]
+                "fg": [200, 200, 50],
+                "needsVisibility": true
             },
-            "Render": {
-                "entityName": "shortsword",
-                "char": "/",
-                "fg": [150,150,150]
-            },
-            "Light": {"radius": 12},
-            "Initiative": {"speed": 0},
-            "Melee": {}
+            "Light": {"radius": 5}
         }
     }
 ]

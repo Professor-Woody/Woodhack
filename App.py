@@ -13,6 +13,7 @@ class App:
 
     def __init__(self):
         self.screen = Screen(self.width, self.height)
+        self.entityDefs = {}
         self.eventHandler = EventHandler(self)
         self.isRunning = True
 
