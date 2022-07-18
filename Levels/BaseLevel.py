@@ -35,6 +35,11 @@ class BaseLevel:
             storeQuery='LightsOnGround'
         )
 
+        self.itemsOnGroundQuery = self.e.createQuery(
+            allOf=[IsItem, Position],
+            storeQuery='ItemsOnGround'
+        )
+
         self.playersQuery = self.e.createQuery(
             allOf=[IsPlayer],
             storeQuery = 'Players'
@@ -60,6 +65,8 @@ class BaseLevel:
             allOf=[Targeted],
             storeQuery = 'TargetedQuery'
         )
+
+
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.initSystem = InitSystem(self)

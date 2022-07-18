@@ -10,7 +10,8 @@ componentMap = {
     'IsReady': 9,
     'Init': 10, 
     'Target': 11,
-    'Targeted': 12
+    'Targeted': 12,
+    'Inventory': 13
 }
 
 def registerComponents(entityManager):
@@ -26,6 +27,7 @@ def registerComponents(entityManager):
     entityManager.registerComponent(Init, {'speed': 0})
     entityManager.registerComponent(Target, {'target': None})
     entityManager.registerComponent(Targeted, {'targetedBy': [], 'targetTimer': 0, 'targetIndex': 0})
+    entityManager.registerComponent(Inventory, {'contents': []})
 
 Position = 1
 Render = 2
@@ -39,5 +41,5 @@ IsReady = 9
 Init = 10
 Target = 11
 Targeted = 12
-
+Inventory = 13
 

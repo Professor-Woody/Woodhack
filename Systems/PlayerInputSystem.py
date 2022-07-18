@@ -9,6 +9,8 @@ class PlayerInputSystem(BaseSystem):
         for entity in entities:
             controller = inputComponents[entity]['controller']
             controller.update()
+
+            # Targeting
             target = None
             if controller.getPressedOnce("next"):
                 target = "next"
@@ -19,6 +21,11 @@ class PlayerInputSystem(BaseSystem):
             if target:
                 self.level.post('target', {'entity': entity, 'targetType': IsNPC, 'targetFocus': target})
 
+            # picking up an item
+            if controller.getPressedOnce("use"):
+                self.level.post('try_pickup_item', {'entity': entity})
+
+            # Movement
             if self.level.e.hasComponent(entity, IsReady):
                 dx = 0
                 dy = 0

@@ -14,3 +14,19 @@ def getLOS(entity, other, Map):
             or Map.checkIsBlocked(x, y):
             return False
     return True      
+
+def areaCollides(entityPositionComponent, otherPositionComponent):
+    return (
+        entityPositionComponent['x'] < otherPositionComponent['x'] + otherPositionComponent['width']
+            and entityPositionComponent['x'] + entityPositionComponent['width'] >= otherPositionComponent['x']
+            and entityPositionComponent['y'] < otherPositionComponent['y'] + otherPositionComponent['height']
+            and entityPositionComponent['y'] + entityPositionComponent['height'] >= otherPositionComponent['y']
+    )
+
+def pointCollides(entityPositionComponent, x, y):
+    return (
+        x >= entityPositionComponent['x']
+        and x < entityPositionComponent['x'] + entityPositionComponent['width']
+        and y >= entityPositionComponent['y']
+        and y < entityPositionComponent['y'] + entityPositionComponent['height']
+    )
