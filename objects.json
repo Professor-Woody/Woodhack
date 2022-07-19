@@ -45,7 +45,8 @@
             },
             "IsPlayer": {},
             "Target": {},
-            "Inventory": {}
+            "Inventory": {},
+            "Body": {}
         }
     },
 
@@ -72,7 +73,8 @@
                 "fg": [200, 200, 50],
                 "needsVisibility": true
             },
-            "Light": {"radius": 5}
+            "Light": {"radius": 5},
+            "Equip": {"slots": ["mainhand", "offhand"]}
         }
     }
 ]

@@ -86,6 +86,7 @@ class BaseLevel:
         self.dropItemSystem = DropItemSystem(self)
         self.updateSelectionUISystem = UpdateSelectionUISystem(self)
         self.closeUISystem = CloseUISystem(self)
+        self.equipItemSystem = EquipItemSystem(self)
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
@@ -153,6 +154,7 @@ class TestLevel(BaseLevel):
         self.pickupItemSystem.run()
         self.updateSelectionUISystem.run()
         self.dropItemSystem.run()
+        self.equipItemSystem.run()
         self.closeUISystem.run()
 
         self.moveSystem.run()

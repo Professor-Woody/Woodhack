@@ -1,6 +1,7 @@
 from select import select
 from Components import *
 from Systems.BaseSystem import BaseSystem
+import Colours as colour
 
 class RenderEntitiesSystem(BaseSystem):
     def run(self):
@@ -26,16 +27,33 @@ class UpdateSelectionUISystem(BaseSystem):
         if entities:
             selectionComponents = self.getComponents(SelectionUI)
             inputComponents = self.getComponents(PlayerInput)
-            
+
             for entity in entities:
+                if inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce('up'):
+                    selectionComponents[entity]['selectionIndex'] -= 1 
+                    if selectionComponents[entity]['selectionIndex'] < 0:
+                        selectionComponents[entity]['selectionIndex'] = len(selectionComponents[entity]['items']) - 1
+                        print (f"setting index to {selectionComponents[entity]['selectionIndex']}")
+                
+                elif inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce('down'):
+                    selectionComponents[entity]['selectionIndex'] += 1 
+                    if selectionComponents[entity]['selectionIndex'] >= len(selectionComponents[entity]['items']):
+                        selectionComponents[entity]['selectionIndex'] = 0            
+                        print (f"setting index to {selectionComponents[entity]['selectionIndex']}")
+
                 for command, result in selectionComponents[entity]['commands'].items():
                     if inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce(command):
-                        self.level.post(result['action'], {
-                            'ui': entity,
-                            'entity': selectionComponents[entity]['parentEntity'],
-                            'items': selectionComponents[entity]['items'],
-                            'item': selectionComponents[entity]['items'][selectionComponents[entity]['selectionIndex']]  if  selectionComponents[entity]['items'] else None
-                        })
+                        if 'data' in result.keys():
+                            data = result['data']
+                        else:
+                            data = {}
+                        data['ui'] = entity
+                        data['entity'] = selectionComponents[entity]['parentEntity']
+                        data['items'] = selectionComponents[entity]['items']
+                        data['item'] = selectionComponents[entity]['items'][selectionComponents[entity]['selectionIndex']]  if  selectionComponents[entity]['items'] else None
+
+                        self.level.post(result['action'], data)
+
 
 class CloseUISystem(BaseSystem):
     actions=['close_selection']
@@ -58,6 +76,7 @@ class RenderSelectionUISystem(BaseSystem):
             selectionComponents = self.getComponents(SelectionUI)
             renderComponents = self.getComponents(Render)
             positionComponents = self.getComponents(Position)
+            equippedComponents = self.getComponents(Equipped)
 
             for entity in entities:
                 # draw the frame
@@ -71,14 +90,15 @@ class RenderSelectionUISystem(BaseSystem):
 
                 # draw the list of items
                 for i in range(len(selectionComponents[entity]['items'])):
+                    title = renderComponents[selectionComponents[entity]['items'][i]]['name']
+                    if selectionComponents[entity]['items'][i] in equippedComponents.keys():
+                        title += " - " + equippedComponents[selectionComponents[entity]['items'][i]]['slot']
                     screen.printLine(
                         positionComponents[entity]['x']+2,
                         positionComponents[entity]['y']+1+i,
-                        renderComponents[selectionComponents[entity]['items'][i]]['name'],
-                        renderComponents[selectionComponents[entity]['items'][i]]['fg']
+                        title,
+                        renderComponents[selectionComponents[entity]['items'][i]]['fg'],
+                        colour.GREY if selectionComponents[entity]['selectionIndex'] == i else None
                     )     
 
 
-
-
-                # check the inputs and perform actions

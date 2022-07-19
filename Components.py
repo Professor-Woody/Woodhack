@@ -13,6 +13,8 @@ componentMap = {
     'Targeted': 12,
     'Inventory': 13,
     'SelectionUI': 14,
+    'Body': 15,
+    'Equip': 16
 }
 
 def registerComponents(entityManager):
@@ -30,6 +32,17 @@ def registerComponents(entityManager):
     entityManager.registerComponent(Targeted, {'targetedBy': [], 'targetTimer': 0, 'targetIndex': 0})
     entityManager.registerComponent(Inventory, {'contents': []})
     entityManager.registerComponent(SelectionUI, {'items': [], 'title': 'selectionUI', 'selectionIndex': 0})
+    entityManager.registerComponent(Body, {'slots': {
+        'mainhand': None,
+        'offhand': None,
+        'head': None,
+        'chest': None,
+        'legs': None,
+        'feet': None,
+        }})
+    entityManager.registerComponent(Equip, {'slots': ['mainhand']})
+    entityManager.registerComponent(Equipped, {'slot': "NOTEQUIPPED"})
+
 
 Position = 1
 Render = 2
@@ -45,4 +58,6 @@ Target = 11
 Targeted = 12
 Inventory = 13
 SelectionUI = 14
-
+Body = 15
+Equip = 16
+Equipped = 17

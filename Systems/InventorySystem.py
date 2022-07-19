@@ -63,6 +63,9 @@ class OpenInventorySystem(BaseSystem):
                     'items': items,
                     'commands': {
                         'inventory': {'action': 'close_selection'},
+                        'use': {'action': 'use_item'},
+                        'mainhand': {'action': 'equip_item', 'data': {'slot': 'mainhand'}},
+                        'offhand': {'action': 'equip_item', 'data': {'slot': 'offhand'}},
                         'cancel': {'action': 'drop_item'}
                         }
                     })
@@ -86,11 +89,23 @@ class DropItemSystem(BaseSystem):
         if self._actionQueue:
             
             positionComponents = self.getComponents(Position)
+            bodyComponents = self.getComponents(Body)
+            equippedComponents = self.getComponents(Equipped)
 
             for action in self.actionQueue:
                 item = action['item']
+
                 if item:
                     entity = action['entity']
+                    if self.level.e.hasComponent(item, Equipped):
+                        bodyComponents[entity]['slots'][equippedComponents[item]['slot']] = None
+                        print (f"removing {item} from {equippedComponents[item]['slot']}")
+                        print (bodyComponents[entity])
+                        self.level.e.removeComponent(item, Equipped)
+                        self.level.post('recalculate_stats', {'entity': action['entity']})
+                    else:
+                        print (f"{item} was not equipped")
+
                     self.level.e.addComponent(item, Position, {
                         'x': positionComponents[entity]['x'],
                         'y': positionComponents[entity]['y']
@@ -100,3 +115,51 @@ class DropItemSystem(BaseSystem):
 
                 if 'ui' in action.keys():
                     self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})
+
+
+class EquipItemSystem(BaseSystem):
+    actions = ['equip_item']
+
+    def run(self):
+        if self._actionQueue:
+            bodyComponents = self.getComponents(Body)
+            equipComponents = self.getComponents(Equip)
+            equippedComponents = self.getComponents(Equipped)
+
+            for action in self.actionQueue:
+                if action['item']:
+                    if self.level.e.hasComponent(action['item'], Equip):
+                        if 'slot' in action.keys():
+                            if action['slot'] in equipComponents[action['item']]['slots']:
+                                # the item can be put into the defined slot
+                                slot = action['slot']
+                                print (f"{action['item']} added to {action['slot']}")
+                            else:
+                                # they obviously still want to equip it, so just put it in
+                                # the first slot identified in the item list
+                                slot = equipComponents[action['item']]['slots'][0]
+                                print (f"{action['item']} added to default slot {slot}")
+                            
+                        else:
+                            slot = equipComponents[action['item']]['slots'][0]
+                            print (f"{action['item']} added to default slot {slot}")
+                        
+                        self.removeItem(bodyComponents, action['entity'], slot)
+                        self.addItem(bodyComponents, equippedComponents, action['entity'], action['item'], slot)
+                        self.level.post('recalculate_stats', {'entity': action['entity']})
+
+                if 'ui' in action.keys():
+                    self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})
+
+
+    def removeItem(self, bodyComponents, entity, slot):
+        if bodyComponents[entity]['slots'][slot]:
+            self.level.e.removeComponent(bodyComponents[entity]['slots'][slot], Equipped)
+            bodyComponents[entity]['slots'][slot] = None
+
+    def addItem(self, bodyComponents, equippedComponents, entity, item, slot):
+        if item in equippedComponents.keys():
+            self.removeItem(bodyComponents, entity, equippedComponents[item]['slot'])
+
+        bodyComponents[entity]['slots'][slot] = item
+        self.level.e.addComponent(item, Equipped, {'slot': slot})
