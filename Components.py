@@ -23,13 +23,13 @@ def registerComponents(entityManager):
     entityManager.registerComponent(IsNPC)
     entityManager.registerComponent(IsItem)
     entityManager.registerComponent(IsVisible)
-    entityManager.registerComponent(PlayerInput, {'controller': None})
+    entityManager.registerComponent(PlayerInput, {'controller': None, 'controlFocus': []})
     entityManager.registerComponent(IsReady)
     entityManager.registerComponent(Init, {'speed': 0})
     entityManager.registerComponent(Target, {'target': None})
     entityManager.registerComponent(Targeted, {'targetedBy': [], 'targetTimer': 0, 'targetIndex': 0})
     entityManager.registerComponent(Inventory, {'contents': []})
-    entityManager.registerComponent(SelectionUI, {'items': [], 'title': 'selectionUI'})
+    entityManager.registerComponent(SelectionUI, {'items': [], 'title': 'selectionUI', 'selectionIndex': 0})
 
 Position = 1
 Render = 2

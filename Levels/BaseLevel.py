@@ -5,7 +5,7 @@ from Systems.BaseSystem import BaseSystem
 from Systems.InitSystem import InitSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
-from Systems.RenderSystems import RenderEntitiesSystem, RenderSelectionUISystem
+from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderSelectionUISystem, UpdateSelectionUISystem
 from Systems.InventorySystem import *
 from Controllers import controllers
 import time
@@ -74,7 +74,6 @@ class BaseLevel:
 
 
 
-        self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.initSystem = InitSystem(self)
         self.playerInputSystem = PlayerInputSystem(self)
         self.moveSystem = MoveSystem(self)
@@ -84,6 +83,11 @@ class BaseLevel:
         self.tryPickupItemSystem = TryPickupItemSystem(self)
         self.pickupItemSystem = PickupItemSystem(self)
         self.openInventorySystem = OpenInventorySystem(self)
+        self.dropItemSystem = DropItemSystem(self)
+        self.updateSelectionUISystem = UpdateSelectionUISystem(self)
+        self.closeUISystem = CloseUISystem(self)
+
+        self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
 
 
@@ -147,9 +151,11 @@ class TestLevel(BaseLevel):
         self.addTargeterSystem.run()
         self.tryPickupItemSystem.run()
         self.pickupItemSystem.run()
+        self.updateSelectionUISystem.run()
+        self.dropItemSystem.run()
+        self.closeUISystem.run()
 
         self.moveSystem.run()
-
         self.openInventorySystem.run()
         
 

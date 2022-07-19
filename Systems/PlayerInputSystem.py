@@ -10,6 +10,9 @@ class PlayerInputSystem(BaseSystem):
             controller = inputComponents[entity]['controller']
             controller.update()
 
+            if inputComponents[entity]['controlFocus']:
+                continue
+            
             # Targeting
             target = None
             if controller.getPressedOnce("next"):

@@ -1,3 +1,4 @@
+from select import select
 from Components import *
 from Systems.BaseSystem import BaseSystem
 
@@ -19,6 +20,36 @@ class RenderEntitiesSystem(BaseSystem):
                     renderComponents[entity]['bg'])
             
 
+class UpdateSelectionUISystem(BaseSystem):
+    def run(self):
+        entities = self.level.selectionUIQuery.result
+        if entities:
+            selectionComponents = self.getComponents(SelectionUI)
+            inputComponents = self.getComponents(PlayerInput)
+            
+            for entity in entities:
+                for command, result in selectionComponents[entity]['commands'].items():
+                    if inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce(command):
+                        self.level.post(result['action'], {
+                            'ui': entity,
+                            'entity': selectionComponents[entity]['parentEntity'],
+                            'items': selectionComponents[entity]['items'],
+                            'item': selectionComponents[entity]['items'][selectionComponents[entity]['selectionIndex']]  if  selectionComponents[entity]['items'] else None
+                        })
+
+class CloseUISystem(BaseSystem):
+    actions=['close_selection']
+
+    def run(self):
+        if self._actionQueue:
+            inputComponents = self.getComponents(PlayerInput)
+
+            for action in self.actionQueue:
+                self.level.e.destroyEntity(action['ui'])
+                inputComponents[action['entity']]['controlFocus'].remove(action['ui'])
+            
+
+
 class RenderSelectionUISystem(BaseSystem):
     def run(self):
         entities = self.level.selectionUIQuery.result
@@ -37,7 +68,7 @@ class RenderSelectionUISystem(BaseSystem):
                     positionComponents[entity]['height'],
                     selectionComponents[entity]['title']
                     )
-                    
+
                 # draw the list of items
                 for i in range(len(selectionComponents[entity]['items'])):
                     screen.printLine(

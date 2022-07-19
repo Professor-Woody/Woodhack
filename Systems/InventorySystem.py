@@ -51,13 +51,21 @@ class OpenInventorySystem(BaseSystem):
 
     def run(self):
         if self._actionQueue:
+            inputComponents = self.getComponents(PlayerInput)
+
             for action in self.actionQueue:
                 ui = self.level.e.createEntity()
                 items = self.level.e.component.components[Inventory][action['entity']]['contents']
 
                 self.level.e.addComponent(ui, SelectionUI, {
+                    'parentEntity': action['entity'],
                     'title': 'Inventory', 
-                    'items': items})
+                    'items': items,
+                    'commands': {
+                        'inventory': {'action': 'close_selection'},
+                        'cancel': {'action': 'drop_item'}
+                        }
+                    })
                 self.level.e.addComponent(
                     ui, 
                     Position, 
@@ -67,3 +75,28 @@ class OpenInventorySystem(BaseSystem):
                         'width': 22,
                         'height': len(items) + 2    
                     })
+
+                inputComponents[action['entity']]['controlFocus'].append(ui)
+
+
+class DropItemSystem(BaseSystem):
+    actions = ['drop_item']
+
+    def run(self):
+        if self._actionQueue:
+            
+            positionComponents = self.getComponents(Position)
+
+            for action in self.actionQueue:
+                item = action['item']
+                if item:
+                    entity = action['entity']
+                    self.level.e.addComponent(item, Position, {
+                        'x': positionComponents[entity]['x'],
+                        'y': positionComponents[entity]['y']
+                    })
+
+                    action['items'].remove(item)
+
+                if 'ui' in action.keys():
+                    self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})

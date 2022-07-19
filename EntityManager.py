@@ -1,6 +1,7 @@
 from functools import reduce
 from Components import *
 import json
+import copy
 
 def subtract_bit(num: int, bit: int) -> int:
     return num & ~(1 << bit)
@@ -36,7 +37,7 @@ class Component:
         if entity in self.components[component].keys():
             finalData = self.components[component][entity]
         else:
-            finalData = self.defaults[component].copy()
+            finalData = copy.deepcopy(self.defaults[component])
 
         if data:
             for key, value in data.items():
@@ -124,6 +125,15 @@ class EntityManager:
         self.entities[entity] = 0
         return entity
 
+    def destroyEntity(self, entity):
+        print (f"destroying entity {entity}")
+        for key, component in self.component.components.items():
+            if entity in component.keys():
+                self.removeComponent(entity, key)
+                print (f"removing component {key}")
+        self.entities.pop(entity)
+        print ("entity destroyed")
+
     def createQuery(self, allOf=[], anyOf=[], noneOf=[], storeQuery = None):
         query = Query(self, allOf, anyOf, noneOf, storeQuery)
         if storeQuery:
@@ -135,6 +145,7 @@ class EntityManager:
 
     def registerComponent(self, component, data = {}):
         self.component.registerComponent(component, data)
+
 
     def addComponent(self, entity, component, data = {}):
         print (f"--{entity} adding component {component}")
@@ -150,6 +161,7 @@ class EntityManager:
 
     def hasComponent(self, entity, component):
         return has_bit(self.entities[entity], component)
+
 
     def candidacy(self, entity):
         for query in self.queries.values():
@@ -178,11 +190,11 @@ class EntityManager:
 
 
 
-    def addComponents(self, entity, entityType):
+    def _addComponents(self, entity, entityType):
         entityDef = Entity.entityDefs[entityType]
         
         if 'inherits' in entityDef.keys():
-            self.addComponents(entity, entityDef['inherits'])
+            self._addComponents(entity, entityDef['inherits'])
         
         for component in entityDef['components'].keys():
             self.addComponent(entity, component, entityDef['components'][component].copy())
@@ -191,6 +203,6 @@ class EntityManager:
 
     def spawn(self, entityType, x, y):
         entity = self.createEntity()
-        self.addComponents(entity, entityType)
+        self._addComponents(entity, entityType)
         self.addComponent(entity, Position, {'x': x, 'y': y})
         return entity
