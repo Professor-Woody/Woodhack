@@ -35,8 +35,10 @@ class Screen:
 
     def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE):
         self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg)
-        self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
-        self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
+        if title:
+            self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
+        if msg:
+            self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 
     def print(self, x, y, msg, fg = colour.WHITE):
         self.console.print(x=x, y=y, string=msg, fg=fg)

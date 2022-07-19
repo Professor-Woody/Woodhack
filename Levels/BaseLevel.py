@@ -5,7 +5,8 @@ from Systems.BaseSystem import BaseSystem
 from Systems.InitSystem import InitSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
-from Systems.RenderEntitiesSystem import RenderEntitiesSystem
+from Systems.RenderSystems import RenderEntitiesSystem, RenderSelectionUISystem
+from Systems.InventorySystem import *
 from Controllers import controllers
 import time
 
@@ -66,6 +67,11 @@ class BaseLevel:
             storeQuery = 'TargetedQuery'
         )
 
+        self.selectionUIQuery = self.e.createQuery(
+            allOf=[SelectionUI],
+            storeQuery = 'SelectionUIQuery'
+        )
+
 
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
@@ -75,6 +81,10 @@ class BaseLevel:
         self.targetSystem = TargetSystem(self)
         self.addTargeterSystem = AddTargeterSystem(self)
         self.removeTargeterSystem = RemoveTargeterSystem(self)
+        self.tryPickupItemSystem = TryPickupItemSystem(self)
+        self.pickupItemSystem = PickupItemSystem(self)
+        self.openInventorySystem = OpenInventorySystem(self)
+        self.renderSelectionUISystem = RenderSelectionUISystem(self)
 
 
     def registerSystem(self, actions, system):
@@ -135,13 +145,22 @@ class TestLevel(BaseLevel):
         self.targetSystem.run()
         self.removeTargeterSystem.run()
         self.addTargeterSystem.run()
+        self.tryPickupItemSystem.run()
+        self.pickupItemSystem.run()
+
         self.moveSystem.run()
+
+        self.openInventorySystem.run()
+        
+
 
 
         self.map.update()
 
         self.map.draw(self.app.screen)
         self.renderEntitiesSystem.run()
+        self.renderSelectionUISystem.run()
+
 
         self.fps += 1
         curTime = time.time()*1000

@@ -15,7 +15,6 @@ class TryPickupItemSystem(BaseSystem):
                 entity = action['entity'] # TODO: optimize
                 pos = positionComponents[entity]
 
-
                 # if there's one, pick it up
                 items = []
                 for item in itemsOnGround:
@@ -29,6 +28,7 @@ class TryPickupItemSystem(BaseSystem):
                         print ("too many items on ground. fix your inventory selectionUI Woody")
                         self.level.post('open_selection_ui', {'entity': entity, 'list': items, 'actions': ['pickup_item']})
                         
+
 class PickupItemSystem(BaseSystem):
     actions=['pickup_item']
 
@@ -46,3 +46,24 @@ class PickupItemSystem(BaseSystem):
 
 
 
+class OpenInventorySystem(BaseSystem):
+    actions=['open_inventory']
+
+    def run(self):
+        if self._actionQueue:
+            for action in self.actionQueue:
+                ui = self.level.e.createEntity()
+                items = self.level.e.component.components[Inventory][action['entity']]['contents']
+
+                self.level.e.addComponent(ui, SelectionUI, {
+                    'title': 'Inventory', 
+                    'items': items})
+                self.level.e.addComponent(
+                    ui, 
+                    Position, 
+                    {
+                        'x': self.level.width - 22,
+                        'y': 0,
+                        'width': 22,
+                        'height': len(items) + 2    
+                    })

@@ -33,9 +33,16 @@ class Component:
         return {key: self.components[component][key] for key in entities}
 
     def addComponent(self, entity, component, data):
-        if not data:
-            data = self.defaults[component]
-        self.components[component][entity] = data
+        if entity in self.components[component].keys():
+            finalData = self.components[component][entity]
+        else:
+            finalData = self.defaults[component].copy()
+
+        if data:
+            for key, value in data.items():
+                finalData[key] = value
+        
+        self.components[component][entity] = finalData
 
     def removeComponent(self, entity, component):
         if entity in self.components[component].keys():

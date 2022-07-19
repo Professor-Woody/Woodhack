@@ -43,6 +43,9 @@ class PlayerInputSystem(BaseSystem):
                     self.level.post('add_speed', {'entity': entity, 'speed': 6})
                     return
 
+                if controller.getPressedOnce('inventory'):
+                    self.level.post('open_inventory', {'entity': entity})
+                    return
 
 
 

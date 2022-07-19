@@ -24,6 +24,7 @@ def areaCollides(entityPositionComponent, otherPositionComponent):
     )
 
 def pointCollides(entityPositionComponent, x, y):
+    print (entityPositionComponent)
     return (
         x >= entityPositionComponent['x']
         and x < entityPositionComponent['x'] + entityPositionComponent['width']

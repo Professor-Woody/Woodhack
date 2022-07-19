@@ -44,7 +44,8 @@
                 "radius": 3
             },
             "IsPlayer": {},
-            "Target": {}
+            "Target": {},
+            "Inventory": {}
         }
     },
 
