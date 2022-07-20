@@ -98,7 +98,7 @@ class DropItemSystem(BaseSystem):
                 if item:
                     entity = action['entity']
                     if self.level.e.hasComponent(item, Equipped):
-                        bodyComponents[entity]['slots'][equippedComponents[item]['slot']] = None
+                        bodyComponents[entity][equippedComponents[item]['slot']] = None
                         print (f"removing {item} from {equippedComponents[item]['slot']}")
                         print (bodyComponents[entity])
                         self.level.e.removeComponent(item, Equipped)
@@ -153,13 +153,13 @@ class EquipItemSystem(BaseSystem):
 
 
     def removeItem(self, bodyComponents, entity, slot):
-        if bodyComponents[entity]['slots'][slot]:
-            self.level.e.removeComponent(bodyComponents[entity]['slots'][slot], Equipped)
-            bodyComponents[entity]['slots'][slot] = None
+        if bodyComponents[entity][slot]:
+            self.level.e.removeComponent(bodyComponents[entity][slot], Equipped)
+            bodyComponents[entity][slot] = None
 
     def addItem(self, bodyComponents, equippedComponents, entity, item, slot):
         if item in equippedComponents.keys():
             self.removeItem(bodyComponents, entity, equippedComponents[item]['slot'])
 
-        bodyComponents[entity]['slots'][slot] = item
+        bodyComponents[entity][slot] = item
         self.level.e.addComponent(item, Equipped, {'slot': slot})

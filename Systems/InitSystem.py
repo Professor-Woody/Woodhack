@@ -15,7 +15,6 @@ class InitSystem(BaseSystem):
         for entity in entities:
             initComponents[entity]['speed'] = max(0, initComponents[entity]['speed']-1)
             if not initComponents[entity]['speed']:
-                print (f"entity {entity} is ready")
                 self.level.e.addComponent(entity, IsReady)
 
         

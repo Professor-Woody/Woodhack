@@ -9,6 +9,7 @@ from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderSel
 from Systems.InventorySystem import *
 from Controllers import controllers
 import time
+from Systems.StatsSystem import RecalculateStatsSystem
 
 from Systems.TargetSystem import AddTargeterSystem, RemoveTargeterSystem, TargetSystem
 
@@ -87,6 +88,8 @@ class BaseLevel:
         self.updateSelectionUISystem = UpdateSelectionUISystem(self)
         self.closeUISystem = CloseUISystem(self)
         self.equipItemSystem = EquipItemSystem(self)
+        self.recalculateStatsSystem = RecalculateStatsSystem(self)
+
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
@@ -134,6 +137,7 @@ class TestLevel(BaseLevel):
         self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
 
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
+        self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
         self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
         self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
@@ -160,7 +164,7 @@ class TestLevel(BaseLevel):
         self.moveSystem.run()
         self.openInventorySystem.run()
         
-
+        self.recalculateStatsSystem.run()
 
 
         self.map.update()

@@ -41,12 +41,13 @@
                 "needsVisibility": false
             },
             "Light": {
-                "radius": 3
+                "radius": 2
             },
             "IsPlayer": {},
             "Target": {},
             "Inventory": {},
-            "Body": {}
+            "Body": {},
+            "Stats": {}
         }
     },
 
@@ -74,7 +75,23 @@
                 "needsVisibility": true
             },
             "Light": {"radius": 5},
-            "Equip": {"slots": ["mainhand", "offhand"]}
+            "Equip": {"slots": ["mainhand", "offhand"]},
+            "StatModifier": {"moveSpeed": -8}
+        }
+    },
+
+    {
+        "type": "shortsword",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "shortsword",
+                "char": "/",
+                "fg": [150, 150, 150]
+            },
+            "Equip": {"slots": ["mainhand", "offhand"]},
+            "Melee": {},
+            "Init": {}
         }
     }
 ]

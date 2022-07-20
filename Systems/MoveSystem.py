@@ -9,11 +9,17 @@ class MoveSystem(BaseSystem):
         for action in self.actionQueue:
             newx = positionComponents[action['entity']]['x'] + action['dx']
             newy = positionComponents[action['entity']]['y'] + action['dy']
+
             if not self.checkCanMove(newx, newy):
-                if not self.checkCanMove(newx, positionComponents[action['entity']]['y']):
-                    action['dx'] = 0
-                elif not self.checkCanMove(positionComponents[action['entity']]['x'], newy):
-                    action['dy'] = 0
+                dx = 0
+                dy = 0
+                if self.checkCanMove(newx, positionComponents[action['entity']]['y']):
+                    dx = action['dx']
+                elif self.checkCanMove(positionComponents[action['entity']]['x'], newy):
+                    dy = action['dy']
+                action['dx'] = dx
+                action['dy'] = dy
+
             if action['dx'] or action['dy']:
                 positionComponents[action['entity']]['x'] += action['dx']
                 positionComponents[action['entity']]['y'] += action['dy']
