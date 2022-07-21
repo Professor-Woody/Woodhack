@@ -126,13 +126,13 @@ class EntityManager:
         return entity
 
     def destroyEntity(self, entity):
-        print (f"destroying entity {entity}")
+        # print (f"destroying entity {entity}")
         for key, component in self.component.components.items():
             if entity in component.keys():
                 self.removeComponent(entity, key)
-                print (f"removing component {key}")
+                # print (f"removing component {key}")
         self.entities.pop(entity)
-        print ("entity destroyed")
+        # print ("entity destroyed")
 
     def createQuery(self, allOf=[], anyOf=[], noneOf=[], storeQuery = None):
         query = Query(self, allOf, anyOf, noneOf, storeQuery)
@@ -148,13 +148,13 @@ class EntityManager:
 
 
     def addComponent(self, entity, component, data = {}):
-        print (f"--{entity} adding component {component}")
+        # print (f"--{entity} adding component {component}")
         self.component.addComponent(entity, component, data)
         self.entities[entity] = add_bit(self.entities[entity], component)
         self.candidacy(entity)
 
     def removeComponent(self, entity, component):
-        print (f"--{entity} removing component {component}")
+        # print (f"--{entity} removing component {component}")
         self.component.removeComponent(entity, component)
         self.entities[entity] = subtract_bit(self.entities[entity], component)
         self.candidacy(entity)
@@ -197,12 +197,15 @@ class EntityManager:
             self._addComponents(entity, entityDef['inherits'])
         
         for component in entityDef['components'].keys():
-            self.addComponent(entity, component, entityDef['components'][component].copy())
-            print (f"adding: {component} / {entityDef['components'][component]}")
+            self.addComponent(entity, component, copy.deepcopy(entityDef['components'][component]))
+            # print (f"adding: {component} / {entityDef['components'][component]}")
 
 
-    def spawn(self, entityType, x, y):
+    def spawn(self, entityType, x, y, parentEntity = None):
         entity = self.createEntity()
         self._addComponents(entity, entityType)
-        self.addComponent(entity, Position, {'x': x, 'y': y})
+        if parentEntity:
+            self.component.components[Inventory][parentEntity]['contents'].append(entity)
+        else:
+            self.addComponent(entity, Position, {'x': x, 'y': y})
         return entity

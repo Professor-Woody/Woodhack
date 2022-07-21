@@ -19,7 +19,12 @@
                 "fg": [255, 255, 255],
                 "needsVisibility": true
             },
-            "Init": {"speed": 0}
+            "Init": {"speed": 0},
+            "Stats": {},
+            "Body": {},
+            "Inventory": {},
+            "Target": {},
+            "Collidable": {}
         }
     },
 
@@ -44,10 +49,13 @@
                 "radius": 2
             },
             "IsPlayer": {},
-            "Target": {},
             "Inventory": {},
             "Body": {},
-            "Stats": {}
+            "Stats": {
+                "hp": 25,
+                "maxHp": 25,
+                "baseMaxHp": 25
+            }
         }
     },
 
@@ -60,6 +68,11 @@
                 "char": "o",
                 "fg": [100, 255, 100],
                 "needsVisibility": true
+            },
+            "AI": {},
+            "Stats": {
+                "moveSpeed": 45,
+                "baseMoveSpeed": 45
             }
         }
     },

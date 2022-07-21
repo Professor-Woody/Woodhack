@@ -18,7 +18,10 @@ componentMap = {
     'Equipped': 17,
     'Stats': 18,
     'StatModifier': 19,
-    'Melee': 20
+    'Melee': 20,
+    'HostileAI': 21,
+    'AI': 22,
+    'Collidable': 23
 }
 
 def registerComponents(entityManager):
@@ -67,6 +70,15 @@ def registerComponents(entityManager):
         'damageDiceAmount': 1,
         'damageDiceType': 6,
     })
+    entityManager.registerComponent(HostileAI, {
+        'targetCooldown': 0,
+
+    })
+    entityManager.registerComponent(AI, {
+        'targetRefreshTimer': 0,
+        'path': []
+    }),
+    entityManager.registerComponent(Collidable)
 
 Position = 1
 Render = 2
@@ -88,3 +100,6 @@ Equipped = 17
 Stats = 18
 StatModifier = 19
 Melee = 20
+HostileAI = 21
+AI = 22
+Collidable = 23

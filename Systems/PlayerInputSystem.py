@@ -78,4 +78,5 @@ class PlayerInputSystem(BaseSystem):
                     if meleed:
                         return
 
-        
+                if controller.getPressedOnce('cancel'):
+                    self.level.e.spawn('orc', positionComponents[entity]['x']+1, positionComponents[entity]['y'])

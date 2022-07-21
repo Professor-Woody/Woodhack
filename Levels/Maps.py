@@ -3,6 +3,7 @@ from Levels.Rooms import wall, SHROUD
 import tcod
 from tcod.map import compute_fov
 from Components import *
+import Helpers.PositionHelper as PositionHelper
 
 class GameMap:
     def __init__(self, level, width, height):
@@ -32,6 +33,11 @@ class GameMap:
         #     if Collision.pointCollides(entity, x, y):
         #         return entity
         # TODO: This
+        positionComponents = self.level.e.component.components[Position]
+
+        for entity in self.level.collidableQuery.result:
+            if PositionHelper.pointCollides(positionComponents[entity], x, y):
+                return True
         return False
 
     def update(self):

@@ -1,8 +1,10 @@
 from EntityManager import EntityManager, Position, Render
 from Levels.LevelCreator import LevelCreator
 from Components import *
+from Systems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
 from Systems.InitSystem import InitSystem
+from Systems.MeleeSystem import DamageSystem, MeleeSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
 from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderSelectionUISystem, UpdateSelectionUISystem
@@ -52,6 +54,16 @@ class BaseLevel:
             storeQuery = 'NPCs'
         )
 
+        self.actorsQuery = self.e.createQuery(
+            anyOf=[IsNPC, IsPlayer],
+            storeQuery = 'Actors'
+        )
+
+        self.collidableQuery = self.e.createQuery(
+            allOf=[Collidable],
+            storeQuery = 'Collidable'
+        )
+
         self.initQuery = self.e.createQuery(
             allOf=[Init],
             noneOf=[IsReady],
@@ -89,7 +101,9 @@ class BaseLevel:
         self.closeUISystem = CloseUISystem(self)
         self.equipItemSystem = EquipItemSystem(self)
         self.recalculateStatsSystem = RecalculateStatsSystem(self)
-
+        self.meleeSystem = MeleeSystem(self)
+        self.damageSystem = DamageSystem(self)
+        self.aiSystem = AISystem(self)
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
@@ -107,7 +121,7 @@ class BaseLevel:
 
 
     def post(self, action, data):
-        print (f"Action posted: {action}\nData: {data}")
+        # print (f"Action posted: {action}\nData: {data}")
         if action in self.systems.keys():
             for system in self.systems[action]:
                 system.post(data)
@@ -139,11 +153,11 @@ class TestLevel(BaseLevel):
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
         self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
         self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
-        self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
-        self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
+        # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
+        # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
 
-        self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
-
+        orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
+        sword = self.e.spawn('shortsword', -1, -1, orc)
 
 
 
@@ -161,11 +175,16 @@ class TestLevel(BaseLevel):
         self.equipItemSystem.run()
         self.closeUISystem.run()
 
+        self.aiSystem.run()
+
         self.moveSystem.run()
         self.openInventorySystem.run()
         
+
         self.recalculateStatsSystem.run()
 
+        self.meleeSystem.run()
+        self.damageSystem.run()
 
         self.map.update()
 
