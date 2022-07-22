@@ -115,7 +115,8 @@ class Query:
 
 
 class EntityManager:
-    def __init__(self):
+    def __init__(self, level):
+        self.level = level
         self.component = Component()
         self.entities = {}
         self.queries: dict[str: Query] = {}
@@ -150,6 +151,17 @@ class EntityManager:
     def addComponent(self, entity, component, data = {}):
         # print (f"--{entity} adding component {component}")
         self.component.addComponent(entity, component, data)
+        
+        if component == Inventory:
+            if 'startingEquipment' in data.keys():
+                for item in data['startingEquipment']:
+                    self.spawn(item, -1, -1, entity)
+                del data['startingEquipment']            
+        elif component == Body:
+            for slot in data.keys():
+                if data[slot]:
+                    self.spawn(data[slot], -1, -1, inInventory=entity, inBodySlot=slot)
+
         self.entities[entity] = add_bit(self.entities[entity], component)
         self.candidacy(entity)
 
@@ -184,7 +196,7 @@ class EntityManager:
             if 'components' in obj.keys():
                 for component in obj['components'].keys():
                     cId = componentMap[component]
-                    Entity.entityDefs[eType]['components'][cId] = self.component.defaults[cId].copy()
+                    Entity.entityDefs[eType]['components'][cId] = copy.deepcopy(self.component.defaults[cId])
                     for key, value in obj['components'][component].items():
                         Entity.entityDefs[eType]['components'][cId][key] = value
 
@@ -201,11 +213,15 @@ class EntityManager:
             # print (f"adding: {component} / {entityDef['components'][component]}")
 
 
-    def spawn(self, entityType, x, y, parentEntity = None):
+    def spawn(self, entityType, x, y, inInventory: int = None, inBodySlot: str = None):
+
         entity = self.createEntity()
         self._addComponents(entity, entityType)
-        if parentEntity:
-            self.component.components[Inventory][parentEntity]['contents'].append(entity)
+        if inInventory:
+            self.component.components[Inventory][inInventory]['contents'].append(entity)
+            if inBodySlot:
+                self.component.components[Body][inInventory][inBodySlot] = None
+                self.level.post('equip_item', {'entity': inInventory, 'item': entity, 'slot': inBodySlot})
         else:
             self.addComponent(entity, Position, {'x': x, 'y': y})
         return entity

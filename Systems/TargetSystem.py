@@ -33,20 +33,20 @@ class TargetSystem(BaseSystem):
 
             for action in self.actionQueue:
                 targets = []
-                currentTargetIndex = -1
+
                 for otherEntity in targetEntities:
                     if self.level.map.checkIsVisible(positionComponents[otherEntity]['x'], positionComponents[otherEntity]['y']):
                         targetRange = PositionHelper.getRange(
-                            (positionComponents[action['entity']]['x'], positionComponents[action['entity']]['x']),
+                            (positionComponents[action['entity']]['x'], positionComponents[action['entity']]['y']),
                             (positionComponents[otherEntity]['x'], positionComponents[otherEntity]['y'])
                         )
                         targets.append((otherEntity, targetRange))
 
                 if targets:
                     targets.sort(key = lambda x: x[1])
-                    print (targets)
-                    counter = 0
 
+                    counter = 0
+                    currentTargetIndex = -1
                     for otherEntity in targets:
                         if otherEntity[0] == targetComponents[action['entity']]['target']:
                             currentTargetIndex = counter
@@ -63,7 +63,9 @@ class TargetSystem(BaseSystem):
                             currentTargetIndex = len(targets) - 1
                     else:
                         currentTargetIndex = 0
-                    
+                    print (targets)
+                    print (targets[currentTargetIndex])
+
                     finalTarget = targets[currentTargetIndex][0]
 
                     if finalTarget != targetComponents[action['entity']]['target']:

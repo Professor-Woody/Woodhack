@@ -108,8 +108,8 @@ class AISystem(BaseSystem):
 
 
         cost = np.array(self.level.map.tiles["passable"], dtype=np.int8)
-        for actor in self.level.actorsQuery.result: #TODO: Replace this query with a collideable one
-            if actor != entity and cost[positionComponents[entity]['x'], positionComponents[entity]['y']]:
+        for actor in self.level.collidableQuery.result: #TODO: Replace this query with a collideable one
+            if actor != entity and cost[positionComponents[actor]['x'], positionComponents[actor]['y']]:
                 # add to cost of a blocked position
                 # there's a potential for the entity to move out so we still
                 # count it as a possible path.
@@ -117,7 +117,7 @@ class AISystem(BaseSystem):
                 # a lower number means more enemies will crowd behind each other in
                 # hallways.  A higher number means enemies will take longer paths in
                 # order to surround the player
-                cost[positionComponents[entity]['x'], positionComponents[entity]['y']] += 10
+                cost[positionComponents[actor]['x'], positionComponents[actor]['y']] += 10
         graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
         pathfinder = tcod.path.Pathfinder(graph)
         pathfinder.add_root((positionComponents[entity]['x'], positionComponents[entity]['y']))

@@ -25,7 +25,7 @@ class BaseLevel:
         
         self.map = None
 
-        self.e: EntityManager = EntityManager()
+        self.e: EntityManager = EntityManager(self)
         registerComponents(self.e)
         self.systems: dict[int: list[BaseSystem]] = {}
 
