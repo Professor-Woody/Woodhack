@@ -7,8 +7,8 @@ from Flags import FPS
 
 
 class App:
-    width = 80
-    height = 60
+    width = 100
+    height = 80
     previousLevel = None
 
     def __init__(self):
@@ -27,7 +27,7 @@ class App:
             # framerate
             self.clock.tick()
             # clear screen
-            self.screen.clear()
+            # self.screen.clear()
 
             # check for global/input events
             for event in tcod.event.get():

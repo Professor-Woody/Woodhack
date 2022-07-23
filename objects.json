@@ -49,8 +49,7 @@
                 "radius": 2
             },
             "IsPlayer": {},
-            "Inventory": {"startingEquipment": ["shortsword"]},
-            "Body": {"mainhand": "torch"},
+            "Body": {"mainhand": "shortsword", "offhand": "torch"},
             "Stats": {
                 "hp": 25,
                 "maxHp": 25,
@@ -73,7 +72,8 @@
             "Stats": {
                 "moveSpeed": 45,
                 "baseMoveSpeed": 45
-            }
+            },
+            "Body": {"mainhand": "shortsword", "offhand": "torch"}
         }
     },
 

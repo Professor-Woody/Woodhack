@@ -4,7 +4,8 @@ from Components import *
 from Systems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
 from Systems.InitSystem import InitSystem
-from Systems.MeleeSystem import DamageSystem, MeleeSystem
+from Systems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
+from Systems.MessageLogSystem import CombatLogSystem, MessageLogSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
 from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderSelectionUISystem, UpdateSelectionUISystem
@@ -12,7 +13,6 @@ from Systems.InventorySystem import *
 from Controllers import controllers
 import time
 from Systems.StatsSystem import RecalculateStatsSystem
-
 from Systems.TargetSystem import AddTargeterSystem, RemoveTargeterSystem, TargetSystem
 
 
@@ -85,7 +85,14 @@ class BaseLevel:
             storeQuery = 'SelectionUIQuery'
         )
 
+        self.messageLogEntity = self.e.createEntity()
+        self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
+        
+        self.combatLogEntity = self.e.createEntity()
+        self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
 
+        self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
+        self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
 
         self.initSystem = InitSystem(self)
         self.playerInputSystem = PlayerInputSystem(self)
@@ -104,6 +111,7 @@ class BaseLevel:
         self.meleeSystem = MeleeSystem(self)
         self.damageSystem = DamageSystem(self)
         self.aiSystem = AISystem(self)
+        self.deathSystem = DeathSystem(self)
 
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
@@ -143,7 +151,7 @@ class TestLevel(BaseLevel):
     def __init__(self, app, width, height):
         super().__init__(app, width, height)
         
-        self.map = LevelCreator.generateBasicLevel(self, self.width-30, self.height-10)
+        self.map = LevelCreator.generateBasicLevel(self, self.width-30, self.height-15)
 
         self.e.loadEntities('objects.json')
 
@@ -158,7 +166,8 @@ class TestLevel(BaseLevel):
 
         orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
         sword = self.e.spawn('shortsword', -1, -1, orc)
-
+        
+        self.post('log', {'colour': (200, 200, 200), 'message': 'Game started'})
 
 
 
@@ -189,8 +198,12 @@ class TestLevel(BaseLevel):
         self.map.update()
 
         self.map.draw(self.app.screen)
+        self.messagelogSystem.run()
+        self.combatLogSystem.run()
         self.renderEntitiesSystem.run()
         self.renderSelectionUISystem.run()
+
+        self.deathSystem.run()
 
 
         self.fps += 1

@@ -2,6 +2,7 @@ from lib2to3.pytree import Base
 from Systems.BaseSystem import BaseSystem
 from Components import *
 import Helpers.PositionHelper as PositionHelper
+import Colours as colour
 
 class TryPickupItemSystem(BaseSystem):
     actions = ['try_pickup_item']
@@ -125,6 +126,7 @@ class EquipItemSystem(BaseSystem):
             bodyComponents = self.getComponents(Body)
             equipComponents = self.getComponents(Equip)
             equippedComponents = self.getComponents(Equipped)
+            renderComponents = self.getComponents(Render)
 
             for action in self.actionQueue:
                 if action['item']:
@@ -146,6 +148,9 @@ class EquipItemSystem(BaseSystem):
                         
                         self.removeItem(bodyComponents, action['entity'], slot)
                         self.addItem(bodyComponents, equippedComponents, action['entity'], action['item'], slot)
+                        
+                        self.log(f"£{action['entity']}$ has equipped the £{action['item']}$", action['entity'])
+
                         self.level.post('recalculate_stats', {'entity': action['entity']})
 
                 if 'ui' in action.keys():

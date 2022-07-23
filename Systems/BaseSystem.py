@@ -1,3 +1,5 @@
+import Colours as colour
+
 class BaseSystem:
     actions = None
     def __init__(self, level):
@@ -19,3 +21,9 @@ class BaseSystem:
 
     def getComponents(self, component):
         return self.level.e.component.components[component]
+
+    def log(self, message, colour=colour.WHITE):
+        self.level.post('log', {'colour': colour, 'message': message})
+
+    def clog(self, message, colour=colour.WHITE):
+        self.level.post('clog', {'colour': colour, 'message': message})        

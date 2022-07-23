@@ -51,13 +51,13 @@ class PlayerInputSystem(BaseSystem):
                 if dx or dy:
                     self.level.post('move', {'entity': entity, 'dx': dx, 'dy': dy})
                     self.level.post('add_speed', {'entity': entity, 'speed': statsComponents[entity]['moveSpeed']})
-                    return
+                    continue
 
                 # inventory
                 if controller.getPressedOnce('inventory'):
                     self.level.post('open_inventory', {'entity': entity})
                     self.level.lowestFps = 1000
-                    return
+                    continue
 
                 # melee
                 if targetComponents[entity]['target']:
@@ -76,7 +76,7 @@ class PlayerInputSystem(BaseSystem):
                                 self.level.post('melee', {'slot': slot, 'target': targetComponents[entity]['target'], 'entity': entity, 'item': bodyComponents[entity][slot]})
                                 meleed = True
                     if meleed:
-                        return
+                        continue
 
                 if controller.getPressedOnce('cancel'):
                     self.level.e.spawn('orc', positionComponents[entity]['x']+1, positionComponents[entity]['y'])
