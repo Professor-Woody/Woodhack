@@ -1,4 +1,4 @@
-from Levels.Rooms import RectangularRoom, floor
+from Levels.Rooms import RectangularRoom, floor, wall
 import random
 import tcod
 from Levels.Maps import GameMap
@@ -6,8 +6,8 @@ from Levels.Maps import GameMap
 
 class LevelCreator:
     minRoomSize = 2
-    maxRoomSize = 12
-    maxRooms = 20
+    maxRoomSize = 8
+    maxRooms = 9
 
     @classmethod
     def generateBasicLevel(cls, level, width, height):
@@ -19,8 +19,8 @@ class LevelCreator:
         for x in range(cls.maxRooms):
             room = cls.createRoom(width, height)
             
-            if any(room.intersects(other) for other in rooms):
-                continue           
+            # if any(room.intersects(other) for other in rooms):
+            #     continue           
             
             rooms.append(room)
 
@@ -34,6 +34,11 @@ class LevelCreator:
                 gameMap.start = room.center
             
             gameMap.tiles[room.inner] = floor
+            # gameMap.tiles[(room.x+1, room.y+1)] = wall
+            # gameMap.tiles[(room.x+1, room.y2-1)] = wall
+            # gameMap.tiles[(room.x2-1, room.y+1)] = wall
+            # gameMap.tiles[(room.x2-1, room.y2-1)] = wall
+            
 
         return gameMap
 

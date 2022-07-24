@@ -1,29 +1,23 @@
 import tcod
-from ecstremity import Engine
 from EventHandler import EventHandler
-from Levels.Level import GameLevel
 from Screen import Screen
 from Clock import Clock
-from Levels.Level import GameLevel
-from Components.ComponentRegister import registerComponents
+from Levels.BaseLevel import TestLevel
 from Flags import FPS
 
 
 class App:
-    width = 80
-    height = 60
+    width = 100
+    height = 80
     previousLevel = None
 
     def __init__(self):
         self.screen = Screen(self.width, self.height)
+        self.entityDefs = {}
         self.eventHandler = EventHandler(self)
         self.isRunning = True
 
-        self.ecs = Engine()
-        self.entityDefs = {}
-        registerComponents(self.ecs)
-
-        self.level = GameLevel(self, self.width, self.height)
+        self.level = TestLevel(self, self.width, self.height)
         self.clock = Clock(FPS)
 
 
@@ -33,7 +27,7 @@ class App:
             # framerate
             self.clock.tick()
             # clear screen
-            self.screen.clear()
+            # self.screen.clear()
 
             # check for global/input events
             for event in tcod.event.get():
@@ -42,7 +36,7 @@ class App:
                     action.perform()
             # eventually loop this through each level too when we have
             # multiple levels
-            self.level.runSystems()
+            self.level.update()
 
             self.screen.flip()
 

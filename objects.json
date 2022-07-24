@@ -2,35 +2,29 @@
     {
         "type": "ITEM",
         "components": {
+            "IsItem": {},
             "Render": {
-                "entityName": "SomeItem",
-                "char": ";",
-                "fg": [200, 200, 200],
+                "name": "SomeItem",
+                "char": "%",
                 "needsVisibility": true
-            },
-            "IsItem": {}
+            }
         }
     },
     {
         "type": "ACTOR",
         "components": {
             "Render": {
-                "entityName": "SomeActor",
+                "name": "SomeActor",
                 "char": "@",
                 "fg": [255, 255, 255],
                 "needsVisibility": true
             },
-            "Collision": {},
-            "BlocksMovement": {},
-            "Initiative": {"speed": 0},
+            "Init": {"speed": 0},
+            "Stats": {},
             "Body": {},
-            "Stats": {
-                "hp": 10,
-                "moveSpeed": 12,
-                "defence": 0,
-                "attack": 0,
-                "bonusDamage": 0
-            }      
+            "Inventory": {},
+            "Target": {},
+            "Collidable": {}
         }
     },
 
@@ -47,24 +41,20 @@
         "inherits": "ACTOR",
         "components": {
             "Render": {
-                "entityName": "Woody",
+                "name": "Woody",
                 "char": "@",
-                "fg": [255, 255, 255],
                 "needsVisibility": false
             },
             "Light": {
-                "radius": 3
+                "radius": 2
             },
             "IsPlayer": {},
+            "Body": {"mainhand": "shortsword", "offhand": "torch"},
             "Stats": {
-                "hp": 10,
-                "moveSpeed": 6,
-                "defence": 0,
-                "attack": 0,
-                "bonusDamage": 0
-            },
-            "Target": {},
-            "Inventory": {}
+                "hp": 25,
+                "maxHp": 25,
+                "baseMaxHp": 25
+            }
         }
     },
 
@@ -72,15 +62,18 @@
         "type": "orc",
         "inherits": "NPC",
         "components": {
-            "Light": {
-                "radius": 2
-            },
             "Render": {
-                "entityName": "orc",
+                "name": "orc",
                 "char": "o",
-                "fg": [50, 255, 50]
+                "fg": [100, 255, 100],
+                "needsVisibility": true
             },
-            "Targeted": {}
+            "AI": {},
+            "Stats": {
+                "moveSpeed": 45,
+                "baseMoveSpeed": 45
+            },
+            "Body": {"mainhand": "shortsword", "offhand": "torch"}
         }
     },
 
@@ -89,13 +82,14 @@
         "inherits": "ITEM",
         "components": {
             "Render": {
-                "entityName": "torch",
+                "name": "torch",
                 "char": "i",
-                "fg": [200, 255, 50]
+                "fg": [200, 200, 50],
+                "needsVisibility": true
             },
-            "Light": {
-                "radius": 5
-            }
+            "Light": {"radius": 5},
+            "Equip": {"slots": ["mainhand", "offhand"]},
+            "StatModifier": {"moveSpeed": -8}
         }
     },
 
@@ -104,20 +98,13 @@
         "inherits": "ITEM",
         "components": {
             "Render": {
-                "entityName": "shortsword",
+                "name": "shortsword",
                 "char": "/",
-                "fg": [200, 200, 200]
+                "fg": [150, 150, 150]
             },
-            "UseMelee": {
-                "attack": 0,
-                "diceType": 6,
-                "diceAmount": 1,
-                "bonusDamage": 0,
-                "speed": 40
-            },
-            "IsMelee": {},
-            "Initiative": {"speed": 0}
-
+            "Equip": {"slots": ["mainhand", "offhand"]},
+            "Melee": {},
+            "Init": {}
         }
     }
 ]

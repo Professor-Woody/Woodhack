@@ -1,12 +1,188 @@
-from Components.Components import PlayerInput, Position
-from Controllers import controllers
+from functools import reduce
+from Components import *
 import json
+import copy
+
+def subtract_bit(num: int, bit: int) -> int:
+    return num & ~(1 << bit)
+
+
+def add_bit(num: int, bit: int) -> int:
+    return num | (1 << bit)
+
+
+def has_bit(num: int, bit: int) -> bool:
+    return (num >> bit) % 2 != 0
+
+
+def bit_intersection(n1: int, n2: int) -> int:
+    return n1 & n2
+
+
+
+class Component:
+    defaults = {}
+
+    def __init__(self):
+        self.components = {}
+
+    def registerComponent(self, component: int, defaults: dict={}):
+        self.components[component] = {}
+        self.defaults[component] = defaults
+
+    def filter(self, component, entities):
+        return {key: self.components[component][key] for key in entities}
+
+    def addComponent(self, entity, component, data):
+        if entity in self.components[component].keys():
+            finalData = self.components[component][entity]
+        else:
+            finalData = copy.deepcopy(self.defaults[component])
+
+        if data:
+            for key, value in data.items():
+                finalData[key] = value
+        
+        self.components[component][entity] = finalData
+
+    def removeComponent(self, entity, component):
+        if entity in self.components[component].keys():
+            self.components[component].pop(entity)
+
+
+class Entity:
+    uidCounter = 1000
+    entityDefs = {}
+    
+    @classmethod
+    def createEntity(cls):
+        cls.uidCounter += 1
+        return cls.uidCounter
+    
+
+
+
+class Query:
+    def __init__(self, entityManager, allOf=[], anyOf=[], noneOf=[], name=None):
+        self.name = name
+        self._cache = []
+        self.entityManager = entityManager
+
+        self._any = reduce(lambda a, b: add_bit(a, b), anyOf, 0)
+        self._all = reduce(lambda a, b: add_bit(a, b), allOf, 0)
+        self._none = reduce(lambda a, b: add_bit(a, b), noneOf, 0)
+
+        self.refresh()
+
+    def refresh(self) -> None:
+        self._cache = []
+        for entity in self.entityManager.entities.keys():
+            self.candidate(entity)
+
+    def idx(self, entity: int) -> int:
+        try:
+            return self._cache.index(entity)
+        except ValueError:
+            return -1
+
+    def matches(self, entityBits: int) -> bool:
+        anyOf = self._any == 0 or bit_intersection(entityBits, self._any) > 0
+        allOf = bit_intersection(entityBits, self._all) == self._all
+        noneOf = bit_intersection(entityBits, self._none) == 0
+        return anyOf & allOf & noneOf
+
+    def candidate(self, entity: int) -> bool:
+        idx = self.idx(entity)
+        isTracking = idx >= 0
+        if self.matches(self.entityManager.entities[entity]):
+            if not isTracking:
+                # print (f"entity {entity} is candidate for {self.name}")
+                self._cache.append(entity)
+            return True
+        
+        if isTracking:
+            # print (f"entity {entity} is no longer candidate for {self.name}"")
+            del self._cache[idx]
+        return False
+
+
+    @property
+    def result(self):
+        return self._cache
+
+
+
 
 
 class EntityManager:
     def __init__(self, level):
         self.level = level
-        self.deferred_entities = []
+        self.component = Component()
+        self.entities = {}
+        self.queries: dict[str: Query] = {}
+        self.playerIds: int = 0
+
+    def createEntity(self):
+        entity = Entity.createEntity()
+        self.entities[entity] = 0
+        return entity
+
+    def destroyEntity(self, entity):
+        # print (f"destroying entity {entity}")
+        for key, component in self.component.components.items():
+            if entity in component.keys():
+                self.removeComponent(entity, key)
+                # print (f"removing component {key}")
+        self.entities.pop(entity)
+        # print ("entity destroyed")
+
+    def createQuery(self, allOf=[], anyOf=[], noneOf=[], storeQuery = None):
+        query = Query(self, allOf, anyOf, noneOf, storeQuery)
+        if storeQuery:
+            self.queries[storeQuery] = query
+        return query
+
+    def getQuery(self, query):
+        return self.queries[query]
+
+    def registerComponent(self, component, data = {}):
+        self.component.registerComponent(component, data)
+
+
+    def addComponent(self, entity, component, data = {}):
+        # print (f"--{entity} adding component {component}")
+        self.component.addComponent(entity, component, data)
+
+        if component == Inventory:
+            if 'startingEquipment' in data.keys():
+                for item in data['startingEquipment']:
+                    self.spawn(item, -1, -1, entity)
+                del data['startingEquipment']            
+        elif component == Body:
+            for slot in data.keys():
+                if data[slot]:
+                    self.spawn(data[slot], -1, -1, inInventory=entity, inBodySlot=slot)
+
+        elif component == IsPlayer:
+            data['id'] = self.playerIds
+            self.playerIds += 1
+
+        self.entities[entity] = add_bit(self.entities[entity], component)
+        self.candidacy(entity)
+
+    def removeComponent(self, entity, component):
+        # print (f"--{entity} removing component {component}")
+        self.component.removeComponent(entity, component)
+        self.entities[entity] = subtract_bit(self.entities[entity], component)
+        self.candidacy(entity)
+
+    def hasComponent(self, entity, component):
+        return has_bit(self.entities[entity], component)
+
+
+    def candidacy(self, entity):
+        for query in self.queries.values():
+            query.candidate(entity)
 
 
     def loadEntities(self, filename):
@@ -14,36 +190,44 @@ class EntityManager:
             objects = json.loads(objectFile.read())
     
         for obj in objects:
-            if obj['type'] not in self.level.app.entityDefs.keys():
-                self.level.app.entityDefs[obj['type']] = {}
-            self.level.app.entityDefs[obj['type']] = obj
-    
-
-    def spawn(self, entityType, x = 0, y = 0, inventory = None):
-        entity = self.level.world.create_entity()
-        self.addComponents(entity, entityType)
-
-        if not inventory:
-            entity.add(Position, {
-                'level': self.level,
-                'x': x,
-                'y': y
-            })
-        else:
-            inventory.inventory.add(entity)
-
-        if entityType == "PLAYER":
-            entity.add(PlayerInput, {'controller': controllers[0]})
+            eType = obj['type']
+            Entity.entityDefs[eType] = {
+                'type': eType
+            }
+            if 'inherits' in obj.keys():
+                Entity.entityDefs[eType]['inherits'] = obj['inherits']
+            
+            Entity.entityDefs[eType]['components'] = {}
+            if 'components' in obj.keys():
+                for component in obj['components'].keys():
+                    cId = componentMap[component]
+                    Entity.entityDefs[eType]['components'][cId] = copy.deepcopy(self.component.defaults[cId])
+                    for key, value in obj['components'][component].items():
+                        Entity.entityDefs[eType]['components'][cId][key] = value
 
 
 
-
-    def addComponents(self, entity, entityType):
-        entityDef = self.level.app.entityDefs[entityType]
+    def _addComponents(self, entity, entityType):
+        entityDef = Entity.entityDefs[entityType]
         
         if 'inherits' in entityDef.keys():
-            self.addComponents(entity, entityDef['inherits'])
+            self._addComponents(entity, entityDef['inherits'])
         
         for component in entityDef['components'].keys():
-            entity.add(component, entityDef['components'][component])
+            self.addComponent(entity, component, copy.deepcopy(entityDef['components'][component]))
+            # print (f"adding: {component} / {entityDef['components'][component]}")
+
+
+    def spawn(self, entityType, x, y, inInventory: int = None, inBodySlot: str = None):
+
+        entity = self.createEntity()
+        self._addComponents(entity, entityType)
         
+        if inInventory:
+            self.component.components[Inventory][inInventory]['contents'].append(entity)
+            if inBodySlot:
+                self.component.components[Body][inInventory][inBodySlot] = None
+                self.level.post('equip_item', {'entity': inInventory, 'item': entity, 'slot': inBodySlot})
+        else:
+            self.addComponent(entity, Position, {'x': x, 'y': y})
+        return entity

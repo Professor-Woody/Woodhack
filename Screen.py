@@ -1,6 +1,5 @@
 import tcod
 import Colours as colour
-from Components.Components import Position, Render
 
 class Screen:
     def __init__(self, width, height):
@@ -20,9 +19,14 @@ class Screen:
     def clear(self):
         self.console.clear()
 
-    def draw(self, entity):
-        self.console.print(x=entity[Position].x, y=entity[Position].y, string=entity[Render].char, fg=entity[Render].fg, bg=entity[Render].bg)
-
+    def draw(self, x, y, char, fg=(255, 255, 255), bg=None):
+        self.console.print(
+            x=x, 
+            y=y, 
+            string=char, 
+            fg=fg, 
+            bg=bg)
+    
     def drawRect(self, x, y, width, height, ch, background):
         self.console.draw_rect(x=x, y=y, width=width, height=height, ch=ch, bg=background)
     
@@ -31,8 +35,10 @@ class Screen:
 
     def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE):
         self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg)
-        self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
-        self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
+        if title:
+            self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
+        if msg:
+            self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 
     def print(self, x, y, msg, fg = colour.WHITE):
         self.console.print(x=x, y=y, string=msg, fg=fg)

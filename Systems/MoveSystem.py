@@ -1,46 +1,33 @@
-from Actions.BaseActions import UpdateLightingAction
 from Systems.BaseSystem import BaseSystem
-from Actions.MoveActions import MovementAction
-from Components.FlagComponents import IsReady
+from Components import *
 
 class MoveSystem(BaseSystem):
+    actions=['move']
     def run(self):
+        positionComponents = self.level.e.component.components[Position]
+
         for action in self.actionQueue:
-            print (action)
-            if type(action) == MovementAction:
-                self.move(action)
-        self.actionQueue.clear()
+            newx = positionComponents[action['entity']]['x'] + action['dx']
+            newy = positionComponents[action['entity']]['y'] + action['dy']
 
-    
-    def move(self, action):
-        position = action.position
-        dx = action.dx
-        dy = action.dy
-        speed = action.speed
-        initiative = action.initiative
-
-        newLocationX = position.x + dx
-        newLocationY = position.y + dy
-
-        if self.checkCanMove(newLocationX, newLocationY):
-            pass
-        else:
-            if not self.checkCanMove(newLocationX, position.y):
+            if not self.checkCanMove(newx, newy):
                 dx = 0
-            if not self.checkCanMove(position.x + dx, newLocationY):
                 dy = 0
+                if self.checkCanMove(newx, positionComponents[action['entity']]['y']):
+                    dx = action['dx']
+                elif self.checkCanMove(positionComponents[action['entity']]['x'], newy):
+                    dy = action['dy']
+                action['dx'] = dx
+                action['dy'] = dy
 
-        if dx or dy:
-            position.x += dx
-            position.y += dy
-            initiative.speed += speed
-            if action.entity.has(IsReady):
-                action.entity.remove(IsReady)
-            self.systemsManager.post(UpdateLightingAction())
+            if action['dx'] or action['dy']:
+                positionComponents[action['entity']]['x'] += action['dx']
+                positionComponents[action['entity']]['y'] += action['dy']
 
-    def checkCanMove(self, dx, dy):
-        if not self.level.map.checkInBounds(dx, dy) or \
-            not self.level.map.checkIsPassable(dx, dy) or \
-            self.level.map.checkIsBlocked(dx, dy):
+
+    def checkCanMove(self, x, y):
+        if not self.level.map.checkInBounds(x, y) or \
+            not self.level.map.checkIsPassable(x, y) or \
+            self.level.map.checkIsBlocked(x, y):
             return False
         return True

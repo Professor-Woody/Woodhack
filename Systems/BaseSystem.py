@@ -1,42 +1,29 @@
-import os
-import importlib
+import Colours as colour
 
 class BaseSystem:
-    def __init__(self, systemsManager, path=None):
-        self.systemsManager = systemsManager
-        self.actionQueue = []
-
-        self.actions = {}
-
-        if path:
-            self.registerSubSystems(path)
-    
-    def registerSubSystems(self, path):
-        for module in os.listdir(os.path.join(os.getcwd(), 'Systems/' + path)):
-            print (f"Registering {module}")
-            if module == '__init__.py' or module =='__pycache__' or module[-3:] != '.py':
-                continue
-            importlib.import_module('Systems.' + path + '.' + module[:-3]).SubSystem(self)
-
-
-    def register(self, action, subSystem):
-        if action not in self.actions.keys():
-            self.actions[action] = []
-        self.actions[action].append(subSystem)
-
-
-    def run(self):
-        for action in self.actionQueue:
-            for subSystem in self.actions[type(action)]:
-                print (f"running {subSystem}")
-                subSystem.run(action)
-        self.actionQueue.clear()
-
+    actions = None
+    def __init__(self, level):
+        self.level = level
+        self._actionQueue = []
+        if self.actions:
+            self.level.registerSystem(self.actions, self)
 
     def post(self, action):
-        self.actionQueue.append(action)
+        self._actionQueue.append(action)
 
     @property
-    def level(self):
-        return self.systemsManager.level
+    def actionQueue(self):
+        try:
+            for action in self._actionQueue:
+                yield action
+        finally:
+            self._actionQueue.clear()
 
+    def getComponents(self, component):
+        return self.level.e.component.components[component]
+
+    def log(self, message, colour=colour.WHITE):
+        self.level.post('log', {'colour': colour, 'message': message})
+
+    def clog(self, message, colour=colour.WHITE):
+        self.level.post('clog', {'colour': colour, 'message': message})        
