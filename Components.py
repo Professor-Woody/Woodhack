@@ -1,3 +1,5 @@
+import Colours as colour
+
 componentMap = {
     'Position': 1,
     'Render': 2,
@@ -21,24 +23,25 @@ componentMap = {
     'Melee': 20,
     'HostileAI': 21,
     'AI': 22,
-    'Collidable': 23
+    'Collidable': 23,
+    'PlayerUI': 24
 }
 
 def registerComponents(entityManager):
     entityManager.registerComponent(Position, {'x': 0, 'y': 0, 'width': 1, 'height': 1, 'moveSpeed': 6})
     entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': (255, 0,0), 'bg': None})
     entityManager.registerComponent(Light, {'radius': 1})
-    entityManager.registerComponent(IsPlayer)
+    entityManager.registerComponent(IsPlayer, {'id': 0})
     entityManager.registerComponent(IsNPC)
     entityManager.registerComponent(IsItem)
     entityManager.registerComponent(IsVisible)
     entityManager.registerComponent(PlayerInput, {'controller': None, 'controlFocus': []})
     entityManager.registerComponent(IsReady)
-    entityManager.registerComponent(Init, {'speed': 0})
+    entityManager.registerComponent(Init, {'speed': 0, 'maxSpeed': 0})
     entityManager.registerComponent(Target, {'target': None})
     entityManager.registerComponent(Targeted, {'targetedBy': [], 'targetTimer': 0, 'targetIndex': 0})
     entityManager.registerComponent(Inventory, {'contents': []})
-    entityManager.registerComponent(SelectionUI, {'items': [], 'title': 'selectionUI', 'selectionIndex': 0})
+    entityManager.registerComponent(SelectionUI, {'items': [], 'title': 'selectionUI', 'selectionIndex': 0, 'fg': colour.WHITE, 'bg': colour.BLACK})
     entityManager.registerComponent(Body, {
         'mainhand': None,
         'offhand': None,
@@ -79,6 +82,9 @@ def registerComponents(entityManager):
         'path': []
     }),
     entityManager.registerComponent(Collidable)
+    entityManager.registerComponent(PlayerUI, {
+        'update': False
+    })
 
 Position = 1
 Render = 2
@@ -103,3 +109,4 @@ Melee = 20
 HostileAI = 21
 AI = 22
 Collidable = 23
+PlayerUI = 24

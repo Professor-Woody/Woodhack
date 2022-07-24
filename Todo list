@@ -3,10 +3,10 @@
 
 
 TODO: 
-    Build message logging and rendering system
-    
-    build character UI
-    build target UI
+    done - build character UI
+    done - build target UI
+
+    add selectionUI for multiple item pickup
 
     research how to move the draw section over so we can draw a frame
     research using different fonts
@@ -22,3 +22,7 @@ TODO:
     build a more advanced level generator
 
     build a stairs system
+
+    build character equipment UI tab
+    build character stats tab
+    build character skills tab?

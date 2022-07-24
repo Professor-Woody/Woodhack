@@ -120,6 +120,7 @@ class EntityManager:
         self.component = Component()
         self.entities = {}
         self.queries: dict[str: Query] = {}
+        self.playerIds: int = 0
 
     def createEntity(self):
         entity = Entity.createEntity()
@@ -151,7 +152,7 @@ class EntityManager:
     def addComponent(self, entity, component, data = {}):
         # print (f"--{entity} adding component {component}")
         self.component.addComponent(entity, component, data)
-        
+
         if component == Inventory:
             if 'startingEquipment' in data.keys():
                 for item in data['startingEquipment']:
@@ -161,6 +162,10 @@ class EntityManager:
             for slot in data.keys():
                 if data[slot]:
                     self.spawn(data[slot], -1, -1, inInventory=entity, inBodySlot=slot)
+
+        elif component == IsPlayer:
+            data['id'] = self.playerIds
+            self.playerIds += 1
 
         self.entities[entity] = add_bit(self.entities[entity], component)
         self.candidacy(entity)
@@ -217,6 +222,7 @@ class EntityManager:
 
         entity = self.createEntity()
         self._addComponents(entity, entityType)
+        
         if inInventory:
             self.component.components[Inventory][inInventory]['contents'].append(entity)
             if inBodySlot:

@@ -8,7 +8,7 @@ from Systems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
 from Systems.MessageLogSystem import CombatLogSystem, MessageLogSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
-from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderSelectionUISystem, UpdateSelectionUISystem
+from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderPlayerUISystem, RenderSelectionUISystem, UpdateSelectionUISystem
 from Systems.InventorySystem import *
 from Controllers import controllers
 import time
@@ -112,7 +112,8 @@ class BaseLevel:
         self.damageSystem = DamageSystem(self)
         self.aiSystem = AISystem(self)
         self.deathSystem = DeathSystem(self)
-
+        
+        self.renderUISystem = RenderPlayerUISystem(self)
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
 
@@ -201,6 +202,7 @@ class TestLevel(BaseLevel):
         self.messagelogSystem.run()
         self.combatLogSystem.run()
         self.renderEntitiesSystem.run()
+        self.renderUISystem.run()
         self.renderSelectionUISystem.run()
 
         self.deathSystem.run()

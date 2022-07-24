@@ -53,6 +53,8 @@ class OpenInventorySystem(BaseSystem):
     def run(self):
         if self._actionQueue:
             inputComponents = self.getComponents(PlayerInput)
+            idComponents = self.getComponents(IsPlayer)
+            renderComponents = self.getComponents(Render)
 
             for action in self.actionQueue:
                 ui = self.level.e.createEntity()
@@ -60,6 +62,7 @@ class OpenInventorySystem(BaseSystem):
 
                 self.level.e.addComponent(ui, SelectionUI, {
                     'parentEntity': action['entity'],
+                    # 'title': renderComponents[action['entity']]['name'] + '\'s Inventory', 
                     'title': 'Inventory', 
                     'items': items,
                     'commands': {
@@ -67,17 +70,20 @@ class OpenInventorySystem(BaseSystem):
                         'use': {'action': 'use_item'},
                         'mainhand': {'action': 'equip_item', 'data': {'slot': 'mainhand'}},
                         'offhand': {'action': 'equip_item', 'data': {'slot': 'offhand'}},
-                        'cancel': {'action': 'drop_item'}
-                        }
+                        'cancel': {'action': 'drop_item'},
+                        'nearestEnemy': {'action': 'inspect_item'}
+                        },
+                    'fg': renderComponents[action['entity']]['fg']
+                    # 'fg': colour.YELLOW
                     })
                 self.level.e.addComponent(
                     ui, 
                     Position, 
                     {
-                        'x': self.level.width - 22,
-                        'y': 0,
-                        'width': 22,
-                        'height': len(items) + 2    
+                        'x': self.level.width - 24,
+                        'y': (idComponents[action['entity']]['id']*16),
+                        'width': 24,
+                        'height': 16
                     })
 
                 inputComponents[action['entity']]['controlFocus'].append(ui)
@@ -112,6 +118,8 @@ class DropItemSystem(BaseSystem):
                         'y': positionComponents[entity]['y']
                     })
 
+                    self.log(f"£{action['entity']}$ has dropped a £{action['item']}$", action['entity'])
+
                     action['items'].remove(item)
 
                 if 'ui' in action.keys():
@@ -126,7 +134,6 @@ class EquipItemSystem(BaseSystem):
             bodyComponents = self.getComponents(Body)
             equipComponents = self.getComponents(Equip)
             equippedComponents = self.getComponents(Equipped)
-            renderComponents = self.getComponents(Render)
 
             for action in self.actionQueue:
                 if action['item']:
@@ -149,7 +156,7 @@ class EquipItemSystem(BaseSystem):
                         self.removeItem(bodyComponents, action['entity'], slot)
                         self.addItem(bodyComponents, equippedComponents, action['entity'], action['item'], slot)
                         
-                        self.log(f"£{action['entity']}$ has equipped the £{action['item']}$", action['entity'])
+                        self.log(f"£{action['entity']}$ has equipped a £{action['item']}$", action['entity'])
 
                         self.level.post('recalculate_stats', {'entity': action['entity']})
 

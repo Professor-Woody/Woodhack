@@ -5,6 +5,7 @@ from Systems.BaseSystem import BaseSystem
 class MessageLogSystem(BaseSystem):
     actions = ['log']
     update = True
+    title = "History"
 
     def __init__(self, level, entity):
         super().__init__(level)
@@ -54,7 +55,7 @@ class MessageLogSystem(BaseSystem):
                 positionComponents[self.log]['y'],
                 positionComponents[self.log]['width'],
                 positionComponents[self.log]['height'],
-                'History'
+                self.title
             )
 
             for i in range(len(self.history)):
@@ -86,5 +87,6 @@ class MessageLogSystem(BaseSystem):
 
 class CombatLogSystem(MessageLogSystem):
     actions = ['clog']
+    title = "Combat"
 
         
