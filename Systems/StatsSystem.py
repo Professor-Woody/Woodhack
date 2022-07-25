@@ -14,7 +14,8 @@ class RecalculateStatsSystem(BaseSystem):
             for action in self.actionQueue:
                 entity = action['entity']
                 print (f"Recalculating stats for {entity}")
-                statsComponents[entity]['hp'] = statsComponents[entity]['baseMaxHp'] + statsComponents[entity]['maxHp'] - statsComponents[entity]['hp']
+                hpLoss = statsComponents[entity]['maxHp'] - statsComponents[entity]['hp']
+                statsComponents[entity]['hp'] = statsComponents[entity]['baseMaxHp']
                 statsComponents[entity]['attack'] = statsComponents[entity]['baseAttack']
                 statsComponents[entity]['defence'] = statsComponents[entity]['baseDefence']
                 statsComponents[entity]['moveSpeed'] = statsComponents[entity]['baseMoveSpeed']
@@ -31,6 +32,7 @@ class RecalculateStatsSystem(BaseSystem):
                             if radius > lightRadius:
                                 lightRadius = radius
                 
+                statsComponents[entity]['hp'] -= hpLoss
                 if statsComponents[entity]['hp'] < 1:
                     statsComponents[entity]['hp'] = 1
                 if statsComponents[entity]['moveSpeed'] < 6:

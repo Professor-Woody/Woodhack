@@ -6,7 +6,7 @@ import Colours as colour
 
 class RenderEntitiesSystem(BaseSystem):
     def run(self):
-        entities = self.level.renderQuery.result
+        entities = self.level.itemsOnGroundQuery.result + self.level.npcsQuery.result + self.level.playersQuery.result
         # renderComponents = self.level.e.component.filter(Render, entities)
         # positionComponents = self.level.e.component.filter(Position, entities)
         renderComponents = self.getComponents(Render)

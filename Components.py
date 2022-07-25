@@ -86,6 +86,11 @@ def registerComponents(entityManager):
         'update': False
     })
 
+def registerMenuComponents(entityManager):
+    entityManager.registerComponent(Position, {'x': 0, 'y': 0, 'width': 1, 'height': 1, 'moveSpeed': 6})
+    entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': (255, 0,0), 'bg': None})
+    entityManager.registerComponent(ButtonUI, {'selected': False, 'action': 'ButtonClickedNothing', 'data': {}})
+
 Position = 1
 Render = 2
 Light = 3
@@ -110,3 +115,4 @@ HostileAI = 21
 AI = 22
 Collidable = 23
 PlayerUI = 24
+ButtonUI = 25

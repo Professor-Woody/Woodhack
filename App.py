@@ -3,6 +3,8 @@ from EventHandler import EventHandler
 from Screen import Screen
 from Clock import Clock
 from Levels.BaseLevel import TestLevel
+from Levels.OptionsLevel import OptionsLevel
+from Levels.MainMenu import MainMenu
 from Flags import FPS
 
 
@@ -10,6 +12,12 @@ class App:
     width = 100
     height = 80
     previousLevel = None
+    levelTemplates = {
+        'MainMenu': MainMenu,    
+        # 'characterSelect': CharacterSelectLevel,
+        'Options': OptionsLevel
+    }
+
 
     def __init__(self):
         self.screen = Screen(self.width, self.height)
@@ -17,7 +25,8 @@ class App:
         self.eventHandler = EventHandler(self)
         self.isRunning = True
 
-        self.level = TestLevel(self, self.width, self.height)
+        # self.level = TestLevel(self, self.width, self.height)
+        self.level = MainMenu(self, self.width, self.height)
         self.clock = Clock(FPS)
 
 
@@ -40,7 +49,13 @@ class App:
 
             self.screen.flip()
 
-    
+    def changeLevel(self, level):
+        # We should probably power down the current level first.  TODO!
+
+        self.screen.clear()
+        self.level = self.levelTemplates[level](self, self.width, self.height)    
+        
+
         
 if __name__ == "__main__":
     app = App()
