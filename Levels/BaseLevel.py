@@ -158,8 +158,8 @@ class TestLevel(BaseLevel):
 
         self.e.loadEntities('objects.json')
 
-        self.player = self.e.spawn('PLAYER', self.map.start[0], self.map.start[1])        
-        self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
+        # self.player = self.e.spawn('PLAYER', self.map.start[0], self.map.start[1])        
+        # self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
 
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
         self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)

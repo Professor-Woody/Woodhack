@@ -206,7 +206,8 @@ class RenderSelectionUISystem(BaseSystem):
                     positionComponents[entity]['height'],
                     selectionComponents[entity]['title'],
                     fg=selectionComponents[entity]['fg'],
-                    bg=selectionComponents[entity]['bg']
+                    bg=selectionComponents[entity]['bg'],
+                    style='topleft'
                     )
 
                 # draw the list of items
@@ -217,7 +218,7 @@ class RenderSelectionUISystem(BaseSystem):
 
                     screen.printLine(
                         positionComponents[entity]['x']+2,
-                        positionComponents[entity]['y']+1+i,
+                        positionComponents[entity]['y']+2+i,
                         title,
                         renderComponents[selectionComponents[entity]['items'][i]]['fg'],
                         colour.GREY if selectionComponents[entity]['selectionIndex'] == i else None

@@ -17,7 +17,7 @@ class RenderCharacterPanesSystem(BaseSystem):
                 positionComponents[entity]['y'],
                 positionComponents[entity]['width'],
                 positionComponents[entity]['height'],
-                f" Player {playerComponents[entity]['id']+1} ",
+                f"Player {playerComponents[entity]['id']+1}",
                 fg=renderComponents[entity]['fg'],
                 bg=colour.BLACK
             )
@@ -41,9 +41,10 @@ class RenderCharacterPanesSystem(BaseSystem):
                 positionComponents[entity]['y'],
                 positionComponents[entity]['width'],
                 positionComponents[entity]['height'],
-                f" Player {playerComponents[entity]['id']+1} ",
+                f"Player {playerComponents[entity]['id']+1}",
                 fg=renderComponents[entity]['fg'],
-                bg=colour.BLACK
+                bg=colour.BLACK,
+                style='topleft'
             )
             screen.printLine(
                 positionComponents[entity]['x']+2,

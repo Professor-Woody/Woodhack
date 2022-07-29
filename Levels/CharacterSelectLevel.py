@@ -1,4 +1,4 @@
-from Components import AttachedInfoPanel, CharacterSelectPane, EntityInfo, InfoPanel, IsActive, IsPlayer, Parent, Player0, Player1, Player2, Player3, Position, Render, Selected, StatPoints, Target, ToggleUI, Stat, registerCharacterSelectComponents
+from Components import AttachedInfoPanel, CharacterSelectPane, EntityInfo, InfoPanel, IsActive, IsPlayer, IsReady, Parent, Player0, Player1, Player2, Player3, Position, Render, Selected, StatPoints, Target, ToggleUI, Stat, registerCharacterSelectComponents
 from Levels.BaseLevel import BaseLevel
 from Controllers import controllers
 from Systems.CharacterSelect.CheckControllersSystem import CheckControllersSystem
@@ -9,6 +9,7 @@ from Systems.CharacterSelect.RenderTogglesSystem import RenderTogglesSystem
 from Systems.CharacterSelect.ToggleSystems import ToggleColourSystem, UpdateTogglesSystem
 from Systems.CharacterSelect.UpdateCharacterPanesSystem import PanesInputSystem, UpdateCharacterPanesSystem
 import Colours as colour
+from Systems.CharacterSelect.UpdateNewGameSystem import UpdateNewGameSystem
 from Systems.CharacterSelect.UpdateStatDisplaySystem import UpdateStatDisplaySystem
 
 
@@ -53,6 +54,7 @@ class CharacterSelectLevel(BaseLevel):
 
         self.claimedPanesQuery = self.e.createQuery(
             allOf=[CharacterSelectPane, IsActive],
+            noneOf=[IsReady],
             storeQuery='claimedPanes'
         )
 
@@ -81,6 +83,10 @@ class CharacterSelectLevel(BaseLevel):
             storeQuery = 'activeInfoPanels'
         )
 
+        self.readyPlayersQuery = self.e.createQuery(
+            allOf=[CharacterSelectPane, IsReady],
+            storeQuery='readyPlayers'
+        )
 
         slots = [
             [4, 4, Player0],
@@ -179,7 +185,7 @@ class CharacterSelectLevel(BaseLevel):
             self.e.addComponent(ui, EntityInfo, {
                 'image': '-(==>\n\n     <==)-',
                 'primaryText': "** Dexterity **\n-------------",
-                'secondaryText': "Dexterity is the flexibility\naccuracy and reflexes of your\ncharacter. Dexterity is used\nwhen calculating your attack"
+                'secondaryText': "Dexterity is the flexibility,\naccuracy and reflexes of your\ncharacter. Dexterity is used\nwhen calculating your attack"
             })
 
 
@@ -259,6 +265,8 @@ class CharacterSelectLevel(BaseLevel):
         self.renderStatDisplaySystem = RenderStatDisplaySystem(self)
         self.renderInfoPanelsSystem = RenderInfoPanelsSystem(self)
 
+        self.updateNewGameSystem = UpdateNewGameSystem(self)
+
     def update(self):
         self.checkControllersSystem.run()
         self.panesInputSystem.run()
@@ -275,4 +283,4 @@ class CharacterSelectLevel(BaseLevel):
         self.renderStatDisplaySystem.run()
         self.renderInfoPanelsSystem.run()
         
-
+        self.updateNewGameSystem.run()

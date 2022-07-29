@@ -113,9 +113,9 @@ class OpenInventorySystem(BaseSystem):
                     Position, 
                     {
                         'x': self.level.width - 24,
-                        'y': (idComponents[action['entity']]['id']*16),
+                        'y': (idComponents[action['entity']]['id']*16)+1,
                         'width': 24,
-                        'height': 16
+                        'height': 15
                     })
 
                 inputComponents[action['entity']]['controlFocus'].append(ui)

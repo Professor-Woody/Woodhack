@@ -60,6 +60,7 @@ def registerComponents(entityManager):
         'hp': 10,
         'maxHp': 10,
         'baseMaxHp': 10,
+        'hpLevelHistory': [],
         'attack': 0,
         'baseAttack': 0,
         'defence': 0,

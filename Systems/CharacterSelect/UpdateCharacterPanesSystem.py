@@ -1,4 +1,4 @@
-from Components import AttachedInfoPanel, CharacterSelectPane, PlayerInput, Render, Selected, Target
+from Components import AttachedInfoPanel, CharacterSelectPane, IsReady, PlayerInput, Render, Selected, Target
 from Systems.BaseSystem import BaseSystem
 
 
@@ -38,6 +38,10 @@ class UpdateCharacterPanesSystem(BaseSystem):
                     print (f"{uiEntities[paneComponents[entity]['selectionIndex']]} selected")
                     self.level.e.addComponent(uiEntities[paneComponents[entity]['selectionIndex']], Selected)                
                     targetComponents[infoPanelComponents[entity]['entity']]['target'] = uiEntities[paneComponents[entity]['selectionIndex']]
+
+                elif command == 'use':
+                    self.level.e.addComponent(entity, IsReady)
+                    self.level.post('player_ready', {'entity': entity})
 
 
 class PanesInputSystem(BaseSystem):
