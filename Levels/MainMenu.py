@@ -1,8 +1,8 @@
 
 
-from Components import ButtonUI, Position, Render, registerMenuComponents
+from Components import ButtonUI, Position, Render, Selected, SliderUI, registerMenuComponents
 from Levels.BaseLevel import BaseLevel
-from Systems.ButtonSystems import RenderButtonsSystem, UpdateButtonsSystem
+from Systems.MainMenu.ButtonSystems import RenderButtonsSystem, UpdateButtonsSystem
 from Systems.ChangeLevelSystem import ChangeLevelSystem
 from Systems.QuitSystems import QuitSystem
 
@@ -18,8 +18,9 @@ class MainMenu(BaseLevel):
 
         newGameButton = self.e.createEntity()
         self.e.addComponent(newGameButton, Position, {'x': centerx, 'y': centery, 'width': 20, 'height': 5})
-        self.e.addComponent(newGameButton, ButtonUI, {'action': 'change_level', 'data': {'nextLevel': 'CharacterSelect'}, 'selected': True})
+        self.e.addComponent(newGameButton, ButtonUI, {'action': 'change_level', 'data': {'nextLevel': 'CharacterSelect'}})
         self.e.addComponent(newGameButton, Render, {'name': 'New Game'})
+        self.e.addComponent(newGameButton, Selected)
 
         # newGameButton = self.e.createEntity()
         # self.e.addComponent(newGameButton, Position, {'x': centerx, 'y': centery + 10, 'width': 20, 'height': 5})
@@ -39,6 +40,10 @@ class MainMenu(BaseLevel):
         self.buttonsQuery = self.e.createQuery(
             allOf=[ButtonUI],
             storeQuery='Buttons'
+        )
+        self.uiInputsQuery = self.e.createQuery(
+            anyOf=[ButtonUI, SliderUI],
+            storeQuery='uiInputs'
         )
 
         self.updateButtonsSystem = UpdateButtonsSystem(self)

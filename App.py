@@ -4,17 +4,18 @@ from Screen import Screen
 from Clock import Clock
 from Levels.BaseLevel import TestLevel
 from Levels.OptionsLevel import OptionsLevel
+from Levels.CharacterSelectLevel import CharacterSelectLevel
 from Levels.MainMenu import MainMenu
 from Flags import FPS
 
 
 class App:
-    width = 100
-    height = 80
+    width = 70
+    height = 60
     previousLevel = None
     levelTemplates = {
         'MainMenu': MainMenu,    
-        # 'characterSelect': CharacterSelectLevel,
+        'CharacterSelect': CharacterSelectLevel,
         'Options': OptionsLevel
     }
 

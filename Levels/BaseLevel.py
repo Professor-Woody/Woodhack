@@ -42,7 +42,7 @@ class BaseLevel:
 
 
     def post(self, action, data):
-        # print (f"Action posted: {action}\nData: {data}")
+        print (f"Action posted: {action}\nData: {data}")
         if action in self.systems.keys():
             for system in self.systems[action]:
                 system.post(data)

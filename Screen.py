@@ -5,21 +5,26 @@ class Screen:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-
+        # tcod.lib.SDL_SetHint(b"SDL_RENDER_SCALE_QUALITY", b"0")
         tileset = tcod.tileset.load_tilesheet(
-                "dejavu10x10_gs_tc.png",
-                32,
-                8,
-                tcod.tileset.CHARMAP_TCOD
+                # "tilesets/dejavu10x10_gs_tc.png",
+                # "tilesets/Cheepicus_12x12.png",
+                "tilesets/Taffer_10x10.png",
+                # "tilesets/dejavu8x8_gs_tc.png",
+                # "tilesets/dejavu16x16_gs_tc.png",
+                # 32,8,
+                16,16,
+                tcod.tileset.CHARMAP_CP437
+                # tcod.tileset.CHARMAP_TCOD
             )
         
-        self.context = tcod.context.new_terminal(self.width, self.height, tileset=tileset, title="blah", vsync=True)
+        self.context = tcod.context.new_terminal(self.width, self.height, tileset=tileset, title="I need a title", vsync=True)
         self.console = tcod.Console(self.width, self.height, order="F")
 
     def clear(self):
         self.console.clear()
 
-    def draw(self, x, y, char, fg=(255, 255, 255), bg=None):
+    def draw(self, x, y, char, fg=colour.WHITE, bg=None):
         self.console.print(
             x=x, 
             y=y, 
@@ -34,9 +39,9 @@ class Screen:
         self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
     def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE):
-        self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg)
+        self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg, decoration="╔═╗║ ║╚═╝" ) #decoration=(201, 205, 187, 186, 32, 186, 200,205, 188))
         if title:
-            self.console.print_box(x, y, width, height, string=title, bg=bg, alignment=tcod.constants.CENTER)
+            self.console.print_box(x+1, y, width, height, string=title, bg=bg)#, alignment=tcod.constants.CENTER)
         if msg:
             self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 

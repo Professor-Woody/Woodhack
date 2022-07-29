@@ -149,6 +149,14 @@ class EntityManager:
         self.component.registerComponent(component, data)
 
 
+    def tryAddComponent(self, entity, component, data = {}):
+        if not self.hasComponent(entity, component):
+            self.addComponent(entity, component, data)
+
+    def tryRemoveComponent(self, entity, component):
+        if self.hasComponent(entity, component):
+            self.removeComponent(entity, component)
+
     def addComponent(self, entity, component, data = {}):
         # print (f"--{entity} adding component {component}")
         self.component.addComponent(entity, component, data)
