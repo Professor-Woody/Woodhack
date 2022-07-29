@@ -20,17 +20,25 @@ class MeleeSystem(BaseSystem):
                 item = action['item']
 
                 # roll attack
-                attackRoll = randint(-9, 10) + statsComponents[entity]['attack'] + meleeComponents[item]['attack'] - statsComponents[target]['defence']
-                print (f"{entity} attacks {target} with an attack roll of {attackRoll}")
+                attackRoll = randint(-9, 10) \
+                    + statsComponents[entity]['attack'] \
+                        + statsComponents[entity]['dex'] \
+                            + meleeComponents[item]['attack'] \
+                                - statsComponents[target]['defence']
+
+                # print (f"{entity} attacks {target} with an attack roll of {attackRoll}")
                 self.clog(f"£{entity}$ attacks £{target}$ with an attack roll of {attackRoll}")
 
                 if attackRoll >= 0:
                     # roll damage
-                    damageRoll = sum([randint(1, meleeComponents[item]['damageDiceType']) for dice in range(meleeComponents[item]['damageDiceAmount'])]) + meleeComponents[item]['damageBonus']
-                    print (f"--{target} is damaged for {damageRoll} points")
+                    damageRoll = sum([randint(1, meleeComponents[item]['damageDiceType']) for dice in range(meleeComponents[item]['damageDiceAmount'])]) \
+                        + meleeComponents[item]['damageBonus'] \
+                            + statsComponents[entity]['str']
+                    # print (f"--{target} is damaged for {damageRoll} points")
                     self.clog(f"£{target}$ is damaged for {damageRoll} points")
                     # post damage
                     self.level.post('damage', {'entity': target, 'damage': damageRoll})
+                    
                 self.level.post('add_speed', {'entity': entity, 'speed': meleeComponents[item]['moveSpeed']})
                 self.level.post('add_speed', {'entity': item, 'speed': meleeComponents[item]['weaponSpeed']})
 

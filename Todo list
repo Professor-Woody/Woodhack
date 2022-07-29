@@ -6,9 +6,9 @@ TODO:
     done - build character UI
     done - build target UI
 
-    add selectionUI for multiple item pickup
+    done - add selectionUI for multiple item pickup
 
-    research how to move the draw section over so we can draw a frame
+    undoable - research how to move the draw section over so we can draw a frame
     research using different fonts
 
     optimise the drawing by adding "update_map" action/system
@@ -26,3 +26,10 @@ TODO:
     build character equipment UI tab
     build character stats tab
     build character skills tab?
+
+    build a pause menu
+
+
+
+    _______________
+  actions based off toggle changes

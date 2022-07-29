@@ -29,6 +29,43 @@ class BaseLevel:
         registerComponents(self.e)
         self.systems: dict[int: list[BaseSystem]] = {}
 
+
+    def registerSystem(self, actions, system):
+        for action in actions:
+            if action not in self.systems.keys():
+                self.systems[action] = []
+
+            self.systems[action].append(system)
+
+    def removeSystem(self, action, system):
+        self.systems[action].pop(system)
+
+
+    def post(self, action, data):
+        print (f"Action posted: {action}\nData: {data}")
+        if action in self.systems.keys():
+            for system in self.systems[action]:
+                system.post(data)
+        else:
+            print (f"no takes for {action}")
+
+
+    def update(self):
+        pass
+
+
+
+class TestLevel(BaseLevel):
+    lastTime = time.time()*1000
+    fps = 0
+    lastFps = 0
+    lowestFps = 60
+
+    def __init__(self, app, width, height):
+        super().__init__(app, width, height)
+        
+        self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+
         self.renderQuery = self.e.createQuery(
             allOf=[Position, Render], 
             anyOf=[IsPlayer, IsItem, IsNPC],
@@ -118,46 +155,11 @@ class BaseLevel:
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
 
 
-    def registerSystem(self, actions, system):
-        for action in actions:
-            if action not in self.systems.keys():
-                self.systems[action] = []
-
-            self.systems[action].append(system)
-
-    def removeSystem(self, action, system):
-        self.systems[action].pop(system)
-
-
-    def post(self, action, data):
-        # print (f"Action posted: {action}\nData: {data}")
-        if action in self.systems.keys():
-            for system in self.systems[action]:
-                system.post(data)
-        else:
-            print (f"no takes for {action}")
-
-
-    def update(self):
-        pass
-
-
-
-class TestLevel(BaseLevel):
-    lastTime = time.time()*1000
-    fps = 0
-    lastFps = 0
-    lowestFps = 60
-
-    def __init__(self, app, width, height):
-        super().__init__(app, width, height)
-        
-        self.map = LevelCreator.generateBasicLevel(self, self.width-30, self.height-15)
 
         self.e.loadEntities('objects.json')
 
-        self.player = self.e.spawn('PLAYER', self.map.start[0], self.map.start[1])        
-        self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
+        # self.player = self.e.spawn('PLAYER', self.map.start[0], self.map.start[1])        
+        # self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
 
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
         self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)

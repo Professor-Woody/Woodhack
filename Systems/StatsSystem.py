@@ -14,12 +14,15 @@ class RecalculateStatsSystem(BaseSystem):
             for action in self.actionQueue:
                 entity = action['entity']
                 print (f"Recalculating stats for {entity}")
-                statsComponents[entity]['hp'] = statsComponents[entity]['baseMaxHp'] + statsComponents[entity]['maxHp'] - statsComponents[entity]['hp']
+                hpLoss = statsComponents[entity]['maxHp'] - statsComponents[entity]['hp']
+                statsComponents[entity]['hp'] = statsComponents[entity]['baseMaxHp']
+                statsComponents[entity]['maxHp'] = statsComponents[entity]['baseMaxHp']
                 statsComponents[entity]['attack'] = statsComponents[entity]['baseAttack']
                 statsComponents[entity]['defence'] = statsComponents[entity]['baseDefence']
                 statsComponents[entity]['moveSpeed'] = statsComponents[entity]['baseMoveSpeed']
                 lightRadius = 0
 
+                # add in all stat bonuses from magic items
                 for slot in bodyComponents[entity].keys():
                     if bodyComponents[entity][slot]:
                         if self.level.e.hasComponent(bodyComponents[entity][slot], StatModifier):
@@ -31,8 +34,15 @@ class RecalculateStatsSystem(BaseSystem):
                             if radius > lightRadius:
                                 lightRadius = radius
                 
+                # recalculate hp
+                statsComponents[entity]['hp'] -= hpLoss
+                statsComponents[entity]['hp'] += sum(statsComponents[entity]['hpLevelHistory'])
+                statsComponents[entity]['maxHp'] += sum(statsComponents[entity]['hpLevelHistory'])
+                # make sure we don't kill them if they just take off an HP boosting item
                 if statsComponents[entity]['hp'] < 1:
                     statsComponents[entity]['hp'] = 1
+
+
                 if statsComponents[entity]['moveSpeed'] < 6:
                     statsComponents[entity]['moveSpeed'] = 6
                 if not self.level.e.hasComponent(entity, Light):

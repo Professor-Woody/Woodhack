@@ -10,6 +10,9 @@ class TryPickupItemSystem(BaseSystem):
         if self._actionQueue:
             itemsOnGround = self.level.itemsOnGroundQuery.result
             positionComponents = self.getComponents(Position)
+            renderComponents = self.getComponents(Render)
+            idComponents = self.getComponents(IsPlayer)
+            inputComponents = self.getComponents(PlayerInput)
 
             for action in self.actionQueue:
                 # check all items on the ground to see if there's one there to pick up
@@ -26,8 +29,33 @@ class TryPickupItemSystem(BaseSystem):
                         self.level.post('pickup_item', {'entity': entity, 'item': items[0]})
                     else:
                         # if there are multiple, build a list and create a new selectionUI entity
-                        print ("too many items on ground. fix your inventory selectionUI Woody")
-                        self.level.post('open_selection_ui', {'entity': entity, 'list': items, 'actions': ['pickup_item']})
+                        ui = self.level.e.createEntity()
+
+                        self.level.e.addComponent(ui, SelectionUI, {
+                            'parentEntity': action['entity'],
+                            # 'title': renderComponents[action['entity']]['name'] + '\'s Inventory', 
+                            'title': 'Pick up', 
+                            'items': items,
+                            'commands': {
+                                'use': {'action': 'pickup_item'},
+                                'mainhand': {'action': 'pickup_item'},
+                                'offhand': {'action': 'pickup_item'},
+                                'cancel': {'action': 'close_selection'},
+                                },
+                            'fg': renderComponents[action['entity']]['fg']
+                            # 'fg': colour.YELLOW
+                            })
+                        self.level.e.addComponent(
+                            ui, 
+                            Position, 
+                            {
+                                'x': self.level.width - 24,
+                                'y': (idComponents[action['entity']]['id']*16),
+                                'width': 24,
+                                'height': 16
+                            })
+
+                        inputComponents[action['entity']]['controlFocus'].append(ui)
                         
 
 class PickupItemSystem(BaseSystem):
@@ -44,6 +72,10 @@ class PickupItemSystem(BaseSystem):
                 inventory['contents'].append(item)
                 self.level.e.removeComponent(item, Position)
                 print (f"{entity} has picked up {item}")
+                self.log(f"£{action['entity']}$ has picked up a £{action['item']}$")
+            
+            if 'ui' in action.keys():
+                    self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})
 
 
 
@@ -81,9 +113,9 @@ class OpenInventorySystem(BaseSystem):
                     Position, 
                     {
                         'x': self.level.width - 24,
-                        'y': (idComponents[action['entity']]['id']*16),
+                        'y': (idComponents[action['entity']]['id']*16)+1,
                         'width': 24,
-                        'height': 16
+                        'height': 15
                     })
 
                 inputComponents[action['entity']]['controlFocus'].append(ui)
@@ -118,7 +150,7 @@ class DropItemSystem(BaseSystem):
                         'y': positionComponents[entity]['y']
                     })
 
-                    self.log(f"£{action['entity']}$ has dropped a £{action['item']}$", action['entity'])
+                    self.log(f"£{action['entity']}$ has dropped a £{action['item']}$")
 
                     action['items'].remove(item)
 
@@ -156,7 +188,7 @@ class EquipItemSystem(BaseSystem):
                         self.removeItem(bodyComponents, action['entity'], slot)
                         self.addItem(bodyComponents, equippedComponents, action['entity'], action['item'], slot)
                         
-                        self.log(f"£{action['entity']}$ has equipped a £{action['item']}$", action['entity'])
+                        self.log(f"£{action['entity']}$ has equipped a £{action['item']}$")
 
                         self.level.post('recalculate_stats', {'entity': action['entity']})
 
