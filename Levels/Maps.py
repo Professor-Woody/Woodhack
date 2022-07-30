@@ -29,15 +29,11 @@ class GameMap:
         return self.visible[x, y] and self.lit[x, y]
 
     def checkIsBlocked(self, x, y):
-        # for entity in self.level.world.getQuery('collidable').result:
-        #     if Collision.pointCollides(entity, x, y):
-        #         return entity
-        # TODO: This
         positionComponents = self.level.e.component.components[Position]
 
         for entity in self.level.collidableQuery.result:
             if PositionHelper.pointCollides(positionComponents[entity], x, y):
-                return True
+                return entity
         return False
 
     def update(self):

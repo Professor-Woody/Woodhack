@@ -49,7 +49,7 @@
                 "radius": 2
             },
             "IsPlayer": {},
-            "Body": {"mainhand": "shortsword", "offhand": "torch"},
+            "Body": {"mainhand": "shortbow", "offhand": "torch"},
             "Stats": {
                 "hp": 25,
                 "maxHp": 25,
@@ -105,6 +105,38 @@
             "Equip": {"slots": ["mainhand", "offhand"]},
             "Melee": {},
             "Init": {}
+        }
+    },
+    {
+        "type": "shortbow",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "shortbow",
+                "char": ")",
+                "fg": [150, 150, 50]
+            },
+            "Equip": {"slots": ["mainhand"]},
+            "Ranged": {},
+            "Init": {},
+            "WeaponStats": {}
+        }
+    },
+    {
+        "type": "arrow",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "arrow",
+                "char": ".",
+                "fg": [200, 200, 100]
+            },
+            "Equip": {"slots": ["offhand"]},
+            "Init": {},
+            "WeaponStats": {},
+            "Light": {
+                "radius": 2
+            }
         }
     }
 ]

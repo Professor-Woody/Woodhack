@@ -1,4 +1,5 @@
-
+DOING:
+    ranged attack
 
 
 
@@ -15,9 +16,20 @@ TODO:
 
     rebuild the IsReady into a Flags component
 
-    build a main menu
-    build a newgame menu
-    build an options menu
+    done-ish - build a main menu
+    done-ish - build a newgame menu
+    done-ish - build an options menu
+
+    flesh out the classes, races, and background options a bit more
+
+    build a tileset choosing system (use a toggle)
+    make the game fullscreen
+
+    build a ranged attack system
+    Add the second stick/mouse aim system
+
+    build potions and scrolls
+
 
     build a more advanced level generator
 
@@ -30,6 +42,3 @@ TODO:
     build a pause menu
 
 
-
-    _______________
-  actions based off toggle changes

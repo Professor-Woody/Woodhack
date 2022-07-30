@@ -161,7 +161,7 @@ class UpdateSelectionUISystem(BaseSystem):
                         print (f"setting index to {selectionComponents[entity]['selectionIndex']}")
 
                 for command, result in selectionComponents[entity]['commands'].items():
-                    if inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce(command):
+                    if inputComponents[selectionComponents[entity]['parentEntity']]['controller'].getPressedOnce(command, True):
                         if 'data' in result.keys():
                             data = result['data']
                         else:

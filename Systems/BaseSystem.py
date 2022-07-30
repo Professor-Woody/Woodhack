@@ -22,6 +22,9 @@ class BaseSystem:
     def getComponents(self, component):
         return self.level.e.component.components[component]
 
+    def hasComponent(self, entity, component):
+        return self.level.e.hasComponent(entity, component)
+
     def log(self, message, colour=colour.WHITE):
         self.level.post('log', {'colour': colour, 'message': message})
 

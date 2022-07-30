@@ -22,6 +22,7 @@ class KeyboardController(BaseController):
             "inventory": pygame.K_i,
         }
         self.checked = []
+        self.locked = []
         self.pressed = pygame.key.get_pressed()
 
     def update(self):
@@ -30,15 +31,20 @@ class KeyboardController(BaseController):
             key = self.commands[check]
             if not self.pressed[key]:
                 self.checked.remove(check)
+                if check in self.locked:
+                    self.locked.remove(check)
 
     def getPressed(self, action):
-        return self.pressed[self.commands[action]]
+        return self.pressed[self.commands[action]] and action not in self.locked
 
-    def getPressedOnce(self, action):
+    def getPressedOnce(self, action, lockKey = False):
         key = self.commands[action]
         pressed = self.pressed[key]
         if pressed and action not in self.checked:
             self.checked.append(action)
+            if lockKey:
+                self.locked.append(action)
+                print (f"{action} locked")
             return True
         return False
 

@@ -11,6 +11,7 @@ class PlayerInputSystem(BaseSystem):
         bodyComponents = self.getComponents(Body)
         positionComponents = self.getComponents(Position)
         meleeComponents = self.getComponents(Melee)
+        useActionComponents = self.getComponents(UseActions)
 
         for entity in entities:
             controller = inputComponents[entity]['controller']
@@ -60,10 +61,10 @@ class PlayerInputSystem(BaseSystem):
                     continue
 
                 # melee
+                slots = ['mainhand', 'offhand']
                 if targetComponents[entity]['target']:
                     
                     meleed = False
-                    slots = ['mainhand', 'offhand']
 
                     for slot in slots:
                         if bodyComponents[entity][slot] and \
@@ -78,5 +79,20 @@ class PlayerInputSystem(BaseSystem):
                     if meleed:
                         continue
 
+                # use item in hand
+                for slot in slots:
+                    if controller.getPressed(slot) and \
+                        bodyComponents[entity][slot] and \
+                            self.level.e.hasComponent(bodyComponents[entity][slot], UseActions) and \
+                                self.level.e.hasComponent(bodyComponents[entity][slot], IsReady):
+                        for action in useActionComponents[bodyComponents[entity][slot]]['actions']:
+                            self.level.post(action, {
+                                'entity': bodyComponents[entity][slot],
+                                'parentEntity': entity
+                            })
+
+
+                # TODO: REMOVE THIS
+                # Temporary for testing purposes
                 if controller.getPressedOnce('cancel'):
                     self.level.e.spawn('orc', positionComponents[entity]['x']+1, positionComponents[entity]['y'])

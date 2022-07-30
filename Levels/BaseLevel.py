@@ -4,13 +4,14 @@ from Components import *
 from Systems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
 from Systems.InitSystem import InitSystem
-from Systems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
+from Systems.Items.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
+from Systems.Items.ProjectileSystem import UpdateProjectilesSystem
+from Systems.Items.RangedSystem import RangedSystem
 from Systems.MessageLogSystem import CombatLogSystem, MessageLogSystem
 from Systems.MoveSystem import MoveSystem
 from Systems.PlayerInputSystem import PlayerInputSystem
 from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderPlayerUISystem, RenderSelectionUISystem, UpdateSelectionUISystem
 from Systems.InventorySystem import *
-from Controllers import controllers
 import time
 from Systems.StatsSystem import RecalculateStatsSystem
 from Systems.TargetSystem import AddTargeterSystem, RemoveTargeterSystem, TargetSystem
@@ -65,6 +66,11 @@ class TestLevel(BaseLevel):
         super().__init__(app, width, height)
         
         self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+
+        self.projectilesQuery = self.e.createQuery(
+            allOf=[Projectile],
+            storeQuery='Projectiles'
+        )
 
         self.renderQuery = self.e.createQuery(
             allOf=[Position, Render], 
@@ -146,6 +152,8 @@ class TestLevel(BaseLevel):
         self.equipItemSystem = EquipItemSystem(self)
         self.recalculateStatsSystem = RecalculateStatsSystem(self)
         self.meleeSystem = MeleeSystem(self)
+        self.rangedSystem = RangedSystem(self)
+        self.projectileSystem = UpdateProjectilesSystem(self)
         self.damageSystem = DamageSystem(self)
         self.aiSystem = AISystem(self)
         self.deathSystem = DeathSystem(self)
@@ -162,7 +170,7 @@ class TestLevel(BaseLevel):
         # self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
 
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
-        self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
+        self.e.spawn('shortbow', self.map.start[0], self.map.start[1]-1)
         self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
@@ -196,6 +204,8 @@ class TestLevel(BaseLevel):
         self.recalculateStatsSystem.run()
 
         self.meleeSystem.run()
+        self.rangedSystem.run()
+        self.projectileSystem.run()
         self.damageSystem.run()
 
         self.map.update()
