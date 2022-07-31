@@ -59,8 +59,12 @@ class RenderPlayerUISystem(BaseSystem):
 
             # --------
             # mainhand
+            quantityComponents = self.getComponents(Stackable)
             if bodyComponents[entity]['mainhand']:
-                screen.printLine(self.level.width - 12, y + 2, renderComponents[bodyComponents[entity]['mainhand']]['name'], renderComponents[bodyComponents[entity]['mainhand']]['fg'], bg=None)
+                name = renderComponents[bodyComponents[entity]['mainhand']]['name']
+                if self.hasComponent(bodyComponents[entity]['mainhand'], Stackable):
+                    name += f"(x{quantityComponents[bodyComponents[entity]['mainhand']]['quantity']})"
+                screen.printLine(self.level.width - 12, y + 2, name, renderComponents[bodyComponents[entity]['mainhand']]['fg'], bg=None)
                 
                 if self.level.e.hasComponent(bodyComponents[entity]['mainhand'], Init):
                     # if not initComponents[bodyComponents[entity]['mainhand']]['speed']:
@@ -80,7 +84,11 @@ class RenderPlayerUISystem(BaseSystem):
             # --------
             # offhand
             if bodyComponents[entity]['offhand']:
-                screen.printLine(self.level.width - 12, y + 3, renderComponents[bodyComponents[entity]['offhand']]['name'], renderComponents[bodyComponents[entity]['offhand']]['fg'], bg=None)
+
+                name = renderComponents[bodyComponents[entity]['offhand']]['name']
+                if self.hasComponent(bodyComponents[entity]['offhand'], Stackable):
+                    name += f" (x{quantityComponents[bodyComponents[entity]['offhand']]['quantity']})"
+                screen.printLine(self.level.width - 12, y + 3, name, renderComponents[bodyComponents[entity]['offhand']]['fg'], bg=None)
                 
                 if self.level.e.hasComponent(bodyComponents[entity]['offhand'], Init):
                     # if not initComponents[bodyComponents[entity]['offhand']]['speed']:
@@ -196,6 +204,7 @@ class RenderSelectionUISystem(BaseSystem):
             renderComponents = self.getComponents(Render)
             positionComponents = self.getComponents(Position)
             equippedComponents = self.getComponents(Equipped)
+            quantityComponents = self.getComponents(Stackable)
 
             for entity in entities:
                 # draw the frame
@@ -213,6 +222,8 @@ class RenderSelectionUISystem(BaseSystem):
                 # draw the list of items
                 for i in range(len(selectionComponents[entity]['items'])):
                     title = renderComponents[selectionComponents[entity]['items'][i]]['name']
+                    if self.hasComponent(selectionComponents[entity]['items'][i], Stackable):
+                        title += f"(x{quantityComponents[selectionComponents[entity]['items'][i]]['quantity']})"
                     if selectionComponents[entity]['items'][i] in equippedComponents.keys():
                         title += "-" + equippedComponents[selectionComponents[entity]['items'][i]]['slot']
 

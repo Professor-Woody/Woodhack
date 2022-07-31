@@ -235,6 +235,7 @@ class EntityManager:
 
         entity = self.createEntity()
         self._addComponents(entity, entityType)
+        self.addComponent(entity, Type, {'primary': entityType})
         
         if inInventory:
             self.component.components[Inventory][inInventory]['contents'].append(entity)

@@ -10,7 +10,7 @@ class PlayerInputSystem(BaseSystem):
         targetComponents = self.level.e.component.filter(Target, entities)
         bodyComponents = self.getComponents(Body)
         positionComponents = self.getComponents(Position)
-        meleeComponents = self.getComponents(Melee)
+        weaponComponents = self.getComponents(WeaponStats)
         useActionComponents = self.getComponents(UseActions)
 
         for entity in entities:
@@ -73,7 +73,7 @@ class PlayerInputSystem(BaseSystem):
                             if PositionHelper.getRange(
                                 (positionComponents[entity]['x'], positionComponents[entity]['y']),
                                 (positionComponents[targetComponents[entity]['target']]['x'], positionComponents[targetComponents[entity]['target']]['y'])
-                            ) <= meleeComponents[bodyComponents[entity][slot]]['range']:
+                            ) <= weaponComponents[bodyComponents[entity][slot]]['range']:
                                 self.level.post('melee', {'slot': slot, 'target': targetComponents[entity]['target'], 'entity': entity, 'item': bodyComponents[entity][slot]})
                                 meleed = True
                     if meleed:

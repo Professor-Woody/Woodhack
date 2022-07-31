@@ -63,16 +63,30 @@ class PickupItemSystem(BaseSystem):
 
     def run(self):
         if self._actionQueue:
+            quantityComponents = self.getComponents(Stackable)
             inventoryComponents = self.getComponents(Inventory)
+            typeComponents = self.getComponents(Type)
+
+
             for action in self.actionQueue:
                 entity = action['entity']
                 item = action['item']
                 inventory = inventoryComponents[entity]
-                
-                inventory['contents'].append(item)
-                self.level.e.removeComponent(item, Position)
-                print (f"{entity} has picked up {item}")
-                self.log(f"£{action['entity']}$ has picked up a £{action['item']}$")
+                added = False
+
+                if self.hasComponent(item, Stackable):
+                    for i in inventory['contents']:
+                        if typeComponents[i]['primary'] == typeComponents[item]['primary']: # TODO: secondary as well should be in here, or stat comparison
+                            quantityComponents[i]['quantity'] += quantityComponents[item]['quantity']
+                            self.level.post('entity_died', {'entity': item})
+                            added = True
+                            self.log(f"£{action['entity']}$ has picked up £{action['item']}$ (x{quantityComponents[item]['quantity']})")
+                            break
+
+                if not added:
+                    inventory['contents'].append(item)
+                    self.level.e.removeComponent(item, Position)
+                    self.log(f"£{action['entity']}$ has picked up a £{action['item']}$")
             
             if 'ui' in action.keys():
                     self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})

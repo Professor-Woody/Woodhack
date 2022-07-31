@@ -44,7 +44,8 @@ UseActions = 41
 Ranged = 42
 Projectile = 43
 WeaponStats = 44
-
+Stackable = 45
+Type = 46
 
 
 
@@ -78,7 +79,9 @@ componentMap = {
     'CharacterSelectPane': 27,
     'ToggleUI': 28,
     'Ranged': Ranged,
-    'WeaponStats': WeaponStats
+    'WeaponStats': WeaponStats,
+    'Type': Type,
+    'Stackable': Stackable
 }
 
 
@@ -86,7 +89,7 @@ componentMap = {
 def registerComponents(entityManager):
     entityManager.registerComponent(Position, {'x': 0, 'y': 0, 'width': 1, 'height': 1, 'moveSpeed': 6})
     entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': colour.WHITE, 'bg': None})
-    entityManager.registerComponent(Light, {'radius': 1})
+    entityManager.registerComponent(Light, {'radius': 1, 'colour': (50,50,50)})
     entityManager.registerComponent(IsPlayer, {'id': 0})
     entityManager.registerComponent(IsNPC)
     entityManager.registerComponent(IsItem)
@@ -129,15 +132,7 @@ def registerComponents(entityManager):
         'baseCon': -1,
     })
     entityManager.registerComponent(StatModifier)
-    entityManager.registerComponent(Melee, {
-        'range': 1,
-        'moveSpeed': 30,
-        'weaponSpeed': 60,
-        'attack': 0,
-        'damageBonus': 0,
-        'damageDiceAmount': 1,
-        'damageDiceType': 6,
-    })
+    entityManager.registerComponent(Melee)
     entityManager.registerComponent(HostileAI, {
         'targetCooldown': 0,
 
@@ -151,9 +146,7 @@ def registerComponents(entityManager):
         'update': False
     })
     entityManager.registerComponent(Ranged, {
-        'range': 1,
-        'moveSpeed': 30,
-        'weaponSpeed': 60,
+        'ammoType': 'arrow',
         'attack': 0,
         'damageBonus': 0,
         'useAction': 'use_ranged'
@@ -170,7 +163,8 @@ def registerComponents(entityManager):
         'damageDiceType': 6,
     })
     entityManager.registerComponent(Parent, {'entity': None})
-
+    entityManager.registerComponent(Type, {'primary': ''})
+    entityManager.registerComponent(Stackable, {'quantity': 1})
 
 # =================================================
 # =================================================

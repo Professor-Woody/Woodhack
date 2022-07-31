@@ -38,6 +38,7 @@ class BaseLevel:
 
             self.systems[action].append(system)
 
+
     def removeSystem(self, action, system):
         self.systems[action].pop(system)
 
@@ -67,76 +68,33 @@ class TestLevel(BaseLevel):
         
         self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
 
-        self.projectilesQuery = self.e.createQuery(
-            allOf=[Projectile],
-            storeQuery='Projectiles'
-        )
+        # =====================
+        # queries
+        self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')
+        self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC],storeQuery='Render')
+        self.lightsQuery = self.e.createQuery(allOf=[Position, Light],storeQuery='LightsOnGround') 
+        self.itemsOnGroundQuery = self.e.createQuery(allOf=[IsItem, Position],storeQuery='ItemsOnGround')
+        self.playersQuery = self.e.createQuery(allOf=[IsPlayer],storeQuery = 'Players')
+        self.npcsQuery = self.e.createQuery(allOf=[IsNPC],storeQuery = 'NPCs')
+        self.actorsQuery = self.e.createQuery(anyOf=[IsNPC, IsPlayer],storeQuery = 'Actors')
+        self.collidableQuery = self.e.createQuery(allOf=[Collidable],storeQuery = 'Collidable')
+        self.initQuery = self.e.createQuery(allOf=[Init],noneOf=[IsReady],storeQuery = 'InitQuery')
+        self.moveQuery = self.e.createQuery(allOf=[Position],storeQuery = 'MoveQuery')
+        self.targetedQuery = self.e.createQuery(allOf=[Targeted],storeQuery = 'TargetedQuery')
+        self.selectionUIQuery = self.e.createQuery(allOf=[SelectionUI],storeQuery = 'SelectionUIQuery')
 
-        self.renderQuery = self.e.createQuery(
-            allOf=[Position, Render], 
-            anyOf=[IsPlayer, IsItem, IsNPC],
-            storeQuery='Render')
-
-        self.lightsQuery = self.e.createQuery(
-            allOf=[Position, Light],
-            storeQuery='LightsOnGround'
-        )
-
-        self.itemsOnGroundQuery = self.e.createQuery(
-            allOf=[IsItem, Position],
-            storeQuery='ItemsOnGround'
-        )
-
-        self.playersQuery = self.e.createQuery(
-            allOf=[IsPlayer],
-            storeQuery = 'Players'
-        )
-
-        self.npcsQuery = self.e.createQuery(
-            allOf=[IsNPC],
-            storeQuery = 'NPCs'
-        )
-
-        self.actorsQuery = self.e.createQuery(
-            anyOf=[IsNPC, IsPlayer],
-            storeQuery = 'Actors'
-        )
-
-        self.collidableQuery = self.e.createQuery(
-            allOf=[Collidable],
-            storeQuery = 'Collidable'
-        )
-
-        self.initQuery = self.e.createQuery(
-            allOf=[Init],
-            noneOf=[IsReady],
-            storeQuery = 'InitQuery'
-        )
-
-        self.moveQuery = self.e.createQuery(
-            allOf=[Position],
-            storeQuery = 'MoveQuery'
-        )
-
-        self.targetedQuery = self.e.createQuery(
-            allOf=[Targeted],
-            storeQuery = 'TargetedQuery'
-        )
-
-        self.selectionUIQuery = self.e.createQuery(
-            allOf=[SelectionUI],
-            storeQuery = 'SelectionUIQuery'
-        )
-
+        # =====================
+        # logs
         self.messageLogEntity = self.e.createEntity()
         self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
-        
         self.combatLogEntity = self.e.createEntity()
         self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
-
         self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
         self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
 
+
+        # =====================
+        # systems
         self.initSystem = InitSystem(self)
         self.playerInputSystem = PlayerInputSystem(self)
         self.moveSystem = MoveSystem(self)
@@ -163,14 +121,12 @@ class TestLevel(BaseLevel):
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
 
 
-
+        # =====================
+        # loading entity defs
         self.e.loadEntities('objects.json')
 
-        # self.player = self.e.spawn('PLAYER', self.map.start[0], self.map.start[1])        
-        # self.e.addComponent(self.player, PlayerInput, {'controller': controllers[0]})
-
         self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
-        self.e.spawn('shortbow', self.map.start[0], self.map.start[1]-1)
+        self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
         self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])

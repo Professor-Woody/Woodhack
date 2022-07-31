@@ -1,4 +1,4 @@
-from Components import IsNPC, IsReady, Parent, Position, Projectile, Ranged, Render, Stats, Target, WeaponStats
+from Components import Body, Equipped, Inventory, IsNPC, IsReady, Parent, Position, Projectile, Ranged, Render, Stackable, Stats, Target, Type, WeaponStats
 from Systems.BaseSystem import BaseSystem
 import Helpers.PositionHelper as PositionHelper
 
@@ -13,6 +13,11 @@ class RangedSystem(BaseSystem):
             rangedComponents = self.getComponents(Ranged)
             statsComponents = self.getComponents(Stats)
             weaponComponents = self.getComponents(WeaponStats)
+            bodyComponents = self.getComponents(Body)
+            typeComponents = self.getComponents(Type)
+            quantityComponents = self.getComponents(Stackable)
+            inventoryComponents = self.getComponents(Inventory)
+
 
             for action in self.actionQueue:
                 # check we are ready
@@ -20,9 +25,9 @@ class RangedSystem(BaseSystem):
                 parent = action['parentEntity']
 
                 if self.hasComponent(entity, IsReady):
-                    # check we have ammo
-                    # we'll ignore this for now
-                    if True:
+                    # check we have ammo)
+                    if bodyComponents[parent]['offhand'] and \
+                            typeComponents[bodyComponents[parent]['offhand']]['primary'] == rangedComponents[entity]['ammoType']:
                         # check we have a target
                         target = targetComponents[parent]['target']
                         if target:
@@ -40,7 +45,17 @@ class RangedSystem(BaseSystem):
                                 run = positionComponents[target]['x'] - positionComponents[parent]['x']
 
                                 # create projectile from ammo. For the moment lets just make a basic arrow
-                                projectile = self.level.e.spawn('arrow', positionComponents[parent]['x'], positionComponents[parent]['y'])
+                                if quantityComponents[bodyComponents[parent]['offhand']]['quantity'] == 1:
+                                    projectile = bodyComponents[parent]['offhand']
+                                    self.level.e.addComponent(projectile, Position, {'x': positionComponents[parent]['x'], 'y': positionComponents[parent]['y']})
+                                    bodyComponents[parent]['offhand'] = None
+                                    inventoryComponents[parent]['contents'].remove(projectile)
+                                    self.level.e.removeComponent(projectile, Equipped)
+                                else:
+                                    projectile = self.level.e.spawn('arrow', positionComponents[parent]['x'], positionComponents[parent]['y'])
+                                    quantityComponents[projectile]['quantity'] = 1
+                                    quantityComponents[bodyComponents[parent]['offhand']]['quantity'] -= 1
+
                                 self.level.e.addComponent(projectile, Parent, {'entity': parent})
                                 self.level.e.addComponent(projectile, Projectile, {
                                     'rise': rise,
