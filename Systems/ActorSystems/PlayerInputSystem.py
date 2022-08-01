@@ -3,6 +3,8 @@ from Components import *
 import Helpers.PositionHelper as PositionHelper
 
 class PlayerInputSystem(BaseSystem):
+    priority = 10
+    
     def run(self):
         entities = self.level.playersQuery.result
         inputComponents = self.level.e.component.filter(PlayerInput, entities)

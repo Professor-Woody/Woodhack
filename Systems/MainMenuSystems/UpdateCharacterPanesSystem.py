@@ -4,6 +4,7 @@ from Systems.BaseSystem import BaseSystem
 
 class UpdateCharacterPanesSystem(BaseSystem):
     actions = ['player_input']
+    priority=40
 
     def run(self):
         if self._actionQueue:
@@ -45,6 +46,8 @@ class UpdateCharacterPanesSystem(BaseSystem):
 
 
 class PanesInputSystem(BaseSystem):
+    priority=20
+
     def run(self):
         entities = self.level.claimedPanesQuery.result
         inputComponents = self.getComponents(PlayerInput)

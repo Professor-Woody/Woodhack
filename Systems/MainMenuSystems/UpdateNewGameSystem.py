@@ -6,6 +6,8 @@ import copy
 
 class UpdateNewGameSystem(BaseSystem):
     actions = ['player_ready']
+    alwaysActive=False
+    priority=120
 
     def run(self):
         if self._actionQueue:

@@ -4,6 +4,8 @@ import Helpers.PositionHelper as PositionHelper
 
 class RangedSystem(BaseSystem):
     actions=['use_ranged']
+    alwaysActive=False
+    priority=160
 
     def run(self):
         if self._actionQueue:

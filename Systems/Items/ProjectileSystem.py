@@ -3,6 +3,7 @@ from Components import Parent, Projectile, Position, Stats, WeaponStats
 from random import randint
 
 class UpdateProjectilesSystem(BaseSystem):
+    priority=170
 
     def run(self):
         entities = self.level.projectilesQuery.result

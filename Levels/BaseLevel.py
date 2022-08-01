@@ -1,53 +1,78 @@
 from EntityManager import EntityManager, Position, Render
 from Levels.LevelCreator import LevelCreator
 from Components import *
-from Systems.AISystem import AISystem
+from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
-from Systems.InitSystem import InitSystem
-from Systems.Items.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
+from Systems.ActorSystems.InitSystem import InitSystem
+from Systems.UseSystems.HealingSystem import HealingSystem
+from Systems.UseSystems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
 from Systems.Items.ProjectileSystem import UpdateProjectilesSystem
-from Systems.Items.RangedSystem import RangedSystem
-from Systems.MessageLogSystem import CombatLogSystem, MessageLogSystem
-from Systems.MoveSystem import MoveSystem
-from Systems.PlayerInputSystem import PlayerInputSystem
+from Systems.UseSystems.RangedSystem import RangedSystem
+from Systems.LevelSystems.MapSystems import RenderMapSystem, UpdateMapSystem
+from Systems.LevelSystems.MessageLogSystem import CombatLogSystem, MessageLogSystem
+from Systems.ActorSystems.MoveSystem import MoveSystem
+from Systems.ActorSystems.PlayerInputSystem import PlayerInputSystem
 from Systems.RenderSystems import CloseUISystem, RenderEntitiesSystem, RenderPlayerUISystem, RenderSelectionUISystem, UpdateSelectionUISystem
-from Systems.InventorySystem import *
+from Systems.ActorSystems.InventorySystem import *
 import time
-from Systems.StatsSystem import RecalculateStatsSystem
-from Systems.TargetSystem import AddTargeterSystem, RemoveTargeterSystem, TargetSystem
+from Systems.ActorSystems.StatsSystem import RecalculateStatsSystem
+from Systems.ActorSystems.TargetSystem import AddTargeterSystem, RemoveTargeterSystem, TargetSystem
 
 
 
 class BaseLevel:
+    needsSorting = False
+    map = None
     def __init__(self, app, width, height):
         self.app = app
         self.width = width
         self.height = height
-        
-        self.map = None
 
         self.e: EntityManager = EntityManager(self)
         registerComponents(self.e)
-        self.systems: dict[int: list[BaseSystem]] = {}
+        self.actions: dict[str: list[BaseSystem]] = {}
+        self.systems = {}
+        self.activeSystems = []
 
 
-    def registerSystem(self, actions, system):
+    def registerSystem(self, priority, system, active):
+        print (f"Registering {priority}: {system}, {active}")
+        self.systems[priority] = system
+        if active:
+            self.activeSystems.append(priority)
+
+
+    def registerActions(self, priority, actions):
         for action in actions:
-            if action not in self.systems.keys():
-                self.systems[action] = []
+            if action not in self.actions.keys():
+                self.actions[action] = []
 
-            self.systems[action].append(system)
+            self.actions[action].append(priority)
 
+    def removeSystem(self, action, priority):
+        self.actions[action].pop(priority)
+        self.systems.pop(priority)
 
-    def removeSystem(self, action, system):
-        self.systems[action].pop(system)
+    def activateSystem(self, priority):
+        if priority not in self.activeSystems:
+            self.activeSystems.append(priority)
+        self.activeSystems.sort()
+
+    def deactivateSystem(self, priority):
+        self.activeSystems.remove(priority)
+        # self.activeSystems.sort()
+
+    def runSystems(self):
+        for key in self.activeSystems:
+            self.systems[key].run()
 
 
     def post(self, action, data):
         print (f"Action posted: {action}\nData: {data}")
-        if action in self.systems.keys():
-            for system in self.systems[action]:
-                system.post(data)
+        if action in self.actions.keys():
+            systems = self.actions[action]
+            for system in systems:
+                self.systems[system].post(data)
         else:
             print (f"no takes for {action}")
 
@@ -116,10 +141,12 @@ class TestLevel(BaseLevel):
         self.aiSystem = AISystem(self)
         self.deathSystem = DeathSystem(self)
         
+        self.updateMapSystem = UpdateMapSystem(self)
+        self.renderMapSystem = RenderMapSystem(self)
         self.renderUISystem = RenderPlayerUISystem(self)
         self.renderEntitiesSystem = RenderEntitiesSystem(self)
         self.renderSelectionUISystem = RenderSelectionUISystem(self)
-
+        HealingSystem(self)
 
         # =====================
         # loading entity defs
@@ -139,42 +166,44 @@ class TestLevel(BaseLevel):
 
 
     def update(self):
-        self.initSystem.run()
-        self.playerInputSystem.run()
-        self.targetSystem.run()
-        self.removeTargeterSystem.run()
-        self.addTargeterSystem.run()
-        self.tryPickupItemSystem.run()
-        self.pickupItemSystem.run()
-        self.updateSelectionUISystem.run()
-        self.dropItemSystem.run()
-        self.equipItemSystem.run()
-        self.closeUISystem.run()
+        # 0  # self.initSystem.run()
+        # 10 # self.playerInputSystem.run()
+        # 20 # self.targetSystem.run()
+        # 30 # self.removeTargeterSystem.run()
+        # 40 # self.addTargeterSystem.run()
+        # 50 # self.tryPickupItemSystem.run()
+        # 60 # self.pickupItemSystem.run()
+        # 70 # self.updateSelectionUISystem.run()
+        # 80 # self.dropItemSystem.run()
+        # 90 # self.equipItemSystem.run()
+        # 100# self.closeUISystem.run()
 
-        self.aiSystem.run()
+        # 110# self.aiSystem.run()
 
-        self.moveSystem.run()
-        self.openInventorySystem.run()
+        # 120# self.moveSystem.run()
+        # 130# self.openInventorySystem.run()
         
 
-        self.recalculateStatsSystem.run()
+        # 140# self.recalculateStatsSystem.run()
 
-        self.meleeSystem.run()
-        self.rangedSystem.run()
-        self.projectileSystem.run()
-        self.damageSystem.run()
+        # 150# self.meleeSystem.run()
+        # 160# self.rangedSystem.run()
+        # 170# self.projectileSystem.run()
+        # 180# self.damageSystem.run()
 
-        self.map.update()
+        # self.runSystems()
 
-        self.map.draw(self.app.screen)
-        self.messagelogSystem.run()
-        self.combatLogSystem.run()
-        self.renderEntitiesSystem.run()
-        self.renderUISystem.run()
-        self.renderSelectionUISystem.run()
+        # 190# self.map.update()
 
-        self.deathSystem.run()
+        # 200# self.map.draw(self.app.screen)
+        # 210# self.messagelogSystem.run()
+        # 220# self.combatLogSystem.run()
+        # 230# self.renderEntitiesSystem.run()
+        # 240# self.renderUISystem.run()
+        # 250# self.renderSelectionUISystem.run()
 
+        # 500# self.deathSystem.run()
+        self.runSystems()
 
         self.fps += 1
         curTime = time.time()*1000

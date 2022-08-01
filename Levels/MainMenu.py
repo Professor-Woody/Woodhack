@@ -2,9 +2,9 @@
 
 from Components import ButtonUI, Position, Render, Selected, SliderUI, registerMenuComponents
 from Levels.BaseLevel import BaseLevel
-from Systems.MainMenu.ButtonSystems import RenderButtonsSystem, UpdateButtonsSystem
-from Systems.ChangeLevelSystem import ChangeLevelSystem
-from Systems.QuitSystems import QuitSystem
+from Systems.MainMenuSystems.ButtonSystems import RenderButtonsSystem, UpdateButtonsSystem
+from Systems.MainMenuSystems.ChangeLevelSystem import ChangeLevelSystem
+from Systems.LevelSystems.QuitSystems import QuitSystem
 
 
 class MainMenu(BaseLevel):
@@ -52,8 +52,9 @@ class MainMenu(BaseLevel):
         self.quitSystem = QuitSystem(self)
 
     def update(self):
-        self.updateButtonsSystem.run()
-        self.renderButtonsSystem.run()
+        self.runSystems()
+        # self.updateButtonsSystem.run()
+        # self.renderButtonsSystem.run()
 
-        self.changeLevelSystem.run()
-        self.quitSystem.run()
+        # self.changeLevelSystem.run()
+        # self.quitSystem.run()

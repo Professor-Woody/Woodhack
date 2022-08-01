@@ -6,6 +6,9 @@ import Colours as colour
 
 class TryPickupItemSystem(BaseSystem):
     actions = ['try_pickup_item']
+    alwaysActive = False
+    priority=50
+
     def run(self):
         if self._actionQueue:
             itemsOnGround = self.level.itemsOnGroundQuery.result
@@ -60,6 +63,8 @@ class TryPickupItemSystem(BaseSystem):
 
 class PickupItemSystem(BaseSystem):
     actions=['pickup_item']
+    alwaysActive=False
+    priority=60
 
     def run(self):
         if self._actionQueue:
@@ -95,6 +100,8 @@ class PickupItemSystem(BaseSystem):
 
 class OpenInventorySystem(BaseSystem):
     actions=['open_inventory']
+    alwaysActive=False
+    priority=130
 
     def run(self):
         if self._actionQueue:
@@ -137,6 +144,8 @@ class OpenInventorySystem(BaseSystem):
 
 class DropItemSystem(BaseSystem):
     actions = ['drop_item']
+    alwaysActive=False
+    priority=80
 
     def run(self):
         if self._actionQueue:
@@ -174,6 +183,8 @@ class DropItemSystem(BaseSystem):
 
 class EquipItemSystem(BaseSystem):
     actions = ['equip_item']
+    alwaysActive=False
+    priority=90
 
     def run(self):
         if self._actionQueue:

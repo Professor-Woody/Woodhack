@@ -46,6 +46,7 @@ Projectile = 43
 WeaponStats = 44
 Stackable = 45
 Type = 46
+UseHealing = 47
 
 
 
@@ -81,7 +82,8 @@ componentMap = {
     'Ranged': Ranged,
     'WeaponStats': WeaponStats,
     'Type': Type,
-    'Stackable': Stackable
+    'Stackable': Stackable,
+    'UseHealing': UseHealing
 }
 
 
@@ -165,6 +167,13 @@ def registerComponents(entityManager):
     entityManager.registerComponent(Parent, {'entity': None})
     entityManager.registerComponent(Type, {'primary': ''})
     entityManager.registerComponent(Stackable, {'quantity': 1})
+    entityManager.registerComponent(UseHealing, {
+        'diceAmount': 1, 
+        'diceType': 8, 
+        'modifier': 0, 
+        'itemSpeed': 240,
+        'moveSpeed': 10,
+        'useAction': 'use_healing'})
 
 # =================================================
 # =================================================

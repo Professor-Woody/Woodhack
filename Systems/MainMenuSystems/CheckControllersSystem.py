@@ -3,6 +3,7 @@ from Systems.BaseSystem import BaseSystem
 
 
 class CheckControllersSystem(BaseSystem):
+    priority=10
 
     def run(self):
         if self.level.controllers:

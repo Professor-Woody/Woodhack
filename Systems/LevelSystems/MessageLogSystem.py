@@ -6,6 +6,8 @@ class MessageLogSystem(BaseSystem):
     actions = ['log']
     update = True
     title = "History"
+    alwaysActive=False
+    priority=210
 
     def __init__(self, level, entity):
         super().__init__(level)
@@ -39,16 +41,10 @@ class MessageLogSystem(BaseSystem):
                         message[message.find('$')+1:]                
 
                     pos = message.find('£')
-
                 self.history.append([action['colour'], message, entities])
             
             self.history = self.history[-10:]
-            self.update = True
-
-        if self.update:
             positionComponents = self.getComponents(Position)
-
-            self.update = False
 
             self.level.app.screen.drawFrame(
                 positionComponents[self.log]['x'],
@@ -85,8 +81,10 @@ class MessageLogSystem(BaseSystem):
             yield start
             start += len(sub)                
 
+
 class CombatLogSystem(MessageLogSystem):
     actions = ['clog']
     title = "Combat"
+    priority=220
 
         

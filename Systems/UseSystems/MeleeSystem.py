@@ -6,6 +6,8 @@ import Colours as colour
 
 class MeleeSystem(BaseSystem):
     actions = ['melee']
+    alwaysActive=False
+    priority=150
 
     def run(self):
         if self._actionQueue:
@@ -44,6 +46,8 @@ class MeleeSystem(BaseSystem):
 
 class DamageSystem(BaseSystem):
     actions = ['damage']
+    alwaysActive=False
+    priority=180
 
     def run(self):
         if self._actionQueue:
@@ -62,7 +66,9 @@ class DamageSystem(BaseSystem):
 
 class DeathSystem(BaseSystem):
     actions = ['entity_died']
-    
+    alwaysActive=True
+    priority=-500
+
     def run(self):
         if self._actionQueue:
             targetComponents = self.getComponents(Target)

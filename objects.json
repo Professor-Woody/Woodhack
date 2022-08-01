@@ -89,7 +89,9 @@
             },
             "Light": {"radius": 5, "colour": [200, 0, 0]},
             "Equip": {"slots": ["mainhand", "offhand"]},
-            "StatModifier": {"moveSpeed": -8}
+            "StatModifier": {"moveSpeed": -8},
+            "UseHealing": {},
+            "Init": {}
         }
     },
     {

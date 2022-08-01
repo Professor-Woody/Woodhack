@@ -3,7 +3,9 @@ from Components import *
 
 class RecalculateStatsSystem(BaseSystem):
     actions = ['recalculate_stats']
-
+    alwaysActive=False
+    priority=140
+    
     def run(self):
         if self._actionQueue:
             statsComponents = self.getComponents(Stats)

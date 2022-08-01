@@ -5,6 +5,8 @@ from Systems.BaseSystem import BaseSystem
 import Colours as colour
 
 class RenderEntitiesSystem(BaseSystem):
+    priority=230
+
     def run(self):
         entities = self.level.itemsOnGroundQuery.result + self.level.npcsQuery.result + self.level.playersQuery.result
         # renderComponents = self.level.e.component.filter(Render, entities)
@@ -25,6 +27,8 @@ class RenderEntitiesSystem(BaseSystem):
             
 
 class RenderPlayerUISystem(BaseSystem):
+    priority=240
+
     def run(self):
         entities = self.level.playersQuery.result
         bodyComponents = self.getComponents(Body)
@@ -149,6 +153,8 @@ class RenderPlayerUISystem(BaseSystem):
 
 
 class UpdateSelectionUISystem(BaseSystem):
+    priority=70
+
     def run(self):
         entities = self.level.selectionUIQuery.result
         if entities:
@@ -184,6 +190,8 @@ class UpdateSelectionUISystem(BaseSystem):
 
 class CloseUISystem(BaseSystem):
     actions=['close_selection']
+    alwaysActive=False
+    priority=100
 
     def run(self):
         if self._actionQueue:
@@ -196,6 +204,8 @@ class CloseUISystem(BaseSystem):
 
 
 class RenderSelectionUISystem(BaseSystem):
+    priority=250
+
     def run(self):
         entities = self.level.selectionUIQuery.result
         if entities:

@@ -14,10 +14,6 @@ class GameMap:
         self.lit = np.full((self.width, self.height), fill_value=False, order="F")
         self.visible = np.full((self.width, self.height), fill_value=False, order="F")
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
-        self.r = np.full((self.width, self.height), dtype=np.int8, fill_value=0, order="F")
-        self.g = np.full((self.width, self.height), dtype=np.int8, fill_value=0, order="F")
-        self.b = np.full((self.width, self.height), dtype=np.int8, fill_value=0, order="F")
-
 
         self.start = None
         self.end = None
@@ -43,9 +39,7 @@ class GameMap:
     def update(self):
         # calculate lit squares
         self.lit[:] = False
-        self.r[:] = 0
-        self.g[:] = 0
-        self.b[:] = 0
+
         entities = self.level.lightsQuery.result
         positionComponents = self.level.e.component.filter(Position, entities)
         lightComponents = self.level.e.component.filter(Light, entities)

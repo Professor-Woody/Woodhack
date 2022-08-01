@@ -4,7 +4,8 @@ import Colours as colour
 
 
 class RenderTogglesSystem(BaseSystem):
-
+    priority=90
+    
     def run(self):
         entities = self.level.togglesQuery.result
         toggleComponents = self.getComponents(ToggleUI)
