@@ -6,6 +6,7 @@ import copy
 
 class UpdateButtonsSystem(BaseSystem):
     selectionIndex = 0
+    priority=10
 
 
 
@@ -69,12 +70,12 @@ class UpdateButtonsSystem(BaseSystem):
 
 
 class RenderButtonsSystem(BaseSystem):
+    priority=20
 
     def run(self):
         # Buttons
         entities = self.level.buttonsQuery.result
         positionComponents = self.getComponents(Position)
-        uiComponents = self.getComponents(ButtonUI)
         renderComponents = self.getComponents(Render)
 
         screen = self.level.app.screen
@@ -104,6 +105,7 @@ class RenderButtonsSystem(BaseSystem):
             )
 
 class RenderSlidersSystem(BaseSystem):
+    priority=30
 
     def run(self):
         # sliders

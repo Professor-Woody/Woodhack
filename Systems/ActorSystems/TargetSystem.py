@@ -5,6 +5,7 @@ import Helpers.PositionHelper as PositionHelper
 
 class TargetSystem(BaseSystem):
     actions = ['target']
+    priority = 20
 
     def run(self):
         self.highlightTargeted()
@@ -92,6 +93,8 @@ class TargetSystem(BaseSystem):
 
 class AddTargeterSystem(BaseSystem):
     actions = ['add_targeter']
+    alwaysActive=False
+    priority = 40
     
     def run(self):
         if self._actionQueue:
@@ -110,6 +113,8 @@ class AddTargeterSystem(BaseSystem):
 
 class RemoveTargeterSystem(BaseSystem):
     actions = ['remove_targeter']
+    priority=30
+    alwaysActive=False
 
     def run(self):
         if self._actionQueue:

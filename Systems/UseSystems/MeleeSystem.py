@@ -6,12 +6,13 @@ import Colours as colour
 
 class MeleeSystem(BaseSystem):
     actions = ['melee']
+    alwaysActive=False
+    priority=150
 
     def run(self):
         if self._actionQueue:
-            meleeComponents = self.getComponents(Melee)
+            weaponComponents = self.getComponents(WeaponStats)
             statsComponents = self.getComponents(Stats)
-            print (self._actionQueue)
             
 
             for action in self.actionQueue:
@@ -23,7 +24,7 @@ class MeleeSystem(BaseSystem):
                 attackRoll = randint(-9, 10) \
                     + statsComponents[entity]['attack'] \
                         + statsComponents[entity]['dex'] \
-                            + meleeComponents[item]['attack'] \
+                            + weaponComponents[item]['attack'] \
                                 - statsComponents[target]['defence']
 
                 # print (f"{entity} attacks {target} with an attack roll of {attackRoll}")
@@ -31,26 +32,27 @@ class MeleeSystem(BaseSystem):
 
                 if attackRoll >= 0:
                     # roll damage
-                    damageRoll = sum([randint(1, meleeComponents[item]['damageDiceType']) for dice in range(meleeComponents[item]['damageDiceAmount'])]) \
-                        + meleeComponents[item]['damageBonus'] \
+                    damageRoll = sum([randint(1, weaponComponents[item]['damageDiceType']) for dice in range(weaponComponents[item]['damageDiceAmount'])]) \
+                        + weaponComponents[item]['damageBonus'] \
                             + statsComponents[entity]['str']
                     # print (f"--{target} is damaged for {damageRoll} points")
                     self.clog(f"£{target}$ is damaged for {damageRoll} points")
                     # post damage
                     self.level.post('damage', {'entity': target, 'damage': damageRoll})
                     
-                self.level.post('add_speed', {'entity': entity, 'speed': meleeComponents[item]['moveSpeed']})
-                self.level.post('add_speed', {'entity': item, 'speed': meleeComponents[item]['weaponSpeed']})
+                self.level.post('add_speed', {'entity': entity, 'speed': weaponComponents[item]['moveSpeed']})
+                self.level.post('add_speed', {'entity': item, 'speed': weaponComponents[item]['weaponSpeed']})
 
 
 class DamageSystem(BaseSystem):
     actions = ['damage']
+    alwaysActive=False
+    priority=180
 
     def run(self):
         if self._actionQueue:
             statsComponents = self.getComponents(Stats)
-            targetedComponents = self.getComponents(Targeted)
-            targetComponents = self.getComponents(Target)
+
 
             for action in self.actionQueue:
                 entity = action['entity']
@@ -64,7 +66,9 @@ class DamageSystem(BaseSystem):
 
 class DeathSystem(BaseSystem):
     actions = ['entity_died']
-    
+    alwaysActive=True
+    priority=-500
+
     def run(self):
         if self._actionQueue:
             targetComponents = self.getComponents(Target)

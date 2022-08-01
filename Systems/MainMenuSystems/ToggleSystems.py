@@ -4,6 +4,7 @@ from Systems.BaseSystem import BaseSystem
 
 class UpdateTogglesSystem(BaseSystem):
     actions=['player_input']
+    priority=50
 
     def run(self):
         if self._actionQueue:
@@ -41,6 +42,7 @@ class UpdateTogglesSystem(BaseSystem):
 
 class ToggleColourSystem(BaseSystem):
     actions = ['toggle_colour']
+    priority=70
 
     def run(self):
         if self._actionQueue:

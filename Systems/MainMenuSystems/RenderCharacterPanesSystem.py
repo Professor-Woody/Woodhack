@@ -3,6 +3,7 @@ from Systems.BaseSystem import BaseSystem
 import Colours as colour
 
 class RenderCharacterPanesSystem(BaseSystem):
+    priority=80
 
     def run(self):
         screen = self.level.app.screen

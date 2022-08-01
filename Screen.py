@@ -8,6 +8,10 @@ styles = {
     'top': '╒═╕│ │└─┘',
     'topleft': '╔═╕║ │╙─┘',
     'bottomright': '┌─╖│ ║╘═╝',
+    'topleftopen': '╔═╕║  ╙  ',
+    'speckles': '░░░░ ░░░░',
+    'solid': '████ ████',
+    'open': '         '
 }
 styleSides = {
     'single': '┤├',
@@ -16,6 +20,10 @@ styleSides = {
     'top': '╡╞',
     'topleft': '╡╞',
     'bottomright': '┤├',
+    'topleftopen': '╡╞',
+    'speckles': '░░',
+    'solid': '██',
+    'open': '  '
 }
 
 class Screen:
@@ -57,7 +65,7 @@ class Screen:
     def drawArray(self, horizontal, vertical, array):
         self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
-    def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE, style='left'):
+    def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE, style='top'):
         self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg, decoration=styles[style] ) #decoration=(201, 205, 187, 186, 32, 186, 200,205, 188))
         if title:
             self.console.print_box(x+1, y, width, height, string= f"{styleSides[style][0]}{title}{styleSides[style][1]}", bg=bg)#, alignment=tcod.constants.CENTER)

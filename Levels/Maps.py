@@ -29,30 +29,29 @@ class GameMap:
         return self.visible[x, y] and self.lit[x, y]
 
     def checkIsBlocked(self, x, y):
-        # for entity in self.level.world.getQuery('collidable').result:
-        #     if Collision.pointCollides(entity, x, y):
-        #         return entity
-        # TODO: This
         positionComponents = self.level.e.component.components[Position]
 
         for entity in self.level.collidableQuery.result:
             if PositionHelper.pointCollides(positionComponents[entity], x, y):
-                return True
+                return entity
         return False
 
     def update(self):
         # calculate lit squares
         self.lit[:] = False
+
         entities = self.level.lightsQuery.result
         positionComponents = self.level.e.component.filter(Position, entities)
         lightComponents = self.level.e.component.filter(Light, entities)
 
         for entity in entities:
-            self.lit = np.logical_or(self.lit, compute_fov(
-                self.tiles["transparent"],
-                (positionComponents[entity]['x'], positionComponents[entity]['y']),
-                radius=lightComponents[entity]['radius'],
-                algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
+            self.lit = np.logical_or(
+                self.lit, 
+                compute_fov(
+                    self.tiles["transparent"],
+                    (positionComponents[entity]['x'], positionComponents[entity]['y']),
+                    radius=lightComponents[entity]['radius'],
+                    algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                 )
             )
 

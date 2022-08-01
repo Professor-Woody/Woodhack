@@ -49,7 +49,7 @@
                 "radius": 2
             },
             "IsPlayer": {},
-            "Body": {"mainhand": "shortsword", "offhand": "torch"},
+            "Body": {"mainhand": "shortbow", "offhand": "arrow"},
             "Stats": {
                 "hp": 25,
                 "maxHp": 25,
@@ -87,11 +87,29 @@
                 "fg": [200, 200, 50],
                 "needsVisibility": true
             },
-            "Light": {"radius": 5},
+            "Light": {"radius": 5, "colour": [200, 0, 0]},
+            "Equip": {"slots": ["mainhand", "offhand"]},
+            "StatModifier": {"moveSpeed": -8},
+            "UseHealing": {},
+            "Init": {}
+        }
+    },
+    {
+        "type": "bluetorch",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "torch",
+                "char": "i",
+                "fg": [0, 200, 0],
+                "needsVisibility": true
+            },
+            "Light": {"radius": 5, "colour": [0, 200, 0]},
             "Equip": {"slots": ["mainhand", "offhand"]},
             "StatModifier": {"moveSpeed": -8}
         }
     },
+
 
     {
         "type": "shortsword",
@@ -104,7 +122,41 @@
             },
             "Equip": {"slots": ["mainhand", "offhand"]},
             "Melee": {},
+            "WeaponStats": {},
             "Init": {}
+        }
+    },
+    {
+        "type": "shortbow",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "shortbow",
+                "char": ")",
+                "fg": [150, 150, 50]
+            },
+            "Equip": {"slots": ["mainhand"]},
+            "Ranged": {"ammoType": "arrow"},
+            "Init": {},
+            "WeaponStats": {}
+        }
+    },
+    {
+        "type": "arrow",
+        "inherits": "ITEM",
+        "components": {
+            "Render": {
+                "name": "arrow",
+                "char": ".",
+                "fg": [200, 200, 100]
+            },
+            "Equip": {"slots": ["offhand"]},
+            "Init": {},
+            "WeaponStats": {},
+            "Light": {
+                "radius": 2
+            },
+            "Stackable": {"quantity": 20}
         }
     }
 ]

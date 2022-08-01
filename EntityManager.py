@@ -175,6 +175,11 @@ class EntityManager:
             data['id'] = self.playerIds
             self.playerIds += 1
 
+        if 'useAction' in data.keys():
+            if not self.hasComponent(entity, UseActions):
+                self.addComponent(entity, UseActions)
+            self.component.components[UseActions][entity]['actions'].add(data['useAction'])
+
         self.entities[entity] = add_bit(self.entities[entity], component)
         self.candidacy(entity)
 
@@ -230,6 +235,7 @@ class EntityManager:
 
         entity = self.createEntity()
         self._addComponents(entity, entityType)
+        self.addComponent(entity, Type, {'primary': entityType})
         
         if inInventory:
             self.component.components[Inventory][inInventory]['contents'].append(entity)

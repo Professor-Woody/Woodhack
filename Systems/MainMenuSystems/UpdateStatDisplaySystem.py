@@ -5,6 +5,7 @@ from Systems.BaseSystem import BaseSystem
 
 class UpdateStatDisplaySystem(BaseSystem):
     actions=['toggle_stat']
+    priority=60
 
     def run(self):
         if self._actionQueue:

@@ -1,16 +1,16 @@
 from Components import AttachedInfoPanel, CharacterSelectPane, EntityInfo, InfoPanel, IsActive, IsPlayer, IsReady, Parent, Player0, Player1, Player2, Player3, Position, Render, Selected, StatPoints, Target, ToggleUI, Stat, registerCharacterSelectComponents
 from Levels.BaseLevel import BaseLevel
 from Controllers import controllers
-from Systems.CharacterSelect.CheckControllersSystem import CheckControllersSystem
-from Systems.CharacterSelect.InfoPanelSystems import CloseInfoPanelsSystem, RenderInfoPanelsSystem
-from Systems.CharacterSelect.RenderCharacterPanesSystem import RenderCharacterPanesSystem
-from Systems.CharacterSelect.RenderStatDisplaySystem import RenderStatDisplaySystem
-from Systems.CharacterSelect.RenderTogglesSystem import RenderTogglesSystem
-from Systems.CharacterSelect.ToggleSystems import ToggleColourSystem, UpdateTogglesSystem
-from Systems.CharacterSelect.UpdateCharacterPanesSystem import PanesInputSystem, UpdateCharacterPanesSystem
+from Systems.MainMenuSystems.CheckControllersSystem import CheckControllersSystem
+from Systems.MainMenuSystems.InfoPanelSystems import CloseInfoPanelsSystem, RenderInfoPanelsSystem
+from Systems.MainMenuSystems.RenderCharacterPanesSystem import RenderCharacterPanesSystem
+from Systems.MainMenuSystems.RenderStatDisplaySystem import RenderStatDisplaySystem
+from Systems.MainMenuSystems.RenderTogglesSystem import RenderTogglesSystem
+from Systems.MainMenuSystems.ToggleSystems import ToggleColourSystem, UpdateTogglesSystem
+from Systems.MainMenuSystems.UpdateCharacterPanesSystem import PanesInputSystem, UpdateCharacterPanesSystem
 import Colours as colour
-from Systems.CharacterSelect.UpdateNewGameSystem import UpdateNewGameSystem
-from Systems.CharacterSelect.UpdateStatDisplaySystem import UpdateStatDisplaySystem
+from Systems.MainMenuSystems.UpdateNewGameSystem import UpdateNewGameSystem
+from Systems.MainMenuSystems.UpdateStatDisplaySystem import UpdateStatDisplaySystem
 
 
 class CharacterSelectLevel(BaseLevel):
@@ -268,19 +268,20 @@ class CharacterSelectLevel(BaseLevel):
         self.updateNewGameSystem = UpdateNewGameSystem(self)
 
     def update(self):
-        self.checkControllersSystem.run()
-        self.panesInputSystem.run()
-        self.closeInfoPanelsSystem.run()
+        # 10 self.checkControllersSystem.run()
+        # 20 self.panesInputSystem.run()
+        # 30 self.closeInfoPanelsSystem.run()
 
-        self.updateCharacterPanesSystem.run()
-        self.updateTogglesSystem.run()
-        self.updateStatDisplaySystem.run()
+        # 40 self.updateCharacterPanesSystem.run()
+        # 50 self.updateTogglesSystem.run()
+        # 60 self.updateStatDisplaySystem.run()
 
-        self.toggleColourSystem.run()
+        # 70 self.toggleColourSystem.run()
         
-        self.renderCharacterPanesSystem.run()
-        self.renderTogglesSystem.run()
-        self.renderStatDisplaySystem.run()
-        self.renderInfoPanelsSystem.run()
+        # 80 self.renderCharacterPanesSystem.run()
+        # 90 self.renderTogglesSystem.run()
+        # 100 self.renderStatDisplaySystem.run()
+        # 110 self.renderInfoPanelsSystem.run()
         
-        self.updateNewGameSystem.run()
+        # 120 self.updateNewGameSystem.run()
+        self.runSystems()

@@ -6,6 +6,9 @@ import Colours as colour
 
 class TryPickupItemSystem(BaseSystem):
     actions = ['try_pickup_item']
+    alwaysActive = False
+    priority=50
+
     def run(self):
         if self._actionQueue:
             itemsOnGround = self.level.itemsOnGroundQuery.result
@@ -60,19 +63,35 @@ class TryPickupItemSystem(BaseSystem):
 
 class PickupItemSystem(BaseSystem):
     actions=['pickup_item']
+    alwaysActive=False
+    priority=60
 
     def run(self):
         if self._actionQueue:
+            quantityComponents = self.getComponents(Stackable)
             inventoryComponents = self.getComponents(Inventory)
+            typeComponents = self.getComponents(Type)
+
+
             for action in self.actionQueue:
                 entity = action['entity']
                 item = action['item']
                 inventory = inventoryComponents[entity]
-                
-                inventory['contents'].append(item)
-                self.level.e.removeComponent(item, Position)
-                print (f"{entity} has picked up {item}")
-                self.log(f"£{action['entity']}$ has picked up a £{action['item']}$")
+                added = False
+
+                if self.hasComponent(item, Stackable):
+                    for i in inventory['contents']:
+                        if typeComponents[i]['primary'] == typeComponents[item]['primary']: # TODO: secondary as well should be in here, or stat comparison
+                            quantityComponents[i]['quantity'] += quantityComponents[item]['quantity']
+                            self.level.post('entity_died', {'entity': item})
+                            added = True
+                            self.log(f"£{action['entity']}$ has picked up £{action['item']}$ (x{quantityComponents[item]['quantity']})")
+                            break
+
+                if not added:
+                    inventory['contents'].append(item)
+                    self.level.e.removeComponent(item, Position)
+                    self.log(f"£{action['entity']}$ has picked up a £{action['item']}$")
             
             if 'ui' in action.keys():
                     self.level.post('close_selection', {'ui': action['ui'], 'entity': action['entity']})
@@ -81,6 +100,8 @@ class PickupItemSystem(BaseSystem):
 
 class OpenInventorySystem(BaseSystem):
     actions=['open_inventory']
+    alwaysActive=False
+    priority=130
 
     def run(self):
         if self._actionQueue:
@@ -113,9 +134,9 @@ class OpenInventorySystem(BaseSystem):
                     Position, 
                     {
                         'x': self.level.width - 24,
-                        'y': (idComponents[action['entity']]['id']*16)+1,
+                        'y': (idComponents[action['entity']]['id']*16),
                         'width': 24,
-                        'height': 15
+                        'height': 16
                     })
 
                 inputComponents[action['entity']]['controlFocus'].append(ui)
@@ -123,6 +144,8 @@ class OpenInventorySystem(BaseSystem):
 
 class DropItemSystem(BaseSystem):
     actions = ['drop_item']
+    alwaysActive=False
+    priority=80
 
     def run(self):
         if self._actionQueue:
@@ -160,6 +183,8 @@ class DropItemSystem(BaseSystem):
 
 class EquipItemSystem(BaseSystem):
     actions = ['equip_item']
+    alwaysActive=False
+    priority=90
 
     def run(self):
         if self._actionQueue:

@@ -22,6 +22,7 @@ class KeyboardController(BaseController):
             "inventory": pygame.K_i,
         }
         self.checked = []
+        self.locked = []
         self.pressed = pygame.key.get_pressed()
 
     def update(self):
@@ -30,21 +31,25 @@ class KeyboardController(BaseController):
             key = self.commands[check]
             if not self.pressed[key]:
                 self.checked.remove(check)
+                if check in self.locked:
+                    self.locked.remove(check)
 
     def getPressed(self, action):
-        return self.pressed[self.commands[action]]
+        return self.pressed[self.commands[action]] and action not in self.locked
 
-    def getPressedOnce(self, action):
+    def getPressedOnce(self, action, lockKey = False):
         key = self.commands[action]
         pressed = self.pressed[key]
         if pressed and action not in self.checked:
             self.checked.append(action)
+            if lockKey:
+                self.locked.append(action)
+                print (f"{action} locked")
             return True
         return False
 
 
 class JoystickController(BaseController):
-    parent = None
     
     def __init__(self, joystick):
         self.joystick = joystick
@@ -64,7 +69,7 @@ class JoystickController(BaseController):
             "aimXAxis": (self.getRawAxis, [2]),
             "aimYAxis": (self.getRawAxis, [3])
         }
-
+        self.locked = []
         self.checked = []
 
     def update(self):
@@ -72,6 +77,8 @@ class JoystickController(BaseController):
             command, data = self.commands[check]
             if not command(data):
                 self.checked.remove(check)
+                if check in self.locked:
+                    self.locked.remove(check)
         
 
     def getButtonForMapping(self):
@@ -124,11 +131,14 @@ class JoystickController(BaseController):
         command, data = self.commands[cmd]
         return command(data)
 
-    def getPressedOnce(self, cmd):
+    def getPressedOnce(self, cmd, lockKey = False):
         command, data = self.commands[cmd]
         result = command(data)
         if result and cmd not in self.checked:
             self.checked.append(cmd)
+            if lockKey:
+                self.locked.append(cmd)
+                print (f"{cmd} locked")
             return True
         return False
         

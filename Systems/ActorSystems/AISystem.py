@@ -5,6 +5,8 @@ import tcod
 import numpy as np
 
 class AISystem(BaseSystem):
+    priority=110
+
     def run(self):
         # the standard hostile AI should do the following:
             # if no enemies and no path, sit still and wait

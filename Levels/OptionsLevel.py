@@ -1,8 +1,8 @@
 
 from Components import ButtonUI, Position, Render, Selected, SliderUI, registerMenuComponents
 from Levels.BaseLevel import BaseLevel
-from Systems.MainMenu.ButtonSystems import RenderButtonsSystem, RenderSlidersSystem, UpdateButtonsSystem
-from Systems.ChangeLevelSystem import ChangeLevelSystem
+from Systems.MainMenuSystems.ButtonSystems import RenderButtonsSystem, RenderSlidersSystem, UpdateButtonsSystem
+from Systems.MainMenuSystems.ChangeLevelSystem import ChangeLevelSystem
 
 
 class OptionsLevel(BaseLevel):

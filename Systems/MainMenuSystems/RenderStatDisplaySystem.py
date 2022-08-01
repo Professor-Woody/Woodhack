@@ -3,6 +3,7 @@ from Systems.BaseSystem import BaseSystem
 
 
 class RenderStatDisplaySystem(BaseSystem):
+    priority=100
 
     def run(self):
         entities = self.level.statDisplayQuery.result

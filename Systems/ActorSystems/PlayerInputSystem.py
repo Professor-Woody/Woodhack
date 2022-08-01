@@ -3,6 +3,8 @@ from Components import *
 import Helpers.PositionHelper as PositionHelper
 
 class PlayerInputSystem(BaseSystem):
+    priority = 10
+    
     def run(self):
         entities = self.level.playersQuery.result
         inputComponents = self.level.e.component.filter(PlayerInput, entities)
@@ -10,7 +12,8 @@ class PlayerInputSystem(BaseSystem):
         targetComponents = self.level.e.component.filter(Target, entities)
         bodyComponents = self.getComponents(Body)
         positionComponents = self.getComponents(Position)
-        meleeComponents = self.getComponents(Melee)
+        weaponComponents = self.getComponents(WeaponStats)
+        useActionComponents = self.getComponents(UseActions)
 
         for entity in entities:
             controller = inputComponents[entity]['controller']
@@ -60,10 +63,10 @@ class PlayerInputSystem(BaseSystem):
                     continue
 
                 # melee
+                slots = ['mainhand', 'offhand']
                 if targetComponents[entity]['target']:
                     
                     meleed = False
-                    slots = ['mainhand', 'offhand']
 
                     for slot in slots:
                         if bodyComponents[entity][slot] and \
@@ -72,11 +75,26 @@ class PlayerInputSystem(BaseSystem):
                             if PositionHelper.getRange(
                                 (positionComponents[entity]['x'], positionComponents[entity]['y']),
                                 (positionComponents[targetComponents[entity]['target']]['x'], positionComponents[targetComponents[entity]['target']]['y'])
-                            ) <= meleeComponents[bodyComponents[entity][slot]]['range']:
+                            ) <= weaponComponents[bodyComponents[entity][slot]]['range']:
                                 self.level.post('melee', {'slot': slot, 'target': targetComponents[entity]['target'], 'entity': entity, 'item': bodyComponents[entity][slot]})
                                 meleed = True
                     if meleed:
                         continue
 
+                # use item in hand
+                for slot in slots:
+                    if controller.getPressed(slot) and \
+                        bodyComponents[entity][slot] and \
+                            self.level.e.hasComponent(bodyComponents[entity][slot], UseActions) and \
+                                self.level.e.hasComponent(bodyComponents[entity][slot], IsReady):
+                        for action in useActionComponents[bodyComponents[entity][slot]]['actions']:
+                            self.level.post(action, {
+                                'entity': bodyComponents[entity][slot],
+                                'parentEntity': entity
+                            })
+
+
+                # TODO: REMOVE THIS
+                # Temporary for testing purposes
                 if controller.getPressedOnce('cancel'):
                     self.level.e.spawn('orc', positionComponents[entity]['x']+1, positionComponents[entity]['y'])

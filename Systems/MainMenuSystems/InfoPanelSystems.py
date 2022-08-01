@@ -7,6 +7,7 @@ import Colours as colour
 
 class CloseInfoPanelsSystem(BaseSystem):
     actions = ['close_info_panel']
+    priority=30
 
     def run(self):
         if self._actionQueue:
@@ -19,6 +20,8 @@ class CloseInfoPanelsSystem(BaseSystem):
 
 
 class RenderInfoPanelsSystem(BaseSystem):
+    priority=110
+    
     def run(self):
         positionComponents = self.getComponents(Position)
         renderComponents = self.getComponents(Render)

@@ -3,7 +3,11 @@ from Components import *
 
 class MoveSystem(BaseSystem):
     actions=['move']
+    alwaysActive=False
+    priority=120
+    
     def run(self):
+        print ("-----Moving-----")
         positionComponents = self.level.e.component.components[Position]
 
         for action in self.actionQueue:
