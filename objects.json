@@ -73,7 +73,7 @@
                 "moveSpeed": 45,
                 "baseMoveSpeed": 45
             },
-            "Body": {"mainhand": "shortsword", "offhand": "torch"}
+            "Body": {"mainhand": "shortsword"}
         }
     },
 
@@ -95,22 +95,26 @@
         }
     },
     {
-        "type": "bluetorch",
+        "type": "WAND",
         "inherits": "ITEM",
         "components": {
             "Render": {
-                "name": "torch",
-                "char": "i",
-                "fg": [0, 200, 0],
+                "name": "empty wand",
+                "char": "/",
+                "fg": [50, 50, 200],
                 "needsVisibility": true
             },
-            "Light": {"radius": 5, "colour": [0, 200, 0]},
-            "Equip": {"slots": ["mainhand", "offhand"]},
-            "StatModifier": {"moveSpeed": -8}
+            "Equip": {"slots": ["mainhand", "offhand"]}
         }
     },
-
-
+    {
+        "type": "Wand of Healing",
+        "inherits": "WAND",
+        "components": {
+            "UseHealing": {},
+            "Init": {}
+        }
+    },
     {
         "type": "shortsword",
         "inherits": "ITEM",

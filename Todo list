@@ -25,12 +25,13 @@ TODO:
     build a tileset choosing system (use a toggle)
     make the game fullscreen
 
-    build a ranged attack system
+    done - build a ranged attack system
     Add the second stick/mouse aim system
 
     build potions and scrolls
     build food
 
+    
 
     build a more advanced level generator
 
@@ -41,5 +42,143 @@ TODO:
     build character skills tab?
 
     build a pause menu
+
+
+
+
+"""
+Game is broken up into chapters (unlockable campaigns)
+Chapter 1: The Delving
+    Players have been drawn to town to delve a 
+    dungeon discovered inside the newly dug well
+Chapter 2: The journey
+    having discovered or unleashed something, the 
+    players must journey through forests and mountains
+    to reach a far destination
+Chapter 3: The scouring
+
+Chapter 4: The big downer
+
+Chapter 5: Final reckoning
+    The players must journey to the top of a tall
+    mountain or tower to have a final boss fight
+
+
+
+
+Chapter 1
+    Players will start in the town.  Here they can
+    buy equipment to change their starting loadouts
+    however they want.  Overall any common equipment
+    should be available to them so they can pick and
+    choose what they want to bring.
+
+    Players will delve through 12-20 levels
+    1-5 are cave levels
+    6-8 open up into 
+    
+
+biomes
+    caves
+    underground forest/mushroom forest
+    dungeons
+    mines
+    dwarven settlement
+    cavern
+    water filled cavern
+    abandoned dwarven settlement
+    orc/goblin settlements
+    wizard abode
+    imprisoned demon
+
+
+
+prefab structures
+    dungeon cell blocks
+    dungeon torture room
+    small fort in caves
+    small dwarven outpost
+    flowing river
+        bridges
+        fishing hut
+        water wheel
+    orc/goblin huts
+    mining supply depot
+    mining pit
+    abandoned mining pit/depot
+    large fort
+    large abandoned fort
+        throne room
+        treasury
+        weapon room
+        barracks
+
+
+
+
+
+
+
+
+
+
+
+
+level creator
+    choose biome (game can feed that in)
+        specific levels (boss levels, unique levels, etc) are just a specific biome
+    create base walls
+    drop required pre-fab rooms in place
+    drop identified potential pre-fab rooms in place
+        create child items
+    create random rooms (if required by biome)
+    
+
+
+"""
+
+
+
+
+        # print ("updating=============")
+        # print (self.activeSystems)
+        # 0  # self.initSystem.run()
+        # 10 # self.playerInputSystem.run()
+        # 20 # self.targetSystem.run()
+        # 30 # self.removeTargeterSystem.run()
+        # 40 # self.addTargeterSystem.run()
+        # 50 # self.tryPickupItemSystem.run()
+        # 60 # self.pickupItemSystem.run()
+        # 70 # self.updateSelectionUISystem.run()
+        # 80 # self.dropItemSystem.run()
+        # 90 # self.equipItemSystem.run()
+        # 100# self.closeUISystem.run()
+
+        # 110# self.aiSystem.run()
+
+        # 120# self.moveSystem.run()
+        # 130# self.openInventorySystem.run()
+        
+
+        # 140# self.recalculateStatsSystem.run()
+
+        # 150# self.meleeSystem.run()
+        # 160# self.rangedSystem.run()
+        # 170# self.projectileSystem.run()
+        # 180# self.damageSystem.run()
+
+        # self.runSystems()
+
+        # 190# self.map.update()
+
+        # 200# self.map.draw(self.app.screen)
+        # 210# self.messagelogSystem.run()
+        # 220# self.combatLogSystem.run()
+        # 230# self.renderEntitiesSystem.run()
+        # 240# self.renderUISystem.run()
+        # 250# self.renderSelectionUISystem.run()
+
+        # 500# self.deathSystem.run()
+
 
 

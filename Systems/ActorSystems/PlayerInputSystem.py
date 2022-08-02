@@ -90,7 +90,8 @@ class PlayerInputSystem(BaseSystem):
                         for action in useActionComponents[bodyComponents[entity][slot]]['actions']:
                             self.level.post(action, {
                                 'entity': bodyComponents[entity][slot],
-                                'parentEntity': entity
+                                'parentEntity': entity,
+                                'command': slot
                             })
 
 

@@ -48,6 +48,9 @@ class KeyboardController(BaseController):
             return True
         return False
 
+    def lock(self, action):
+        self.checked.append(action)
+        self.locked.append(action)
 
 class JoystickController(BaseController):
     
@@ -142,6 +145,10 @@ class JoystickController(BaseController):
             return True
         return False
         
+    def lock(self, action):
+        self.checked.append(action)
+        self.locked.append(action)
+
 controllers = []
 controllers.append(KeyboardController())
 controllers += [JoystickController(pygame.joystick.Joystick(x)) for x in range(pygame.joystick.get_count())]

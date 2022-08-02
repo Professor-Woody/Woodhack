@@ -14,9 +14,9 @@ class InitSystem(BaseSystem):
 
     def run(self):
         # add speed to any from actions
-        initComponents = self.level.e.component.components[Init]
+        initComponents = self.getComponents(Init)
+        
         if self._actionQueue:
-
             for action in self.actionQueue:
                 initComponents[action['entity']]['speed'] += action['speed']
                 if initComponents[action['entity']]['speed'] > initComponents[action['entity']]['maxSpeed']:

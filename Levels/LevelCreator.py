@@ -2,6 +2,49 @@ from Levels.Rooms import RectangularRoom, floor, wall
 import random
 import tcod
 from Levels.Maps import GameMap
+import copy
+
+
+class NewLevelCreator:
+    biomes = {}
+    prefabs = {}
+        
+    @classmethod
+    def generateLevel(cls, level, width, height, biomeType, startSpot = None):
+        treasureSpots = []
+        monsterSpots = []
+        exitSpots = []
+
+        # if needed biome not in biomes.keys()
+            # load biome json
+        if biomeType not in cls.biomes.keys():
+            cls.loadBiome(biomeType)
+        biome = copy.deepcopy(cls.biomes[biomeType])
+
+
+
+        # if needed prefabs not in prefabs.keys()
+            # load prefabs
+    
+
+        # generate the base level
+        gameMap = GameMap(level, width, height)
+
+        biome.createBaseMap(gameMap)
+
+        # if level doesn't require a specific spot for the start
+            # add startPoint based on passed startPoint
+        biome.createStartRoom(gameMap, startSpot)
+
+        # drop in required pre-fabs (if called for)
+            # prepopulate room with required entities
+        biome.createRooms(gameMap)
+
+        # populate level with required entities
+        biome.spawnEntities(level)
+
+        # populate exit spot
+        biome.createExitRoom(gameMap)
 
 
 class LevelCreator:

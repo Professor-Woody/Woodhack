@@ -55,16 +55,22 @@ class BaseLevel:
 
     def activateSystem(self, priority):
         if priority not in self.activeSystems:
+            # print (f"activating system: {self.systems[priority]}")
             self.activeSystems.append(priority)
-        self.activeSystems.sort()
+            self.activeSystems.sort()
 
     def deactivateSystem(self, priority):
         self.activeSystems.remove(priority)
         # self.activeSystems.sort()
 
     def runSystems(self):
+        lastKey = -10000
         for key in self.activeSystems:
-            self.systems[key].run()
+            if key > lastKey:
+                lastKey = key
+                # print (self.activeSystems)
+                # print (f"running system: {self.systems[key]}")
+                self.systems[key].run()
 
 
     def post(self, action, data):
@@ -120,32 +126,32 @@ class TestLevel(BaseLevel):
 
         # =====================
         # systems
-        self.initSystem = InitSystem(self)
-        self.playerInputSystem = PlayerInputSystem(self)
-        self.moveSystem = MoveSystem(self)
-        self.targetSystem = TargetSystem(self)
-        self.addTargeterSystem = AddTargeterSystem(self)
-        self.removeTargeterSystem = RemoveTargeterSystem(self)
-        self.tryPickupItemSystem = TryPickupItemSystem(self)
-        self.pickupItemSystem = PickupItemSystem(self)
-        self.openInventorySystem = OpenInventorySystem(self)
-        self.dropItemSystem = DropItemSystem(self)
-        self.updateSelectionUISystem = UpdateSelectionUISystem(self)
-        self.closeUISystem = CloseUISystem(self)
-        self.equipItemSystem = EquipItemSystem(self)
-        self.recalculateStatsSystem = RecalculateStatsSystem(self)
-        self.meleeSystem = MeleeSystem(self)
-        self.rangedSystem = RangedSystem(self)
-        self.projectileSystem = UpdateProjectilesSystem(self)
-        self.damageSystem = DamageSystem(self)
-        self.aiSystem = AISystem(self)
-        self.deathSystem = DeathSystem(self)
+        InitSystem(self)
+        PlayerInputSystem(self)
+        MoveSystem(self)
+        TargetSystem(self)
+        AddTargeterSystem(self)
+        RemoveTargeterSystem(self)
+        TryPickupItemSystem(self)
+        PickupItemSystem(self)
+        OpenInventorySystem(self)
+        DropItemSystem(self)
+        UpdateSelectionUISystem(self)
+        CloseUISystem(self)
+        EquipItemSystem(self)
+        RecalculateStatsSystem(self)
+        MeleeSystem(self)
+        RangedSystem(self)
+        UpdateProjectilesSystem(self)
+        DamageSystem(self)
+        AISystem(self)
+        DeathSystem(self)
         
-        self.updateMapSystem = UpdateMapSystem(self)
-        self.renderMapSystem = RenderMapSystem(self)
-        self.renderUISystem = RenderPlayerUISystem(self)
-        self.renderEntitiesSystem = RenderEntitiesSystem(self)
-        self.renderSelectionUISystem = RenderSelectionUISystem(self)
+        UpdateMapSystem(self)
+        RenderMapSystem(self)
+        RenderPlayerUISystem(self)
+        RenderEntitiesSystem(self)
+        RenderSelectionUISystem(self)
         HealingSystem(self)
 
         # =====================
@@ -158,51 +164,14 @@ class TestLevel(BaseLevel):
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
 
-        orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
-        sword = self.e.spawn('shortsword', -1, -1, orc)
+        # orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
+        # sword = self.e.spawn('shortsword', -1, -1, orc)
         
         self.post('log', {'colour': (200, 200, 200), 'message': 'Game started'})
 
 
 
     def update(self):
-        # 0  # self.initSystem.run()
-        # 10 # self.playerInputSystem.run()
-        # 20 # self.targetSystem.run()
-        # 30 # self.removeTargeterSystem.run()
-        # 40 # self.addTargeterSystem.run()
-        # 50 # self.tryPickupItemSystem.run()
-        # 60 # self.pickupItemSystem.run()
-        # 70 # self.updateSelectionUISystem.run()
-        # 80 # self.dropItemSystem.run()
-        # 90 # self.equipItemSystem.run()
-        # 100# self.closeUISystem.run()
-
-        # 110# self.aiSystem.run()
-
-        # 120# self.moveSystem.run()
-        # 130# self.openInventorySystem.run()
-        
-
-        # 140# self.recalculateStatsSystem.run()
-
-        # 150# self.meleeSystem.run()
-        # 160# self.rangedSystem.run()
-        # 170# self.projectileSystem.run()
-        # 180# self.damageSystem.run()
-
-        # self.runSystems()
-
-        # 190# self.map.update()
-
-        # 200# self.map.draw(self.app.screen)
-        # 210# self.messagelogSystem.run()
-        # 220# self.combatLogSystem.run()
-        # 230# self.renderEntitiesSystem.run()
-        # 240# self.renderUISystem.run()
-        # 250# self.renderSelectionUISystem.run()
-
-        # 500# self.deathSystem.run()
         self.runSystems()
 
         self.fps += 1
