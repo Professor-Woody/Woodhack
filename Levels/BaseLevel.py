@@ -1,5 +1,5 @@
 from EntityManager import EntityManager, Position, Render
-from Levels.LevelCreator import LevelCreator
+from Levels.LevelCreator import LevelCreator, NewLevelCreator
 from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
@@ -97,8 +97,8 @@ class TestLevel(BaseLevel):
     def __init__(self, app, width, height):
         super().__init__(app, width, height)
         
-        self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
-
+        #self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+        self.map = NewLevelCreator.generateLevel(self, width-24, self.height-16, 'caverns')
         # =====================
         # queries
         self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')
@@ -158,9 +158,9 @@ class TestLevel(BaseLevel):
         # loading entity defs
         self.e.loadEntities('objects.json')
 
-        self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
-        self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
-        self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
+        self.e.spawn('torch', self.map.startSpot[0], self.map.startSpot[1]+1)
+        self.e.spawn('shortsword', self.map.startSpot[0], self.map.startSpot[1]-1)
+        self.e.spawn('torch', self.map.endSpot[0], self.map.endSpot[1]+1)
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
 

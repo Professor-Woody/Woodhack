@@ -15,8 +15,8 @@ class GameMap:
         self.visible = np.full((self.width, self.height), fill_value=False, order="F")
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
 
-        self.start = None
-        self.end = None
+        self.startSpot = None
+        self.endSpot = None
 
 
     def checkIsPassable(self, x, y):

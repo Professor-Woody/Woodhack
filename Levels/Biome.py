@@ -16,10 +16,10 @@ surrounding = [
     ]
 
 
-square2 = [[(x-1,y-1) for x in range(3)] for y in range(3)] 
-square2[1].pop(1)
-square3 = [[(x-2,y-2) for x in range(5)] for y in range(5)] 
-square3[2].pop(2)
+square2 = [(x-1,y-1) for x in range(3) for y in range(3)] 
+square2.pop(4)
+square3 = [(x-2,y-2) for x in range(5) for y in range(5)] 
+square3.pop(12)
 diamond2 = [(0,-1),(-1, 0), (1, 0),(0, 1)]
 diamond3 = [(0, -2),(-1, -1), (0, -1), (1, -1),(-2, 0), (-1, 0), (1, 0), (2, 0),(-1, 1), (0, 1), (1, 1),(0, 2)]
 circle3 = [(-1, -2), (0, -2), (1, -2),(-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1),(-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0),(-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1),(-1, 2), (0, 2), (1, 2),]
@@ -38,13 +38,13 @@ def createCaverns(gameMap):
     # randomly stagger around the map digging out areas
     # make the first and last place the start and end points
 
-    points = []
+    pointsOfInterest = []
     print ("creating caverns")
 
     for hulk in range(HULKS):
         x = randint(5, gameMap.width - 5)
         y = randint(5, gameMap.height - 5)
-        points.append((x,y))
+        pointsOfInterest.append((x,y))
         
 
         for step in range(HULKSTEPS):
@@ -64,10 +64,10 @@ def createCaverns(gameMap):
             gameMap.tiles[x, y] = ground
 
     # Ensure every part of the map is reachable
-    for i in range(len(points) - 1):
-        path = PositionHelper.getPathTo(points[i], points[i+1], gameMap)
+    for i in range(len(pointsOfInterest) - 1):
+        path = PositionHelper.getPathTo(pointsOfInterest[i], pointsOfInterest[i+1], gameMap)
         if not len(path):
-            createFullTunnel(points[i], points[i+1], gameMap, ground)
+            createFullTunnel(pointsOfInterest[i], pointsOfInterest[i+1], gameMap, ground)
 
     # trim away the majority of stragglers/orphaned walls
     clearList = [0, 1, 2, 4, 8, 16, 32, 64, 128]
@@ -83,6 +83,8 @@ def createCaverns(gameMap):
     gameMap.tiles[0, 0:gameMap.height-1] = wall
     gameMap.tiles[0:gameMap.width-1, gameMap.height-1] = wall
     gameMap.tiles[gameMap.width-1, 0:gameMap.height-1] = wall
+
+    gameMap.pointsOfInterest = pointsOfInterest
 
 
 
@@ -131,8 +133,11 @@ generators = {
     "caves": createCaves
 }
 
-
-
+def drawShape(pos, shape, tile, gameMap):
+    for (dx,dy) in shapes[shape]:
+        x = pos[0] + dx
+        y = pos[1] + dy
+        gameMap.tiles[x,y] = tile
 
 
 class Biome:
@@ -150,7 +155,23 @@ class Biome:
 
 
     def createStartRoom(self, gameMap, startSpot):
-        pass
+        if not startSpot:
+            dist = 0
+            startSpot = gameMap.pointsOfInterest[0]
+            endSpot = None
+
+            for poi in gameMap.pointsOfInterest[1:]:
+                rng = PositionHelper.getRange(startSpot, poi)
+                if rng > dist:
+                    endSpot = poi
+                    dist = rng
+        
+        drawShape(startSpot, 'circle3', floor, gameMap)
+        
+        gameMap.startSpot = startSpot
+        gameMap.endSpot = endSpot
+
+
 
     def createRooms(self, gameMap):
         pass
@@ -159,4 +180,4 @@ class Biome:
         pass
 
     def createExitRoom(self, gameMap):
-        pass
+        drawShape(gameMap.endSpot, 'square2', floor, gameMap)

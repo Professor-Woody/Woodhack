@@ -31,7 +31,7 @@ class UpdateNewGameSystem(BaseSystem):
                 stats = ['str', 'dex', 'int', 'con']
 
                 for player in readyPlayers:
-                    entity = newLevel.e.spawn("PLAYER",  newLevel.map.start[0], newLevel.map.start[1])
+                    entity = newLevel.e.spawn("PLAYER",  newLevel.map.startSpot[0], newLevel.map.startSpot[1])
                     newLevel.e.addComponent(entity, PlayerInput, {'controller': oldInputComponents[player]['controller']})
 
                     # add starter equipment based on class
