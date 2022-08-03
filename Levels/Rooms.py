@@ -30,15 +30,22 @@ def newTile(passable, transparent, dark, light):
 floor = newTile(
     passable=True, 
     transparent=True,
-    dark=(ord(" "), (255,255,255), (10, 10, 10)),
-    light=(ord(" "), (255, 255, 255), (100, 100, 100)),
+    dark=(ord(" "), (100,100,100), (10, 10, 10)),
+    light=(ord(" "), (200, 200, 200), (100, 100, 100)),
+)
+
+ground = newTile(
+    passable=True, 
+    transparent=True,
+    dark=(ord("."), (100,100,100), (10, 10, 10)),
+    light=(ord("."), (200, 200, 200), (100, 100, 100)),
 )
 
 wall = newTile(
     passable=False, 
     transparent=False, 
-    dark=(ord("#"), (255, 255, 255), (0, 0, 0)),
-    light=(ord("#"), (255, 255, 255), (100, 100, 100)),
+    dark=(ord("#"), (100,100,100), (10, 10, 10)),
+    light=(ord("#"), (200, 200, 200), (100, 100, 100)),
 )
 
 

@@ -1,3 +1,4 @@
+from Levels.Biome import Biome
 from Levels.Rooms import RectangularRoom, floor, wall
 import random
 import tcod
@@ -45,6 +46,14 @@ class NewLevelCreator:
 
         # populate exit spot
         biome.createExitRoom(gameMap)
+
+        return gameMap
+
+    @classmethod
+    def loadBiome(cls, biomeType):
+        biome = Biome()
+        cls.biomes[biomeType] = biome
+
 
 
 class LevelCreator:

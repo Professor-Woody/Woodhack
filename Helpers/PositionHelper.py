@@ -1,4 +1,5 @@
 import tcod
+import numpy as np
 
 def getRange(entityCoords, otherCoords):
     return max(abs(entityCoords[0] - otherCoords[0]), abs(entityCoords[1] - otherCoords[1]))
@@ -16,7 +17,17 @@ def getLOS(entity, other, visionRange, Map):
         if not Map.checkIsPassable(x,y) \
             or Map.checkIsBlocked(x, y):
             return False
-    return path      
+    return path    
+
+def getPathTo(start, end, Map, goThoughWalls = False):
+    cost = np.array(Map.tiles["passable"], dtype=np.int8)
+    if goThoughWalls:
+        cost[np.where(cost==0)]=3
+    graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
+    pathfinder = tcod.path.Pathfinder(graph)
+    pathfinder.add_root(start)
+    return pathfinder.path_to(end).tolist()[1:]
+
 
 def areaCollides(entityPositionComponent, otherPositionComponent):
     return (
