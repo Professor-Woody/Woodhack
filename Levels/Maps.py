@@ -14,6 +14,7 @@ class GameMap:
         self.lit = np.full((self.width, self.height), fill_value=False, order="F")
         self.visible = np.full((self.width, self.height), fill_value=False, order="F")
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
+        self.restricted = np.full((self.width, self.height), fill_value=False, order="F")
 
         self.startSpot = None
         self.endSpot = None
