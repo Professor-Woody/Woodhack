@@ -1,7 +1,7 @@
 from EventHandler import EventHandler
 from Screen import Screen
 import tcod
-from Levels.LevelCreator import NewLevelCreator
+from Levels.LevelCreator import NewLevelCreator, loadTestData
 
 class App:
     width = 140
@@ -11,7 +11,8 @@ class App:
 
     def __init__(self):
         self.screen = Screen(self.width, self.height)
-        self.eventHandler = EventHandler(self)
+        self.eventHandler = EventHandler(self, test=True)
+        loadTestData()
         self.regenerateLevel()
 
     def run(self):

@@ -11,7 +11,8 @@ styles = {
     'topleftopen': '╔═╕║  ╙  ',
     'speckles': '░░░░ ░░░░',
     'solid': '████ ████',
-    'open': '         '
+    'open': '         ',
+    'frame': "╔─╗│ │╚─╝"
 }
 styleSides = {
     'single': '┤├',
@@ -23,7 +24,8 @@ styleSides = {
     'topleftopen': '╡╞',
     'speckles': '░░',
     'solid': '██',
-    'open': '  '
+    'open': '  ',
+    'frame': '┤├',
 }
 
 class Screen:
@@ -65,10 +67,10 @@ class Screen:
     def drawArray(self, horizontal, vertical, array):
         self.console.rgb[horizontal[0]:horizontal[1], vertical[0]:vertical[1]] = array
 
-    def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE, style='top'):
+    def drawFrame(self, x, y, width, height, title="", msg="", bg=None, fg=colour.WHITE, style='frame'):
         self.console.draw_frame(x, y, width, height, clear=True, fg=fg, bg=bg, decoration=styles[style] ) #decoration=(201, 205, 187, 186, 32, 186, 200,205, 188))
         if title:
-            self.console.print_box(x+1, y, width, height, string= f"{styleSides[style][0]}{title}{styleSides[style][1]}", bg=bg)#, alignment=tcod.constants.CENTER)
+            self.console.print_box(x+2, y, width, height, string= f"{styleSides[style][0]}{title}{styleSides[style][1]}", bg=bg)#, alignment=tcod.constants.CENTER)
         if msg:
             self.console.print_box(x+1, y+1, width-1, height-1, msg, bg=bg)
 

@@ -10,7 +10,7 @@ from Flags import FPS
 
 class App:
     width = 140
-    height = 100
+    height = 80
     previousLevel = None
     levelTemplates = {
         'MainMenu': MainMenu,    

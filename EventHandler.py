@@ -2,15 +2,17 @@ import tcod
 from Actions.BaseActions import Action, QuitAction
 
 class EventHandler(tcod.event.EventDispatch[Action]):
-    def __init__(self, app):
+    def __init__(self, app, test=False):
         super().__init__()
         self.app = app
+        self.test = test
 
     def ev_quit(self, event: tcod.event.Quit):
         return QuitAction()
 
-    # def ev_keydown(self, event: tcod.event.KeyDown):
-    #     return RegenMapAction(self.app)
+    def ev_keydown(self, event: tcod.event.KeyDown):
+        if self.test:
+            return RegenMapAction(self.app)
 
 
 class RegenMapAction:

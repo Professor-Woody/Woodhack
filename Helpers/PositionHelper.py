@@ -19,10 +19,10 @@ def getLOS(entity, other, visionRange, Map):
             return False
     return path    
 
-def getPathTo(start, end, Map, goThoughWalls = False, diagonal=3, ignoreRestricted=True):
+def getPathTo(start, end, Map, goThroughWalls = 0, diagonal=3, ignoreRestricted=True):
     cost = np.array(Map.tiles["passable"], dtype=np.int8)
-    if goThoughWalls:
-        cost[np.where(cost==0)]=3
+    if goThroughWalls:
+        cost[np.where(cost==0)]=goThroughWalls
     if ignoreRestricted:
         cost[np.where(Map.restricted)]=0
     graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=diagonal)

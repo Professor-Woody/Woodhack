@@ -1,9 +1,33 @@
 from Levels.Biome import Biome
-from Levels.Rooms import RectangularRoom, floor, wall
+from Levels.Prefab import Prefab
+from Levels.Rooms import RectangularRoom
+from Helpers.LevelCreation import floor, wall
 import random
 import tcod
 from Levels.Maps import GameMap
 import copy
+
+
+def loadTestData():
+      #####
+    ###   ###
+    #       #
+    ###   ###
+      ## ##
+    
+    tiles = [
+        [(2,0), 'wall2'], [(3,0), 'wall2'],  [(4,0), 'wall2'],  [(5,0), 'wall2'],  [(6,0), 'wall2'], 
+        [(0,1), 'wall2'], [(1,1), 'wall2'], [(2,1), 'wall2'],  [(3,1), 'floor'],  [(4,1), 'floor'],  [(5,1), 'floor'],   [(6,1), 'wall2'], [(7,1), 'wall2'], [(8,1), 'wall2'], 
+        [(0,2), 'wall2'],   [(1,2), 'floor'], [(2,2), 'floor'],  [(3,2), 'floor'],  [(4,2), 'floor'], [(5,2), 'floor'],  [(6,2), 'floor'],  [(7,2), 'floor'],   [(8,2), 'wall2'],  
+        [(0,3), 'wall2'], [(1,3), 'wall2'], [(2,3), 'wall2'],  [(3,3), 'floor'],  [(4,3), 'floor'],  [(5,3), 'floor'],    [(6,3), 'wall2'], [(7,3), 'wall2'], [(8,3), 'wall2'], 
+        [(2,4), 'wall2'], [(3,4), 'wall2'],  [(4,4), 'floor'],  [(5,4), 'wall2'],  [(6,4), 'wall2'],         
+    ]
+    entryPoints = [(4, 4)]
+    temple = Prefab(tiles,entryPoints)
+    NewLevelCreator.prefabs['temple'] = temple
+    caverns = Biome()
+    NewLevelCreator.biomes['caverns'] = caverns
+
 
 
 class NewLevelCreator:
@@ -21,6 +45,7 @@ class NewLevelCreator:
         if biomeType not in cls.biomes.keys():
             cls.loadBiome(biomeType)
         biome = copy.deepcopy(cls.biomes[biomeType])
+        biome.creator = cls
 
 
 

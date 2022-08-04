@@ -1,5 +1,5 @@
 from EntityManager import EntityManager, Position, Render
-from Levels.LevelCreator import LevelCreator, NewLevelCreator
+from Levels.LevelCreator import LevelCreator, NewLevelCreator, loadTestData
 from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
@@ -33,6 +33,9 @@ class BaseLevel:
         self.actions: dict[str: list[BaseSystem]] = {}
         self.systems = {}
         self.activeSystems = []
+
+        # TODO: REMOVE!
+        loadTestData()
 
 
     def registerSystem(self, priority, system, active):

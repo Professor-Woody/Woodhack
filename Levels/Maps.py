@@ -1,9 +1,10 @@
 import numpy as np
-from Levels.Rooms import wall, SHROUD
+from Helpers.LevelCreation import wall, SHROUD
 import tcod
 from tcod.map import compute_fov
 from Components import *
 import Helpers.PositionHelper as PositionHelper
+from random import randint
 
 class GameMap:
     def __init__(self, level, width, height):
@@ -18,6 +19,10 @@ class GameMap:
 
         self.startSpot = None
         self.endSpot = None
+        self.pointsOfInterest = []
+
+    def getPOI(self):
+        return self.pointsOfInterest.pop(randint(0, len(self.pointsOfInterest)))
 
 
     def checkIsPassable(self, x, y):

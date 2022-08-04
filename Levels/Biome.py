@@ -1,19 +1,25 @@
-from Helpers.LevelCreation import floor, generators
+from Helpers.LevelCreation import floor, ground, wall, wall2, generators, drawShape
 import Helpers.PositionHelper as PositionHelper
 
 
 
 class Biome:
     genType = "caverns"
+    creator = None
 
     def __init__(self):
-        pass
+        self.requiredPrefabs = ['temple']
+        self.tileset = {
+            'floor': floor,
+            'ground': ground,
+            'wall': wall,
+            'wall2': wall2
+        }
+
 
     def createBaseMap(self, gameMap):
         # here we use the designated algorithms to build the base tunnels/rooms
         generators[self.genType](gameMap)
-
-
 
 
 

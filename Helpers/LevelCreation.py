@@ -48,12 +48,15 @@ wall = newTile(
     light=(ord("#"), (200, 200, 200), (100, 100, 100)),
 )
 
+wall2 = newTile(
+    passable=False, 
+    transparent=False, 
+    dark=(ord("█"), (100,100,100), (10, 10, 10)),
+    light=(ord("█"), (200, 200, 200), (100, 100, 100)),
+)
 
-
-
-
-HULKS = 40
-HULKSTEPS = 500
+HULKS = 80
+HULKSTEPS = 100
 DIR = [-1, 1]
 
 
@@ -172,23 +175,30 @@ def createTunnel(start, end, gameMap, tile):
     path = PositionHelper.getPathTo(start, end, gameMap, True)
     for (x,y) in path:
         gameMap.tiles[x, y] = tile
-        for s in surrounding:
+        for s in shapes[choice(['diamond2', 'diamond3', 'square2', 'square2', 'square2', 'square3', 'circle3'])]:
             gameMap.tiles[x + s[0], y + s[1]] = tile
 
-def createCorridor(start, end, gameMap, tile):
-        x1, y1 = start
-        x2, y2 = end
-
-        path = PositionHelper.getPathTo(start, end, gameMap, True, 0)
+def createCorridor(start, end, gameMap, tile, goThroughWalls = 3):
+        path = PositionHelper.getPathTo(start, end, gameMap, goThroughWalls, 0, True)
         for (x, y) in path:
             gameMap.tiles[x, y] = tile
+            gameMap.tiles[x,y]['light']['fg'] = (255, 0, 0)
+
+
+def createSmallTunnel(start, end, gameMap, tile):
+    pass
+
+def createSmallCorridor(start, end, gameMap, tile):
+    pass
 
 generators = {
     "caverns": createCaverns,
     "dungeon": createDungeon,
     "caves": createCaves,
     "tunnel": createTunnel,
-    "corridor": createCorridor
+    "corridor": createCorridor,
+    "smallTunnel": createSmallTunnel,
+    "smallCorridor": createSmallCorridor
 }
 
 def drawShape(pos, shape, tile, gameMap):
