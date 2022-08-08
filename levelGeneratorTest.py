@@ -1,7 +1,7 @@
 from EventHandler import EventHandler
 from Screen import Screen
 import tcod
-from Levels.LevelCreator import NewLevelCreator, loadTestData
+from Levels.Creator.LevelCreator import NewLevelCreator, loadTestData
 
 class App:
     width = 140

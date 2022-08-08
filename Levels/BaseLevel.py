@@ -1,5 +1,6 @@
+from random import randint
 from EntityManager import EntityManager, Position, Render
-from Levels.LevelCreator import LevelCreator, NewLevelCreator, loadTestData
+from Levels.Creator.LevelCreator import LevelCreator, NewLevelCreator, loadTestData
 from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
@@ -21,8 +22,8 @@ from Systems.ActorSystems.TargetSystem import AddTargeterSystem, RemoveTargeterS
 
 
 class BaseLevel:
-    needsSorting = False
     map = None
+
     def __init__(self, app, width, height):
         self.app = app
         self.width = width
@@ -33,9 +34,15 @@ class BaseLevel:
         self.actions: dict[str: list[BaseSystem]] = {}
         self.systems = {}
         self.activeSystems = []
+        self.POIs = []
+        self.startPoint = None
+        self.exitPoint = None
 
-        # TODO: REMOVE!
-        loadTestData()
+    def getPOI(self):
+        if self.POIs:
+            return self.POIs.pop(0)
+        else:
+            return (randint(4, self.width)-5, randint(4, self.height)-5)
 
 
     def registerSystem(self, priority, system, active):

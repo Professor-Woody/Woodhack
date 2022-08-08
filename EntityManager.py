@@ -197,7 +197,7 @@ class EntityManager:
         for query in self.queries.values():
             query.candidate(entity)
 
-
+    # ----------------------------------------------
     def loadEntities(self, filename):
         with open(filename, 'r') as objectFile:
             objects = json.loads(objectFile.read())
@@ -217,7 +217,7 @@ class EntityManager:
                     Entity.entityDefs[eType]['components'][cId] = copy.deepcopy(self.component.defaults[cId])
                     for key, value in obj['components'][component].items():
                         Entity.entityDefs[eType]['components'][cId][key] = value
-
+    # ----------------------------------------------
 
 
     def _addComponents(self, entity, entityType):
