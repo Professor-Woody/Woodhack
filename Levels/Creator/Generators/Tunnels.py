@@ -25,10 +25,10 @@ def createTunnel(start, end, gameMap, tile):
 
 
 
-def createCorridor(start, end, gameMap, tile, goThroughWalls = 3):
+def createCorridor(start, end, gameMap, tileset, goThroughWalls = 3):
         path = PositionHelper.getPathTo(start, end, gameMap, goThroughWalls, 0, True)
         for (x, y) in path:
-            gameMap.tiles[x, y] = tile
+            gameMap.tiles[x, y] = tileset['floor']
             gameMap.tiles[x,y]['light']['fg'] = (255, 0, 0)
 
 

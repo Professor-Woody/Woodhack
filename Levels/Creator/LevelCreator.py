@@ -22,4 +22,5 @@ class NewLevelCreator:
         gameMap = GameMap(level, level.width, level.height)
         biome = cls.biomes[biomeType]
         biome.createLevel(level, gameMap)
+        return gameMap
 

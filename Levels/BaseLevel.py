@@ -108,12 +108,15 @@ class TestLevel(BaseLevel):
         super().__init__(app, width, height)
         
         #self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+        # loading entity defs
+        self.e.loadEntities('objects.json')
+
         NewLevelCreator.loadTemplates()
         self.map = NewLevelCreator.createLevel(self, 'caverns')
         # =====================
         # queries
         self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')
-        self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC],storeQuery='Render')
+        self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC, IsTerrain],storeQuery='Render')
         self.lightsQuery = self.e.createQuery(allOf=[Position, Light],storeQuery='LightsOnGround') 
         self.itemsOnGroundQuery = self.e.createQuery(allOf=[IsItem, Position],storeQuery='ItemsOnGround')
         self.playersQuery = self.e.createQuery(allOf=[IsPlayer],storeQuery = 'Players')
@@ -166,12 +169,10 @@ class TestLevel(BaseLevel):
         HealingSystem(self)
 
         # =====================
-        # loading entity defs
-        self.e.loadEntities('objects.json')
 
-        self.e.spawn('torch', self.map.startSpot[0], self.map.startSpot[1]+1)
-        self.e.spawn('shortsword', self.map.startSpot[0], self.map.startSpot[1]-1)
-        self.e.spawn('torch', self.map.endSpot[0], self.map.endSpot[1]+1)
+        self.e.spawn('torch', self.map.startPoint[0], self.map.startPoint[1]+1)
+        self.e.spawn('shortsword', self.map.startPoint[0], self.map.startPoint[1]-1)
+        self.e.spawn('torch', self.map.exitPoint[0], self.map.exitPoint[1]+1)
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
 

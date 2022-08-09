@@ -25,12 +25,13 @@ class GameMap:
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
         self.restricted = np.full((self.width, self.height), fill_value=False, order="F")
 
-        self.startSpot = None
-        self.endSpot = None
-        self.pointsOfInterest = []
+        self.startPoint = None
+        self.exitPoint = None
+        self.POIs = []
 
     def getPOI(self):
-        return self.pointsOfInterest.pop(randint(0, len(self.pointsOfInterest)))
+        print (self.POIs)
+        return self.POIs.pop(randint(0, len(self.POIs)))
 
 
     def checkIsPassable(self, x, y):

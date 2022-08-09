@@ -11,13 +11,12 @@ def createCaverns(level, gameMap, tileset):
     # randomly stagger around the map digging out areas
     # make the first and last place the start and end points
 
-    pointsOfInterest = []
     print ("creating caverns")
 
     for hulk in range(HULKS):
         x = randint(5, gameMap.width - 5)
         y = randint(5, gameMap.height - 5)
-        pointsOfInterest.append((x,y))
+        gameMap.POIs.append((x,y))
         
 
         for step in range(HULKSTEPS):
@@ -37,10 +36,10 @@ def createCaverns(level, gameMap, tileset):
             gameMap.tiles[x, y] = tileset['floor']
 
     # Ensure every part of the map is reachable
-    for i in range(len(pointsOfInterest) - 1):
-        path = PositionHelper.getPathTo(pointsOfInterest[i], pointsOfInterest[i+1], gameMap)
+    for i in range(len(gameMap.POIs) - 1):
+        path = PositionHelper.getPathTo(gameMap.POIs[i], gameMap.POIs[i+1], gameMap)
         if not len(path):
-            createTunnel(pointsOfInterest[i], pointsOfInterest[i+1], gameMap, tileset['floor'])
+            createTunnel(gameMap.POIs[i], gameMap.POIs[i+1], gameMap, tileset['floor'])
 
     # trim away the majority of stragglers/orphaned walls
     clearList = [0, 1, 2, 4, 8, 16, 32, 64, 128]
@@ -57,5 +56,4 @@ def createCaverns(level, gameMap, tileset):
     gameMap.tiles[0:gameMap.width-1, gameMap.height-1] = tileset['wall']
     gameMap.tiles[gameMap.width-1, 0:gameMap.height-1] = tileset['wall']
 
-    gameMap.pointsOfInterest = pointsOfInterest
 

@@ -1,4 +1,5 @@
 from random import choice, randint
+from EntityManager import Entity
 from Levels.Creator.Generators import Generators
 from Levels.Creator.Prefabs import Prefab
 from Levels.Creator.Shapes import drawShape
@@ -38,8 +39,6 @@ class Biome:
 
     # ------------------------------------------t
     def createTileset(self, tileset): 
-        print (tileset)
-        print (type(tileset))
         for tile in tileset.keys():
             if tile[-1] == 's':
                 # it's plural, so there's multiple tiles inside here
@@ -85,19 +84,24 @@ class Biome:
     def createStartPoint(self, level, gameMap):
         # if the level already contains an entry point, put ours there
 
-        level.startPoint = choice(level.POIs) if not level.startPoint else level.startPoint
-
-        drawShape((level.startPoint[0], level.startPoint[1]), 'square2', self.tileset['floor'], gameMap)
-        level.e.spawn('stairsUp', level.startPoint[0], level.startPoint[1])
+        gameMap.startPoint = gameMap.getPOI()
+        print ("=======================")
+        print (f"Start point: {gameMap.startPoint}")
+        drawShape((gameMap.startPoint[0], gameMap.startPoint[1]), 'square2', self.tileset['floor'], gameMap)
+        level.e.spawn('StairsUp', gameMap.startPoint[0], gameMap.startPoint[1])
 
 
 
     # ------------------------------------------
     def createExitPoint(self, level, gameMap):
-        level.exitPoint = level.getPOI() if not level.exitPoint else level.exitPoint
+        gameMap.exitPoint = gameMap.getPOI() if not gameMap.exitPoint else gameMap.exitPoint
 
-        drawShape((level.exitPoint[0], level.exitPoint[1]), 'square2', self.tileset['floor'], gameMap)
-        level.e.spawn('stairsDown', level.exitPoint[0], level.exitPoint[1])
-        Generators['smallTunnel']((level.start[0], level.start[1]), (level.exitPoint[0], level.exitPoint[1]))
+        drawShape((gameMap.exitPoint[0], gameMap.exitPoint[1]), 'square2', self.tileset['floor'], gameMap)
+        level.e.spawn('StairsDown', gameMap.exitPoint[0], gameMap.exitPoint[1])
+        Generators['corridor'](
+            (gameMap.startPoint[0], gameMap.startPoint[1]), 
+            (gameMap.exitPoint[0], gameMap.exitPoint[1]),
+            gameMap,
+            self.tileset)
     
         

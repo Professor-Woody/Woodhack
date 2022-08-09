@@ -47,7 +47,8 @@ WeaponStats = 44
 Stackable = 45
 Type = 46
 UseHealing = 47
-
+Stairs = 48
+IsTerrain = 49
 
 
 componentMap = {
@@ -83,7 +84,9 @@ componentMap = {
     'WeaponStats': WeaponStats,
     'Type': Type,
     'Stackable': Stackable,
-    'UseHealing': UseHealing
+    'UseHealing': UseHealing,
+    'Stairs': Stairs,
+    'IsTerrain': IsTerrain
 }
 
 
@@ -174,7 +177,8 @@ def registerComponents(entityManager):
         'itemSpeed': 240,
         'moveSpeed': 10,
         'useAction': 'use_healing'})
-
+    entityManager.registerComponent(Stairs, {'direction': 'down'})
+    entityManager.registerComponent(IsTerrain)
 # =================================================
 # =================================================
 def registerMenuComponents(entityManager):

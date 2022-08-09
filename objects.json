@@ -162,5 +162,29 @@
             },
             "Stackable": {"quantity": 20}
         }
+    },
+    {
+        "type": "StairsUp",
+        "components": {
+            "Render": {
+                "name": "Stairs",
+                "char": "<",
+                "fg": [200,200,200]
+            },
+            "Stairs": {"direction": "up"},
+            "IsTerrain": {}
+        }
+    },
+    {
+        "type": "StairsDown",
+        "components": {
+            "Render": {
+                "name": "Stairs",
+                "char": ">",
+                "fg": [200,200,200]
+            },
+            "Stairs": {},
+            "IsTerrain": {}
+        }
     }
 ]
