@@ -15,10 +15,11 @@ class Biome:
     randomStartPoint: bool = True
 
     def __init__(self, biomeDef) -> None:
-        biomeType = biomeDef['type']
+        self.type = biomeDef['type']
 
         self.mapGenerator = biomeDef['mapGenerator']
-        self.tileset = self.createTileset(biomeDef['tileset'])
+        self.tileset = {}
+        self.createTileset(biomeDef['tileset'])
         self.requiredPrefabs = [Prefab(prefab) for prefab in biomeDef['requiredPrefabs']] if 'requiredPrefabs' in biomeDef.keys() else {}
         self.optionalPrefabs = [Prefab(prefab) for prefab in biomeDef['optionalPrefabs']] if 'optionalPrefabs' in biomeDef.keys() else {}
         self.optionalMin = biomeDef['optionalMin']  if 'optionalMin' in biomeDef.keys() else 0
@@ -28,25 +29,30 @@ class Biome:
     def createLevel(self, level, gameMap):
         self.createBaseMap(level, gameMap)
         self.createRequiredPrefabs(level, gameMap)
-        self.createOptionalPrefabs(level, gameMap)
+        #self.createOptionalPrefabs(level, gameMap)
         self.createStartPoint(level, gameMap)
         self.createExitPoint(level, gameMap)
 
         # TODO: create additional spawners for random monsters
 
 
-    # ------------------------------------------
-    def createTileset(self, tileset):
+    # ------------------------------------------t
+    def createTileset(self, tileset): 
+        print (tileset)
+        print (type(tileset))
         for tile in tileset.keys():
             if tile[-1] == 's':
                 # it's plural, so there's multiple tiles inside here
-                self.createTileset(tile)
+                self.createTileset(tileset[tile])
             else:
+
+                tileset[tile]['dark'][0] = ord(tileset[tile]['dark'][0])
+                tileset[tile]['light'][0] = ord(tileset[tile]['light'][0])
                 self.tileset[tile] = newTile(
                                         tileset[tile]['passable'],
                                         tileset[tile]['transparent'],
-                                        tileset[tile]['dark'],
-                                        tileset[tile]['light'])
+                                        tuple(tileset[tile]['dark']),
+                                        tuple(tileset[tile]['light']))
 
 
     # ------------------------------------------
@@ -71,7 +77,7 @@ class Biome:
 
     # ------------------------------------------
     def createBaseMap(self, level, gameMap):
-        Generators[self.mapGenerator](level, gameMap)
+        Generators[self.mapGenerator](level, gameMap, self.tileset)
 
 
 

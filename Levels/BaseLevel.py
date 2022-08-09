@@ -1,6 +1,6 @@
 from random import randint
 from EntityManager import EntityManager, Position, Render
-from Levels.Creator.LevelCreator import LevelCreator, NewLevelCreator, loadTestData
+from Levels.Creator.LevelCreator import NewLevelCreator
 from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
@@ -108,7 +108,8 @@ class TestLevel(BaseLevel):
         super().__init__(app, width, height)
         
         #self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
-        self.map = NewLevelCreator.generateLevel(self, width-24, self.height-16, 'caverns')
+        NewLevelCreator.loadTemplates()
+        self.map = NewLevelCreator.createLevel(self, 'caverns')
         # =====================
         # queries
         self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')

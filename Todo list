@@ -1,9 +1,11 @@
+from audioop import add
+
+
 DOING:
-    ranged attack
+    Need to add the POI system to the cavern generator
 
 
-
-TODO: 
+TODO: or
     done - build character UI
     done - build target UI
 

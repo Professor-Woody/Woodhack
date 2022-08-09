@@ -1,10 +1,18 @@
 import numpy as np
-from Helpers.LevelCreation import wall, SHROUD
 import tcod
 from tcod.map import compute_fov
 from Components import *
-import Helpers.PositionHelper as PositionHelper
 from random import randint
+import Helpers.PositionHelper as PositionHelper
+from Levels.Creator.Tiles import SHROUD, newTile
+
+wall = newTile(
+    passable=False, 
+    transparent=False, 
+    dark=(ord("#"), (100,100,100), (10, 10, 10)),
+    light=(ord("#"), (200, 200, 200), (100, 100, 100)),
+)
+
 
 class GameMap:
     def __init__(self, level, width, height):
