@@ -93,7 +93,7 @@ componentMap = {
 # =================================================
 def registerComponents(entityManager):
     entityManager.registerComponent(Position, {'x': 0, 'y': 0, 'width': 1, 'height': 1, 'moveSpeed': 6})
-    entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': colour.WHITE, 'bg': None})
+    entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': colour.WHITE, 'bg': None, 'needsVisibility': True})
     entityManager.registerComponent(Light, {'radius': 1, 'colour': (50,50,50)})
     entityManager.registerComponent(IsPlayer, {'id': 0})
     entityManager.registerComponent(IsNPC)

@@ -111,12 +111,12 @@ class TestLevel(BaseLevel):
         # loading entity defs
         self.e.loadEntities('objects.json')
 
-        NewLevelCreator.loadTemplates()
-        self.map = NewLevelCreator.createLevel(self, 'caverns')
+        
         # =====================
         # queries
         self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')
         self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC, IsTerrain],storeQuery='Render')
+        self.terrainQuery = self.e.createQuery(allOf=[IsTerrain], storeQuery='Terrain')
         self.lightsQuery = self.e.createQuery(allOf=[Position, Light],storeQuery='LightsOnGround') 
         self.itemsOnGroundQuery = self.e.createQuery(allOf=[IsItem, Position],storeQuery='ItemsOnGround')
         self.playersQuery = self.e.createQuery(allOf=[IsPlayer],storeQuery = 'Players')
@@ -127,6 +127,14 @@ class TestLevel(BaseLevel):
         self.moveQuery = self.e.createQuery(allOf=[Position],storeQuery = 'MoveQuery')
         self.targetedQuery = self.e.createQuery(allOf=[Targeted],storeQuery = 'TargetedQuery')
         self.selectionUIQuery = self.e.createQuery(allOf=[SelectionUI],storeQuery = 'SelectionUIQuery')
+
+        # =====================
+        # LEVEL CREATION
+        NewLevelCreator.loadTemplates()
+        self.map = NewLevelCreator.createLevel(self, 'caverns')
+        print (self.renderQuery.result)
+        time.sleep(5)
+        
 
         # =====================
         # logs

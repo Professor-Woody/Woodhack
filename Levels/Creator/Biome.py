@@ -84,7 +84,7 @@ class Biome:
     def createStartPoint(self, level, gameMap):
         # if the level already contains an entry point, put ours there
 
-        gameMap.startPoint = gameMap.getPOI()
+        gameMap.startPoint = gameMap.getPOI() if not gameMap.startPoint else gameMap.startPoint
         print ("=======================")
         print (f"Start point: {gameMap.startPoint}")
         drawShape((gameMap.startPoint[0], gameMap.startPoint[1]), 'square2', self.tileset['floor'], gameMap)
@@ -95,7 +95,6 @@ class Biome:
     # ------------------------------------------
     def createExitPoint(self, level, gameMap):
         gameMap.exitPoint = gameMap.getPOI() if not gameMap.exitPoint else gameMap.exitPoint
-
         drawShape((gameMap.exitPoint[0], gameMap.exitPoint[1]), 'square2', self.tileset['floor'], gameMap)
         level.e.spawn('StairsDown', gameMap.exitPoint[0], gameMap.exitPoint[1])
         Generators['corridor'](

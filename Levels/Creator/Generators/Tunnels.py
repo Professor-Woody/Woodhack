@@ -1,6 +1,8 @@
 from random import choice
 import Helpers.PositionHelper as PositionHelper
 from Levels.Creator.Shapes import *
+import time
+
 
 def createTunnel(start, end, gameMap, tile):
     # get the path with getLOS
@@ -19,10 +21,11 @@ def createTunnel(start, end, gameMap, tile):
     path = PositionHelper.getPathTo(start, end, gameMap, True)
     for (x,y) in path:
         gameMap.tiles[x, y] = tile
-        for s in shapes[choice(['diamond2', 'diamond3', 'square2', 'square2', 'square2', 'square3', 'circle3'])]:
+        for s in shapes[choice(['diamond2', 'diamond3', 'square', 'square', 'square2', 'square', 'square', 'square'])]:
             gameMap.tiles[x + s[0], y + s[1]] = tile
-
-
+            # #tempdraw
+            # gameMap.level.app.screen.drawArray((0,gameMap.width), (0, gameMap.height), gameMap.tiles['light'])
+            # gameMap.level.app.screen.flip()
 
 
 def createCorridor(start, end, gameMap, tileset, goThroughWalls = 3):
@@ -30,6 +33,7 @@ def createCorridor(start, end, gameMap, tileset, goThroughWalls = 3):
         for (x, y) in path:
             gameMap.tiles[x, y] = tileset['floor']
             gameMap.tiles[x,y]['light']['fg'] = (255, 0, 0)
+            # time.sleep(.01)
 
 
 

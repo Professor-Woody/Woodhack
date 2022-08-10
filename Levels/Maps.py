@@ -31,7 +31,7 @@ class GameMap:
 
     def getPOI(self):
         print (self.POIs)
-        return self.POIs.pop(randint(0, len(self.POIs)))
+        return self.POIs.pop(randint(0, len(self.POIs)-1))
 
 
     def checkIsPassable(self, x, y):

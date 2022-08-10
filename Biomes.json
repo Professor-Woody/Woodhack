@@ -18,8 +18,8 @@
                 ]
             },
             "floor": {
-                "passable": false,
-                "transparent": false,
+                "passable": true,
+                "transparent": true,
                 "dark": [
                     ".",
                     [38, 48, 46],
@@ -71,8 +71,8 @@
             },
             "floors": {
                 "floor": {
-                    "passable": false,
-                    "transparent": false,
+                    "passable": true,
+                    "transparent": true,
                     "dark": [
                         " ",
                         [38, 48, 46],
@@ -86,8 +86,8 @@
                     "weight": 60
                 },
                 "floor2": {
-                    "passable": false,
-                    "transparent": false,
+                    "passable": true,
+                    "transparent": true,
                     "dark": [
                         ".",
                         [38, 48, 46],
@@ -101,8 +101,8 @@
                     "weight": 30
                 },
                 "floor3": {
-                    "passable": false,
-                    "transparent": false,
+                    "passable": true,
+                    "transparent": true,
                     "dark": [
                         ",",
                         [38, 48, 46],
