@@ -11,6 +11,7 @@ graphic_dt = np.dtype(
 
 tile_dt = np.dtype(
     [
+        ("type", str),
         ("passable", np.bool),
         ("transparent", np.bool),
         ("dark", graphic_dt),
@@ -21,5 +22,5 @@ tile_dt = np.dtype(
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
 
-def newTile(passable, transparent, dark, light):
-    return np.array((passable, transparent, dark, light), dtype=tile_dt)
+def newTile(tileType, passable, transparent, dark, light):
+    return np.array((tileType, passable, transparent, dark, light), dtype=tile_dt)

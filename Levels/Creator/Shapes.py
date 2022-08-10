@@ -29,8 +29,8 @@ shapes = {
 }
 
 
-def drawShape(pos, shape, tile, gameMap):
+def drawShape(pos, shape, biome, tileType, gameMap):
     for (dx,dy) in shapes[shape]:
         x = pos[0] + dx
         y = pos[1] + dy
-        gameMap.tiles[x,y] = tile
+        gameMap.tiles[x,y] = biome.getTile(tileType)

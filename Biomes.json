@@ -2,43 +2,50 @@
     {
         "type": "dungeon",
         "mapGenerator": "dungeon",
-        "tileset": {
-            "wall": {
-                "passable": false,
-                "transparent": false,
-                "dark": [
-                    "#",
-                    [38, 48, 46],
-                    [34, 34, 34]
-                ],
-                "light": [
-                    "#",
-                    [47, 59, 74],
-                    [64,64,64]
-                ]
+        "tileset": [
+            {
+                "type": "wall",
+                "tile": {
+                    "passable": false,
+                    "transparent": false,
+                    "dark": [
+                        "#",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        "#",
+                        [47, 59, 74],
+                        [64,64,64]
+                    ]
+                }
             },
-            "floor": {
-                "passable": true,
-                "transparent": true,
-                "dark": [
-                    ".",
-                    [38, 48, 46],
-                    [34, 34, 34]
-                ],
-                "light": [
-                    ".",
-                    [47, 59, 74],
-                    [64,64,64]
-                ]
+            {
+                "type": "floor",
+                "tile": {
+                    "passable": true,
+                    "transparent": true,
+                    "dark": [
+                        ".",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        ".",
+                        [47, 59, 74],
+                        [64,64,64]
+                    ]
+                }
             }
-        }
+        ]
     },
     {
         "type": "caverns",
         "mapGenerator": "caverns",
-        "tileset": {
-            "walls": {
-                "wall": {
+        "tileset": [
+            {
+                "type": "wall",
+                "tile": {
                     "passable": false,
                     "transparent": false,
                     "dark": [
@@ -49,28 +56,32 @@
                     "light": [
                         "#",
                         [111,86,55],
-                        [48,31,16]
-                    ],
-                    "weight": 70
+                        [46,44,27]
+                    ]
                 },
-                "wall2": {
-                    "passable": false,
-                    "transparent": false,
-                    "dark": [
-                        "#",
-                        [38, 48, 46],
-                        [34, 34, 34]
-                    ],
-                    "light": [
-                        "#",
-                        [111,86,55],
-                        [48,31,16]
-                    ],
-                    "weight": 30
-                }
+                "weight": 70
             },
-            "floors": {
-                "floor": {
+            {
+                "type": "wall",
+                "tile": {
+                    "passable": false,
+                    "transparent": false,
+                    "dark": [
+                        "*",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        "*",
+                        [111,86,55],
+                        [46,44,27]
+                    ]
+                },
+                "weight": 30
+            },
+            {
+                "type": "floor",
+                "tile": {
                     "passable": true,
                     "transparent": true,
                     "dark": [
@@ -82,10 +93,13 @@
                         " ",
                         [140,138,100],
                         [46,44,27]
-                    ],
-                    "weight": 60
+                    ]
                 },
-                "floor2": {
+                "weight": 90
+            },
+            {
+                "type": "floor",
+                "tile": {
                     "passable": true,
                     "transparent": true,
                     "dark": [
@@ -97,25 +111,10 @@
                         ".",
                         [140,138,100],
                         [46,44,27]
-                    ],
-                    "weight": 30
+                    ]
                 },
-                "floor3": {
-                    "passable": true,
-                    "transparent": true,
-                    "dark": [
-                        ",",
-                        [38, 48, 46],
-                        [34, 34, 34]
-                    ],
-                    "light": [
-                        ",",
-                        [216,196,148],
-                        [46,44,27]
-                    ],
-                    "weight": 10
-                }
+                "weight": 15
             }
-        }
+        ]
     }
 ]

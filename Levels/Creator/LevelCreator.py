@@ -16,6 +16,8 @@ class NewLevelCreator:
         for obj in objects:
             biome = Biome(obj)
             cls.biomes[biome.type] = biome
+        print ("99999999999999999")
+        print (cls.biomes)
 
     @classmethod
     def createLevel(cls, level, biomeType):

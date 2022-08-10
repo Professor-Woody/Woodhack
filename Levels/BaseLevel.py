@@ -132,8 +132,8 @@ class TestLevel(BaseLevel):
         # LEVEL CREATION
         NewLevelCreator.loadTemplates()
         self.map = NewLevelCreator.createLevel(self, 'caverns')
-        print (self.renderQuery.result)
-        time.sleep(5)
+    
+        # time.sleep(5)
         
 
         # =====================

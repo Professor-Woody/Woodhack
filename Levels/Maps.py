@@ -4,14 +4,7 @@ from tcod.map import compute_fov
 from Components import *
 from random import randint
 import Helpers.PositionHelper as PositionHelper
-from Levels.Creator.Tiles import SHROUD, newTile
-
-wall = newTile(
-    passable=False, 
-    transparent=False, 
-    dark=(ord("#"), (100,100,100), (10, 10, 10)),
-    light=(ord("#"), (200, 200, 200), (100, 100, 100)),
-)
+from Levels.Creator.Tiles import SHROUD, newTile, tile_dt
 
 
 class GameMap:
@@ -19,7 +12,7 @@ class GameMap:
         self.level = level
         self.width = width
         self.height = height
-        self.tiles = np.full((self.width, self.height), fill_value=wall, order="F")
+        self.tiles = np.empty((self.width, self.height), dtype=tile_dt, order="F")
         self.lit = np.full((self.width, self.height), fill_value=False, order="F")
         self.visible = np.full((self.width, self.height), fill_value=False, order="F")
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
@@ -30,7 +23,6 @@ class GameMap:
         self.POIs = []
 
     def getPOI(self):
-        print (self.POIs)
         return self.POIs.pop(randint(0, len(self.POIs)-1))
 
 

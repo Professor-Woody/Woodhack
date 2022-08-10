@@ -8,7 +8,7 @@ HULKS = 20
 HULKSTEPS = 300
 DIR = [-1, 1]
 
-def createCaverns(level, gameMap, tileset):
+def createCaverns(level, biome, gameMap):
     # drunken umber hulk approach
     # randomly stagger around the map digging out areas
     # make the first and last place the start and end points
@@ -35,7 +35,7 @@ def createCaverns(level, gameMap, tileset):
             if y < 2 or y > gameMap.height - 2:
                 y -= dy
             
-            gameMap.tiles[x, y] = tileset['floor']
+            gameMap.tiles[x, y] = biome.getTile('floor')
             #tempdraw
             # level.app.screen.drawArray((0,gameMap.width), (0, gameMap.height), gameMap.tiles['light'])
             # level.app.screen.flip()
@@ -45,27 +45,27 @@ def createCaverns(level, gameMap, tileset):
     for i in range(len(gameMap.POIs) - 1):
         path = PositionHelper.getPathTo(gameMap.POIs[i], gameMap.POIs[i+1], gameMap)
         if not len(path):
-            createTunnel(gameMap.POIs[i], gameMap.POIs[i+1], gameMap, tileset['floor'])
+            createTunnel(gameMap.POIs[i], gameMap.POIs[i+1], biome, gameMap)
 
 
     # trim away the majority of stragglers/orphaned walls
     clearList = [0, 1, 2, 4, 8, 16, 32, 64, 128]
     for y in range(1, gameMap.height - 2):
         for x in range(1, gameMap.width - 2):
-            if gameMap.tiles[x, y]['light']['ch'] == ord('#'):
+            if gameMap.tiles[x, y]['type'] == 'wall':
                 value = getTileShapeValue((x,y), gameMap)
                 if value in clearList:
-                    gameMap.tiles[x, y] = tileset['floor']
+                    gameMap.tiles[x, y] = biome.getTile('floor')
                     
                     # #tempdraw
                     # level.app.screen.drawArray((0,gameMap.width), (0, gameMap.height), gameMap.tiles['light'])
                     # level.app.screen.flip()
 
     # restore the border walls
-    gameMap.tiles[0:gameMap.width-1, 0] = tileset['wall']
-    gameMap.tiles[0, 0:gameMap.height-1] = tileset['wall']
-    gameMap.tiles[0:gameMap.width-1, gameMap.height-1] = tileset['wall']
-    gameMap.tiles[gameMap.width-1, 0:gameMap.height-1] = tileset['wall']
+    gameMap.tiles[0:gameMap.width-1, 0] = biome.getTile('wall')
+    gameMap.tiles[0, 0:gameMap.height-1] = biome.getTile('wall')
+    gameMap.tiles[0:gameMap.width-1, gameMap.height-1] = biome.getTile('wall')
+    gameMap.tiles[gameMap.width-1, 0:gameMap.height-1] = biome.getTile('wall')
     #tempdraw
     # time.sleep(5)
 
@@ -77,7 +77,7 @@ def getTileShapeValue(pos, gameMap):
     for s in surrounding:
         tile = gameMap.tiles[pos[0]+s[0], pos[1]+s[1]]
         # print (tile['light']['ch'])
-        if tile['light']['ch'] == ord('#'):
+        if tile['type'] == 'wall':
             value = add_bit(value, counter)
         counter += 1
     return value

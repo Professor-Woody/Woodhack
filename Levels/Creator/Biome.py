@@ -1,4 +1,4 @@
-from random import choice, randint
+from random import choice, choices, randint
 from EntityManager import Entity
 from Levels.Creator.Generators import Generators
 from Levels.Creator.Prefabs import Prefab
@@ -20,6 +20,7 @@ class Biome:
 
         self.mapGenerator = biomeDef['mapGenerator']
         self.tileset = {}
+        self.tilesetWeights = {}
         self.createTileset(biomeDef['tileset'])
         self.requiredPrefabs = [Prefab(prefab) for prefab in biomeDef['requiredPrefabs']] if 'requiredPrefabs' in biomeDef.keys() else {}
         self.optionalPrefabs = [Prefab(prefab) for prefab in biomeDef['optionalPrefabs']] if 'optionalPrefabs' in biomeDef.keys() else {}
@@ -39,20 +40,23 @@ class Biome:
 
     # ------------------------------------------t
     def createTileset(self, tileset): 
-        for tile in tileset.keys():
-            if tile[-1] == 's':
-                # it's plural, so there's multiple tiles inside here
-                self.createTileset(tileset[tile])
-            else:
+        for tile in tileset:
+            tile['tile']['dark'][0] = ord(tile['tile']['dark'][0])
+            tile['tile']['light'][0] = ord(tile['tile']['light'][0])
+            
+            if tile['type'] not in self.tileset.keys():
+                self.tileset[tile['type']] = []
+                self.tilesetWeights[tile['type']] = []
 
-                tileset[tile]['dark'][0] = ord(tileset[tile]['dark'][0])
-                tileset[tile]['light'][0] = ord(tileset[tile]['light'][0])
-                self.tileset[tile] = newTile(
-                                        tileset[tile]['passable'],
-                                        tileset[tile]['transparent'],
-                                        tuple(tileset[tile]['dark']),
-                                        tuple(tileset[tile]['light']))
+            nt = newTile(
+                    tile['type'],
+                    tile['tile']['passable'],
+                    tile['tile']['transparent'],
+                    tuple(tile['tile']['dark']),
+                    tuple(tile['tile']['light']))
+            self.tileset[tile['type']].append(nt)
 
+            self.tilesetWeights[tile['type']].append(tile['weight'] if 'weight' in tile.keys() else 100)
 
     # ------------------------------------------
     def createRequiredPrefabs(self, level, gameMap):
@@ -76,7 +80,10 @@ class Biome:
 
     # ------------------------------------------
     def createBaseMap(self, level, gameMap):
-        Generators[self.mapGenerator](level, gameMap, self.tileset)
+        for x in range(gameMap.width):
+            for y in range(gameMap.height):
+                gameMap.tiles[x,y] = self.getTile('wall')
+        Generators[self.mapGenerator](level, self, gameMap)
 
 
 
@@ -87,7 +94,7 @@ class Biome:
         gameMap.startPoint = gameMap.getPOI() if not gameMap.startPoint else gameMap.startPoint
         print ("=======================")
         print (f"Start point: {gameMap.startPoint}")
-        drawShape((gameMap.startPoint[0], gameMap.startPoint[1]), 'square2', self.tileset['floor'], gameMap)
+        drawShape((gameMap.startPoint[0], gameMap.startPoint[1]), 'square2', self, 'floor', gameMap)
         level.e.spawn('StairsUp', gameMap.startPoint[0], gameMap.startPoint[1])
 
 
@@ -95,12 +102,15 @@ class Biome:
     # ------------------------------------------
     def createExitPoint(self, level, gameMap):
         gameMap.exitPoint = gameMap.getPOI() if not gameMap.exitPoint else gameMap.exitPoint
-        drawShape((gameMap.exitPoint[0], gameMap.exitPoint[1]), 'square2', self.tileset['floor'], gameMap)
+        drawShape((gameMap.exitPoint[0], gameMap.exitPoint[1]), 'square2', self, 'floor', gameMap)
         level.e.spawn('StairsDown', gameMap.exitPoint[0], gameMap.exitPoint[1])
         Generators['corridor'](
             (gameMap.startPoint[0], gameMap.startPoint[1]), 
             (gameMap.exitPoint[0], gameMap.exitPoint[1]),
-            gameMap,
-            self.tileset)
+            self,
+            gameMap)
     
         
+    def getTile(self, tileType):
+        result = choices(self.tileset[tileType], self.tilesetWeights[tileType])[0]
+        return result
