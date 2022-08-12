@@ -170,10 +170,14 @@ class EntityManager:
             for slot in data.keys():
                 if data[slot]:
                     self.spawn(data[slot], -1, -1, inInventory=entity, inBodySlot=slot)
-
+        
         elif component == IsPlayer:
             data['id'] = self.playerIds
             self.playerIds += 1
+
+        elif component == Init and data['speed'] > 0:
+            self.level.post("add_speed", {'entity': entity, 'speed': 0})
+
 
         if 'useAction' in data.keys():
             if not self.hasComponent(entity, UseActions):
@@ -197,7 +201,7 @@ class EntityManager:
         for query in self.queries.values():
             query.candidate(entity)
 
-
+    # ----------------------------------------------
     def loadEntities(self, filename):
         with open(filename, 'r') as objectFile:
             objects = json.loads(objectFile.read())
@@ -217,7 +221,7 @@ class EntityManager:
                     Entity.entityDefs[eType]['components'][cId] = copy.deepcopy(self.component.defaults[cId])
                     for key, value in obj['components'][component].items():
                         Entity.entityDefs[eType]['components'][cId][key] = value
-
+    # ----------------------------------------------
 
 
     def _addComponents(self, entity, entityType):
@@ -231,7 +235,7 @@ class EntityManager:
             # print (f"adding: {component} / {entityDef['components'][component]}")
 
 
-    def spawn(self, entityType, x, y, inInventory: int = None, inBodySlot: str = None):
+    def spawn(self, entityType, x=0, y=0, inInventory: int = None, inBodySlot: str = None):
 
         entity = self.createEntity()
         self._addComponents(entity, entityType)

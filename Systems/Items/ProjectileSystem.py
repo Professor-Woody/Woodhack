@@ -1,6 +1,7 @@
 from Systems.BaseSystem import BaseSystem
 from Components import Parent, Projectile, Position, Stats, WeaponStats
 from random import randint
+import Colours as colour
 
 class UpdateProjectilesSystem(BaseSystem):
     priority=170
@@ -30,6 +31,8 @@ class UpdateProjectilesSystem(BaseSystem):
                                 + weaponComponents[entity]['damageBonus'] \
                                     + projectileComponents[entity]['damageBonus']
                             self.level.post('damage', {'entity': blocked, 'damage': damageRoll})
+                            
+                            self.removeProjectile(entity)
                     # else:
                     #     print (f"blocked by something else: {blocked}")
                     #     self.removeProjectile(entity)

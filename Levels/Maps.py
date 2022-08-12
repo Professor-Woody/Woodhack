@@ -1,22 +1,29 @@
 import numpy as np
-from Levels.Rooms import wall, SHROUD
 import tcod
 from tcod.map import compute_fov
 from Components import *
+from random import randint
 import Helpers.PositionHelper as PositionHelper
+from Levels.Creator.Tiles import SHROUD, newTile, tile_dt
+
 
 class GameMap:
     def __init__(self, level, width, height):
         self.level = level
         self.width = width
         self.height = height
-        self.tiles = np.full((self.width, self.height), fill_value=wall, order="F")
+        self.tiles = np.empty((self.width, self.height), dtype=tile_dt, order="F")
         self.lit = np.full((self.width, self.height), fill_value=False, order="F")
         self.visible = np.full((self.width, self.height), fill_value=False, order="F")
         self.explored = np.full((self.width, self.height), fill_value=False, order="F")
+        self.restricted = np.full((self.width, self.height), fill_value=False, order="F")
 
-        self.start = None
-        self.end = None
+        self.startPoint = None
+        self.exitPoint = None
+        self.POIs = []
+
+    def getPOI(self):
+        return self.POIs.pop(randint(0, len(self.POIs)-1))
 
 
     def checkIsPassable(self, x, y):
@@ -26,7 +33,10 @@ class GameMap:
         return 0 <= x < self.width and 0 <= y < self.height
 
     def checkIsVisible(self, x, y):
-        return self.visible[x, y] and self.lit[x, y]
+        return self.visible[x, y]# and self.lit[x, y]
+    
+    def checkIsTransparent(self, x, y):
+        return self.tiles["transparent"][x, y]
 
     def checkIsBlocked(self, x, y):
         positionComponents = self.level.e.component.components[Position]
@@ -45,15 +55,13 @@ class GameMap:
         lightComponents = self.level.e.component.filter(Light, entities)
 
         for entity in entities:
-            self.lit = np.logical_or(
-                self.lit, 
-                compute_fov(
+            self.lit += compute_fov(
                     self.tiles["transparent"],
                     (positionComponents[entity]['x'], positionComponents[entity]['y']),
                     radius=lightComponents[entity]['radius'],
                     algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                 )
-            )
+            
 
         # calculate visible squares from lit
         entities = self.level.playersQuery.result
@@ -61,22 +69,23 @@ class GameMap:
 
         self.visible[:] = False
         for entity in entities:
-            self.visible[:] = np.logical_or(self.visible, np.logical_and(self.lit, compute_fov(
+            self.visible += np.logical_and(self.lit, compute_fov(
                         self.tiles["transparent"],
                         (positionComponents[entity]['x'], positionComponents[entity]['y']),
                         radius=40,
                         algorithm=tcod.FOV_SYMMETRIC_SHADOWCAST
                     )
                 )
-            )
         self.explored |= self.visible
+
+
 
     def draw(self, screen):
         screen.drawArray(
             (0,self.width), 
             (0,self.height),
             np.select(
-                condlist=[np.logical_and(self.visible, self.lit), self.explored],
+                condlist=[self.visible, self.explored],
                 choicelist=[self.tiles["light"], self.tiles["dark"]],
                 default=SHROUD
                 )

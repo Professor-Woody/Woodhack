@@ -21,6 +21,8 @@ class AISystem(BaseSystem):
             positionComponents = self.getComponents(Position)
             statsComponents = self.getComponents(Stats)
             bodyComponents = self.getComponents(Body)
+        
+        self.pathfinder = None
 
         for entity in npcs:
             aiComponents[entity]['targetRefreshTimer'] -= 1
@@ -42,6 +44,8 @@ class AISystem(BaseSystem):
                 ) 
                 if distance > 1:
                     if distance < 5 or not aiComponents[entity]['path']:
+                        if not self.pathfinder:
+                            self.generatePathfinder()
                         aiComponents[entity]['path'] = self.getPathTo(entity, target, positionComponents)
 
                     if aiComponents[entity]['path']:
@@ -103,15 +107,12 @@ class AISystem(BaseSystem):
 
 
 
-
-    def getPathTo(self, entity, target, positionComponents):
-        dx = positionComponents[target]['x']
-        dy = positionComponents[target]['y']
-
+    def generatePathfinder(self):
+        positionComponents = self.level.e.component.components[Position]
 
         cost = np.array(self.level.map.tiles["passable"], dtype=np.int8)
-        for actor in self.level.collidableQuery.result: #TODO: Replace this query with a collideable one
-            if actor != entity and cost[positionComponents[actor]['x'], positionComponents[actor]['y']]:
+        for actor in self.level.collidableQuery.result: 
+            if cost[positionComponents[actor]['x'], positionComponents[actor]['y']]:
                 # add to cost of a blocked position
                 # there's a potential for the entity to move out so we still
                 # count it as a possible path.
@@ -121,10 +122,18 @@ class AISystem(BaseSystem):
                 # order to surround the player
                 cost[positionComponents[actor]['x'], positionComponents[actor]['y']] += 10
         graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
-        pathfinder = tcod.path.Pathfinder(graph)
-        pathfinder.add_root((positionComponents[entity]['x'], positionComponents[entity]['y']))
-        path = pathfinder.path_to((dx, dy))[1:].tolist()
-        result = [(index[0], index[1]) for index in path]
-        return result
+        self.pathfinder = tcod.path.Pathfinder(graph)
+
+
+    def getPathTo(self, entity, target, positionComponents):
+        dx = positionComponents[target]['x']
+        dy = positionComponents[target]['y']
+
+        self.pathfinder.clear()
+        self.pathfinder.add_root((positionComponents[entity]['x'], positionComponents[entity]['y']))
+        path = self.pathfinder.path_to((dx, dy))[1:].tolist()
+        # result = [(index[0], index[1]) for index in path]
+        # return result
+        return path
                     
 

@@ -1,4 +1,4 @@
-from Components import Body, Equipped, Inventory, IsNPC, IsReady, Parent, Position, Projectile, Ranged, Render, Stackable, Stats, Target, Type, WeaponStats
+from Components import Body, Equipped, Inventory, IsNPC, IsPlayer, IsReady, Parent, PlayerInput, Position, Projectile, Ranged, Render, Stackable, Stats, Target, Type, WeaponStats
 from Systems.BaseSystem import BaseSystem
 import Helpers.PositionHelper as PositionHelper
 
@@ -19,6 +19,7 @@ class RangedSystem(BaseSystem):
             typeComponents = self.getComponents(Type)
             quantityComponents = self.getComponents(Stackable)
             inventoryComponents = self.getComponents(Inventory)
+            inputComponents = self.getComponents(PlayerInput)
 
 
             for action in self.actionQueue:
@@ -42,7 +43,7 @@ class RangedSystem(BaseSystem):
                                 100,
                                 self.level.map
                             )
-                            if los:
+                            if los and self.level.map.checkIsVisible(positionComponents[target]['x'], positionComponents[target]['y']):
                                 rise = positionComponents[target]['y'] - positionComponents[parent]['y']
                                 run = positionComponents[target]['x'] - positionComponents[parent]['x']
 
@@ -68,16 +69,27 @@ class RangedSystem(BaseSystem):
                                     'attack': rangedComponents[entity]['attack'] + statsComponents[parent]['attack'] + statsComponents[parent]['dex'],
                                     'damageBonus': 0
                                 })
-                                self.clog("Twang!", renderComponents[parent]['fg'])
+                                if self.hasComponent(parent, IsPlayer):
+                                    self.clog("Twang!", renderComponents[parent]['fg'])
+                                    self.level.post("create_effect", {
+                                        "type": "label",
+                                        "x": positionComponents[parent]['x'] -2,
+                                        "y": positionComponents[parent]['y'] -1,
+                                        "name": "Twang!",
+                                        "fg": renderComponents[parent]['fg']
+                                    })
                                 self.level.post('add_speed', {'entity': parent, 'speed': weaponComponents[entity]['moveSpeed']})
                                 self.level.post('add_speed', {'entity': entity, 'speed': weaponComponents[entity]['weaponSpeed']})
-
-
+                            else:
+                                if self.hasComponent(parent, IsPlayer):
+                                    self.log(f"£{parent}$ has cannot see target")
+                                    inputComponents[parent]['controller'].lock(action['command'])
+                        else:
+                            if self.hasComponent(parent, IsPlayer):
+                                self.log(f"£{parent}$ has no target")
+                                inputComponents[parent]['controller'].lock(action['command'])
 
                     else:
-                        self.log(f"£{parent}$ can't use £{entity}$: No ammo")
+                        if self.hasComponent(parent, IsPlayer):
+                            self.log(f"£{parent}$ can't use £{entity}$: No ammo")
 
-                # subtract ammo
-                # create projectile
-                # post everything
-                print (f"Ranged action: {action}")

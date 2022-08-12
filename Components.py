@@ -47,7 +47,10 @@ WeaponStats = 44
 Stackable = 45
 Type = 46
 UseHealing = 47
-
+Stairs = 48
+IsTerrain = 49
+TTL = 50
+IsEffect = 51
 
 
 componentMap = {
@@ -83,14 +86,18 @@ componentMap = {
     'WeaponStats': WeaponStats,
     'Type': Type,
     'Stackable': Stackable,
-    'UseHealing': UseHealing
+    'UseHealing': UseHealing,
+    'Stairs': Stairs,
+    'IsTerrain': IsTerrain,
+    'TTL': TTL,
+    'IsEffect': IsEffect
 }
 
 
 # =================================================
 def registerComponents(entityManager):
     entityManager.registerComponent(Position, {'x': 0, 'y': 0, 'width': 1, 'height': 1, 'moveSpeed': 6})
-    entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': colour.WHITE, 'bg': None})
+    entityManager.registerComponent(Render, {'char': '@', 'name': 'Woody', 'fg': colour.WHITE, 'bg': None, 'needsVisibility': True})
     entityManager.registerComponent(Light, {'radius': 1, 'colour': (50,50,50)})
     entityManager.registerComponent(IsPlayer, {'id': 0})
     entityManager.registerComponent(IsNPC)
@@ -174,6 +181,10 @@ def registerComponents(entityManager):
         'itemSpeed': 240,
         'moveSpeed': 10,
         'useAction': 'use_healing'})
+    entityManager.registerComponent(Stairs, {'direction': 'down'})
+    entityManager.registerComponent(IsTerrain)
+    entityManager.registerComponent(TTL)
+    entityManager.registerComponent(IsEffect, {'state': 1, 'width': 0, 'name': ''})
 
 # =================================================
 # =================================================

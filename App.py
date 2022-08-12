@@ -2,7 +2,6 @@ import tcod
 from EventHandler import EventHandler
 from Screen import Screen
 from Clock import Clock
-from Levels.BaseLevel import TestLevel
 from Levels.OptionsLevel import OptionsLevel
 from Levels.CharacterSelectLevel import CharacterSelectLevel
 from Levels.MainMenu import MainMenu
@@ -11,7 +10,7 @@ from Flags import FPS
 
 class App:
     width = 140
-    height = 100
+    height = 80
     previousLevel = None
     levelTemplates = {
         'MainMenu': MainMenu,    

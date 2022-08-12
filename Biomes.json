@@ -1,0 +1,120 @@
+[
+    {
+        "type": "dungeon",
+        "mapGenerator": "dungeon",
+        "tileset": [
+            {
+                "type": "wall",
+                "tile": {
+                    "passable": false,
+                    "transparent": false,
+                    "dark": [
+                        "#",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        "#",
+                        [47, 59, 74],
+                        [64,64,64]
+                    ]
+                }
+            },
+            {
+                "type": "floor",
+                "tile": {
+                    "passable": true,
+                    "transparent": true,
+                    "dark": [
+                        ".",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        ".",
+                        [47, 59, 74],
+                        [64,64,64]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "type": "caverns",
+        "mapGenerator": "caverns",
+        "tileset": [
+            {
+                "type": "wall",
+                "tile": {
+                    "passable": false,
+                    "transparent": false,
+                    "dark": [
+                        "#",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        "#",
+                        [111,86,55],
+                        [46,44,27]
+                    ]
+                },
+                "weight": 70
+            },
+            {
+                "type": "wall",
+                "tile": {
+                    "passable": false,
+                    "transparent": false,
+                    "dark": [
+                        "*",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        "*",
+                        [111,86,55],
+                        [46,44,27]
+                    ]
+                },
+                "weight": 30
+            },
+            {
+                "type": "floor",
+                "tile": {
+                    "passable": true,
+                    "transparent": true,
+                    "dark": [
+                        " ",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        " ",
+                        [140,138,100],
+                        [46,44,27]
+                    ]
+                },
+                "weight": 90
+            },
+            {
+                "type": "floor",
+                "tile": {
+                    "passable": true,
+                    "transparent": true,
+                    "dark": [
+                        ".",
+                        [38, 48, 46],
+                        [34, 34, 34]
+                    ],
+                    "light": [
+                        ".",
+                        [140,138,100],
+                        [46,44,27]
+                    ]
+                },
+                "weight": 15
+            }
+        ]
+    }
+]

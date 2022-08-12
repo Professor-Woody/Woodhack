@@ -1,9 +1,13 @@
+from random import randint
 from EntityManager import EntityManager, Position, Render
-from Levels.LevelCreator import LevelCreator
+from Levels.Creator.LevelCreator import NewLevelCreator
 from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
 from Systems.ActorSystems.InitSystem import InitSystem
+from Systems.EffectsSystems.CreateEffectsSystem import CreateEffectsSystem
+from Systems.EffectsSystems.TTLSystem import TTLSystem
+from Systems.EffectsSystems.UpdateEffectsSystem import UpdateEffectsSystem
 from Systems.UseSystems.HealingSystem import HealingSystem
 from Systems.UseSystems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
 from Systems.Items.ProjectileSystem import UpdateProjectilesSystem
@@ -21,8 +25,8 @@ from Systems.ActorSystems.TargetSystem import AddTargeterSystem, RemoveTargeterS
 
 
 class BaseLevel:
-    needsSorting = False
     map = None
+
     def __init__(self, app, width, height):
         self.app = app
         self.width = width
@@ -33,6 +37,15 @@ class BaseLevel:
         self.actions: dict[str: list[BaseSystem]] = {}
         self.systems = {}
         self.activeSystems = []
+        self.POIs = []
+        self.startPoint = None
+        self.exitPoint = None
+
+    def getPOI(self):
+        if self.POIs:
+            return self.POIs.pop(0)
+        else:
+            return (randint(4, self.width)-5, randint(4, self.height)-5)
 
 
     def registerSystem(self, priority, system, active):
@@ -55,16 +68,22 @@ class BaseLevel:
 
     def activateSystem(self, priority):
         if priority not in self.activeSystems:
+            # print (f"activating system: {self.systems[priority]}")
             self.activeSystems.append(priority)
-        self.activeSystems.sort()
+            self.activeSystems.sort()
 
     def deactivateSystem(self, priority):
         self.activeSystems.remove(priority)
         # self.activeSystems.sort()
 
     def runSystems(self):
+        lastKey = -10000
         for key in self.activeSystems:
-            self.systems[key].run()
+            if key > lastKey:
+                lastKey = key
+                # print (self.activeSystems)
+                # print (f"running system: {self.systems[key]}")
+                self.systems[key].run()
 
 
     def post(self, action, data):
@@ -91,12 +110,16 @@ class TestLevel(BaseLevel):
     def __init__(self, app, width, height):
         super().__init__(app, width, height)
         
-        self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+        #self.map = LevelCreator.generateBasicLevel(self, self.width-24, self.height-14)
+        # loading entity defs
+        self.e.loadEntities('objects.json')
 
+        
         # =====================
         # queries
         self.projectilesQuery = self.e.createQuery(allOf=[Projectile],storeQuery='Projectiles')
-        self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC],storeQuery='Render')
+        self.renderQuery = self.e.createQuery(allOf=[Position, Render], anyOf=[IsPlayer, IsItem, IsNPC, IsTerrain],storeQuery='Render')
+        self.terrainQuery = self.e.createQuery(allOf=[IsTerrain], storeQuery='Terrain')
         self.lightsQuery = self.e.createQuery(allOf=[Position, Light],storeQuery='LightsOnGround') 
         self.itemsOnGroundQuery = self.e.createQuery(allOf=[IsItem, Position],storeQuery='ItemsOnGround')
         self.playersQuery = self.e.createQuery(allOf=[IsPlayer],storeQuery = 'Players')
@@ -107,102 +130,75 @@ class TestLevel(BaseLevel):
         self.moveQuery = self.e.createQuery(allOf=[Position],storeQuery = 'MoveQuery')
         self.targetedQuery = self.e.createQuery(allOf=[Targeted],storeQuery = 'TargetedQuery')
         self.selectionUIQuery = self.e.createQuery(allOf=[SelectionUI],storeQuery = 'SelectionUIQuery')
+        self.effectsQuery = self.e.createQuery(allOf=[IsEffect], storeQuery='Effects')
+        self.ttlQuery = self.e.createQuery(allOf=[TTL, IsReady], storeQuery='TTL')
+        # =====================
+        # LEVEL CREATION
+        NewLevelCreator.loadTemplates()
+        self.map = NewLevelCreator.createLevel(self, 'caverns')
+    
+        # time.sleep(5)
+        
 
         # =====================
         # logs
-        self.messageLogEntity = self.e.createEntity()
-        self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
-        self.combatLogEntity = self.e.createEntity()
-        self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
-        self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
-        self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
+        # self.messageLogEntity = self.e.createEntity()
+        # self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
+        # self.combatLogEntity = self.e.createEntity()
+        # self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
+        # self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
+        # self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
 
 
         # =====================
         # systems
-        self.initSystem = InitSystem(self)
-        self.playerInputSystem = PlayerInputSystem(self)
-        self.moveSystem = MoveSystem(self)
-        self.targetSystem = TargetSystem(self)
-        self.addTargeterSystem = AddTargeterSystem(self)
-        self.removeTargeterSystem = RemoveTargeterSystem(self)
-        self.tryPickupItemSystem = TryPickupItemSystem(self)
-        self.pickupItemSystem = PickupItemSystem(self)
-        self.openInventorySystem = OpenInventorySystem(self)
-        self.dropItemSystem = DropItemSystem(self)
-        self.updateSelectionUISystem = UpdateSelectionUISystem(self)
-        self.closeUISystem = CloseUISystem(self)
-        self.equipItemSystem = EquipItemSystem(self)
-        self.recalculateStatsSystem = RecalculateStatsSystem(self)
-        self.meleeSystem = MeleeSystem(self)
-        self.rangedSystem = RangedSystem(self)
-        self.projectileSystem = UpdateProjectilesSystem(self)
-        self.damageSystem = DamageSystem(self)
-        self.aiSystem = AISystem(self)
-        self.deathSystem = DeathSystem(self)
+        InitSystem(self)
+        PlayerInputSystem(self)
+        MoveSystem(self)
+        TargetSystem(self)
+        AddTargeterSystem(self)
+        RemoveTargeterSystem(self)
+        TryPickupItemSystem(self)
+        PickupItemSystem(self)
+        OpenInventorySystem(self)
+        DropItemSystem(self)
+        UpdateSelectionUISystem(self)
+        CloseUISystem(self)
+        EquipItemSystem(self)
+        RecalculateStatsSystem(self)
+        MeleeSystem(self)
+        RangedSystem(self)
+        UpdateProjectilesSystem(self)
+        DamageSystem(self)
+        AISystem(self)
+        DeathSystem(self)
         
-        self.updateMapSystem = UpdateMapSystem(self)
-        self.renderMapSystem = RenderMapSystem(self)
-        self.renderUISystem = RenderPlayerUISystem(self)
-        self.renderEntitiesSystem = RenderEntitiesSystem(self)
-        self.renderSelectionUISystem = RenderSelectionUISystem(self)
+        UpdateMapSystem(self)
+        RenderMapSystem(self)
+        RenderPlayerUISystem(self)
+        RenderEntitiesSystem(self)
+        RenderSelectionUISystem(self)
         HealingSystem(self)
+        CreateEffectsSystem(self)
+        UpdateEffectsSystem(self)
+        TTLSystem(self)
 
         # =====================
-        # loading entity defs
-        self.e.loadEntities('objects.json')
 
-        self.e.spawn('torch', self.map.start[0], self.map.start[1]+1)
-        self.e.spawn('shortsword', self.map.start[0], self.map.start[1]-1)
-        self.e.spawn('torch', self.map.end[0], self.map.end[1]+1)
+        self.e.spawn('torch', self.map.startPoint[0], self.map.startPoint[1]+1)
+        self.e.spawn('shortsword', self.map.startPoint[0], self.map.startPoint[1]-1)
+        self.e.spawn('torch', self.map.exitPoint[0], self.map.exitPoint[1]+1)
         # self.e.spawn('orc', self.map.start[0]-1, self.map.start[1])
         # self.e.spawn('orc', self.map.start[0]+1, self.map.start[1])
 
-        orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
-        sword = self.e.spawn('shortsword', -1, -1, orc)
+        # orc = self.e.spawn('orc', self.map.end[0]-1, self.map.end[1])
+        # sword = self.e.spawn('shortsword', -1, -1, orc)
         
         self.post('log', {'colour': (200, 200, 200), 'message': 'Game started'})
 
 
 
     def update(self):
-        # 0  # self.initSystem.run()
-        # 10 # self.playerInputSystem.run()
-        # 20 # self.targetSystem.run()
-        # 30 # self.removeTargeterSystem.run()
-        # 40 # self.addTargeterSystem.run()
-        # 50 # self.tryPickupItemSystem.run()
-        # 60 # self.pickupItemSystem.run()
-        # 70 # self.updateSelectionUISystem.run()
-        # 80 # self.dropItemSystem.run()
-        # 90 # self.equipItemSystem.run()
-        # 100# self.closeUISystem.run()
-
-        # 110# self.aiSystem.run()
-
-        # 120# self.moveSystem.run()
-        # 130# self.openInventorySystem.run()
-        
-
-        # 140# self.recalculateStatsSystem.run()
-
-        # 150# self.meleeSystem.run()
-        # 160# self.rangedSystem.run()
-        # 170# self.projectileSystem.run()
-        # 180# self.damageSystem.run()
-
-        # self.runSystems()
-
-        # 190# self.map.update()
-
-        # 200# self.map.draw(self.app.screen)
-        # 210# self.messagelogSystem.run()
-        # 220# self.combatLogSystem.run()
-        # 230# self.renderEntitiesSystem.run()
-        # 240# self.renderUISystem.run()
-        # 250# self.renderSelectionUISystem.run()
-
-        # 500# self.deathSystem.run()
         self.runSystems()
 
         self.fps += 1

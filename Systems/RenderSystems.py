@@ -8,13 +8,13 @@ class RenderEntitiesSystem(BaseSystem):
     priority=230
 
     def run(self):
-        entities = self.level.itemsOnGroundQuery.result + self.level.npcsQuery.result + self.level.playersQuery.result
+        entities = self.level.terrainQuery.result + self.level.itemsOnGroundQuery.result + self.level.npcsQuery.result + self.level.playersQuery.result
         # renderComponents = self.level.e.component.filter(Render, entities)
         # positionComponents = self.level.e.component.filter(Position, entities)
         renderComponents = self.getComponents(Render)
         positionComponents = self.getComponents(Position)
         screen = self.level.app.screen
-
+    
         for entity in entities:
             if (renderComponents[entity]['needsVisibility'] and self.level.map.checkIsVisible(positionComponents[entity]['x'], positionComponents[entity]['y'])) \
             or not renderComponents[entity]['needsVisibility']:
@@ -22,6 +22,14 @@ class RenderEntitiesSystem(BaseSystem):
                     positionComponents[entity]['x'], 
                     positionComponents[entity]['y'],
                     renderComponents[entity]['char'],
+                    renderComponents[entity]['fg'],
+                    renderComponents[entity]['bg'])
+
+        for entity in self.level.effectsQuery.result:
+            screen.printLine(
+                    positionComponents[entity]['x'], 
+                    positionComponents[entity]['y'],
+                    renderComponents[entity]['name'],
                     renderComponents[entity]['fg'],
                     renderComponents[entity]['bg'])
             

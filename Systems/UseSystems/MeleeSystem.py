@@ -52,11 +52,21 @@ class DamageSystem(BaseSystem):
     def run(self):
         if self._actionQueue:
             statsComponents = self.getComponents(Stats)
+            positionComponents = self.getComponents(Position)
 
 
             for action in self.actionQueue:
                 entity = action['entity']
                 statsComponents[entity]['hp'] -= action['damage']
+
+                self.level.post('create_effect', {
+                    "type": "label",
+                    "x": positionComponents[entity]['x'],
+                    "y": positionComponents[entity]['y'],
+                    "name": f"{action['damage']}",
+                    "fg": colour.RED
+                })
+
                 if statsComponents[entity]['hp'] <= 0:
                     print (f"{entity} has died")
                     self.clog(f"£{entity}$ has died", colour.RED)
