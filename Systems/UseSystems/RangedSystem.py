@@ -75,7 +75,7 @@ class RangedSystem(BaseSystem):
                                         "type": "label",
                                         "x": positionComponents[parent]['x'] -2,
                                         "y": positionComponents[parent]['y'] -1,
-                                        "name": "┤Twang!├",
+                                        "name": "Twang!",
                                         "fg": renderComponents[parent]['fg']
                                     })
                                 self.level.post('add_speed', {'entity': parent, 'speed': weaponComponents[entity]['moveSpeed']})

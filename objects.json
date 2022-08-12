@@ -73,7 +73,7 @@
                 "moveSpeed": 45,
                 "baseMoveSpeed": 45
             },
-            "Body": {"mainhand": "shortsword"}
+            "Body": {"mainhand": "shortsword", "offhand": "torch"}
         }
     },
 
@@ -192,12 +192,11 @@
         "type": "Effect-Label",
         "components": {
             "Render": {
-                "name": "Some Message",
+                "name": "",
                 "needsVisibility": false
             },
-            "Init": {"speed": 10},
-            "IsEffect": {},
-            "TTL": {}
+            "Init": {},
+            "IsEffect": {}
         }
     }
 ]

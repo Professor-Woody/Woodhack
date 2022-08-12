@@ -26,7 +26,6 @@ class RenderEntitiesSystem(BaseSystem):
                     renderComponents[entity]['bg'])
 
         for entity in self.level.effectsQuery.result:
-            print (f"Rendering {entity}")
             screen.printLine(
                     positionComponents[entity]['x'], 
                     positionComponents[entity]['y'],

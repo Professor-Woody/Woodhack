@@ -7,6 +7,7 @@ from Systems.BaseSystem import BaseSystem
 from Systems.ActorSystems.InitSystem import InitSystem
 from Systems.EffectsSystems.CreateEffectsSystem import CreateEffectsSystem
 from Systems.EffectsSystems.TTLSystem import TTLSystem
+from Systems.EffectsSystems.UpdateEffectsSystem import UpdateEffectsSystem
 from Systems.UseSystems.HealingSystem import HealingSystem
 from Systems.UseSystems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
 from Systems.Items.ProjectileSystem import UpdateProjectilesSystem
@@ -179,6 +180,7 @@ class TestLevel(BaseLevel):
         RenderSelectionUISystem(self)
         HealingSystem(self)
         CreateEffectsSystem(self)
+        UpdateEffectsSystem(self)
         TTLSystem(self)
 
         # =====================

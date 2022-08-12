@@ -31,13 +31,7 @@ class UpdateProjectilesSystem(BaseSystem):
                                 + weaponComponents[entity]['damageBonus'] \
                                     + projectileComponents[entity]['damageBonus']
                             self.level.post('damage', {'entity': blocked, 'damage': damageRoll})
-                            self.level.post('create_effect', {
-                                "type": "label",
-                                "x": positionComponents[entity]['x'] -1,
-                                "y": positionComponents[entity]['y'] -1,
-                                "name": f"┤{damageRoll}├",
-                                "fg": colour.RED
-                            })
+                            
                             self.removeProjectile(entity)
                     # else:
                     #     print (f"blocked by something else: {blocked}")

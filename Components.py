@@ -184,7 +184,8 @@ def registerComponents(entityManager):
     entityManager.registerComponent(Stairs, {'direction': 'down'})
     entityManager.registerComponent(IsTerrain)
     entityManager.registerComponent(TTL)
-    entityManager.registerComponent(IsEffect)
+    entityManager.registerComponent(IsEffect, {'state': 1, 'width': 0, 'name': ''})
+
 # =================================================
 # =================================================
 def registerMenuComponents(entityManager):

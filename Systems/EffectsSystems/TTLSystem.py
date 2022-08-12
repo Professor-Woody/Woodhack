@@ -5,6 +5,7 @@ from Systems.BaseSystem import BaseSystem
 class TTLSystem(BaseSystem):
     actions=['create_effect']
     priority = 1
+    alwaysActive = False
     active = True
 
     def post(self, action):
