@@ -34,6 +34,9 @@ class GameMap:
 
     def checkIsVisible(self, x, y):
         return self.visible[x, y]# and self.lit[x, y]
+    
+    def checkIsTransparent(self, x, y):
+        return self.tiles["transparent"][x, y]
 
     def checkIsBlocked(self, x, y):
         positionComponents = self.level.e.component.components[Position]

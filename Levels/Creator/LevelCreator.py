@@ -16,12 +16,11 @@ class NewLevelCreator:
         for obj in objects:
             biome = Biome(obj)
             cls.biomes[biome.type] = biome
-        print ("99999999999999999")
-        print (cls.biomes)
+
 
     @classmethod
     def createLevel(cls, level, biomeType):
-        gameMap = GameMap(level, level.width, level.height)
+        gameMap = GameMap(level, level.width-25, level.height)
         biome = cls.biomes[biomeType]
         biome.createLevel(level, gameMap)
         return gameMap

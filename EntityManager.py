@@ -170,10 +170,14 @@ class EntityManager:
             for slot in data.keys():
                 if data[slot]:
                     self.spawn(data[slot], -1, -1, inInventory=entity, inBodySlot=slot)
-
+        
         elif component == IsPlayer:
             data['id'] = self.playerIds
             self.playerIds += 1
+
+        elif component == Init and data['speed'] > 0:
+            self.level.post("add_speed", {'entity': entity, 'speed': 0})
+
 
         if 'useAction' in data.keys():
             if not self.hasComponent(entity, UseActions):
@@ -231,7 +235,7 @@ class EntityManager:
             # print (f"adding: {component} / {entityDef['components'][component]}")
 
 
-    def spawn(self, entityType, x, y, inInventory: int = None, inBodySlot: str = None):
+    def spawn(self, entityType, x=0, y=0, inInventory: int = None, inBodySlot: str = None):
 
         entity = self.createEntity()
         self._addComponents(entity, entityType)

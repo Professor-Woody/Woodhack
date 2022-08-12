@@ -5,6 +5,8 @@ from Components import *
 from Systems.ActorSystems.AISystem import AISystem
 from Systems.BaseSystem import BaseSystem
 from Systems.ActorSystems.InitSystem import InitSystem
+from Systems.EffectsSystems.CreateEffectsSystem import CreateEffectsSystem
+from Systems.EffectsSystems.TTLSystem import TTLSystem
 from Systems.UseSystems.HealingSystem import HealingSystem
 from Systems.UseSystems.MeleeSystem import DamageSystem, DeathSystem, MeleeSystem
 from Systems.Items.ProjectileSystem import UpdateProjectilesSystem
@@ -127,7 +129,8 @@ class TestLevel(BaseLevel):
         self.moveQuery = self.e.createQuery(allOf=[Position],storeQuery = 'MoveQuery')
         self.targetedQuery = self.e.createQuery(allOf=[Targeted],storeQuery = 'TargetedQuery')
         self.selectionUIQuery = self.e.createQuery(allOf=[SelectionUI],storeQuery = 'SelectionUIQuery')
-
+        self.effectsQuery = self.e.createQuery(allOf=[IsEffect], storeQuery='Effects')
+        self.ttlQuery = self.e.createQuery(allOf=[TTL, IsReady], storeQuery='TTL')
         # =====================
         # LEVEL CREATION
         NewLevelCreator.loadTemplates()
@@ -138,12 +141,12 @@ class TestLevel(BaseLevel):
 
         # =====================
         # logs
-        self.messageLogEntity = self.e.createEntity()
-        self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
-        self.combatLogEntity = self.e.createEntity()
-        self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
-        self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
-        self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
+        # self.messageLogEntity = self.e.createEntity()
+        # self.e.addComponent(self.messageLogEntity, Position, {'x': 0, 'y': height - 14, 'width': int(width / 2), 'height': 14})
+        # self.combatLogEntity = self.e.createEntity()
+        # self.e.addComponent(self.combatLogEntity, Position, {'x': int(width/2), 'y': height - 14, 'width': int(width / 2), 'height': 14})
+        # self.messagelogSystem = MessageLogSystem(self, self.messageLogEntity)
+        # self.combatLogSystem = CombatLogSystem(self, self.combatLogEntity)
 
 
         # =====================
@@ -175,6 +178,8 @@ class TestLevel(BaseLevel):
         RenderEntitiesSystem(self)
         RenderSelectionUISystem(self)
         HealingSystem(self)
+        CreateEffectsSystem(self)
+        TTLSystem(self)
 
         # =====================
 

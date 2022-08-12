@@ -49,6 +49,8 @@ Type = 46
 UseHealing = 47
 Stairs = 48
 IsTerrain = 49
+TTL = 50
+IsEffect = 51
 
 
 componentMap = {
@@ -86,7 +88,9 @@ componentMap = {
     'Stackable': Stackable,
     'UseHealing': UseHealing,
     'Stairs': Stairs,
-    'IsTerrain': IsTerrain
+    'IsTerrain': IsTerrain,
+    'TTL': TTL,
+    'IsEffect': IsEffect
 }
 
 
@@ -179,6 +183,8 @@ def registerComponents(entityManager):
         'useAction': 'use_healing'})
     entityManager.registerComponent(Stairs, {'direction': 'down'})
     entityManager.registerComponent(IsTerrain)
+    entityManager.registerComponent(TTL)
+    entityManager.registerComponent(IsEffect)
 # =================================================
 # =================================================
 def registerMenuComponents(entityManager):

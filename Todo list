@@ -2,10 +2,9 @@ from audioop import add
 
 
 DOING:
-    Need to add the POI system to the cavern generator
 
 
-TODO: or
+TODO: 
     done - build character UI
     done - build target UI
 

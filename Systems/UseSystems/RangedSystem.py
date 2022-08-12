@@ -71,6 +71,13 @@ class RangedSystem(BaseSystem):
                                 })
                                 if self.hasComponent(parent, IsPlayer):
                                     self.clog("Twang!", renderComponents[parent]['fg'])
+                                    self.level.post("create_effect", {
+                                        "type": "label",
+                                        "x": positionComponents[parent]['x'] -2,
+                                        "y": positionComponents[parent]['y'] -1,
+                                        "name": "┤Twang!├",
+                                        "fg": renderComponents[parent]['fg']
+                                    })
                                 self.level.post('add_speed', {'entity': parent, 'speed': weaponComponents[entity]['moveSpeed']})
                                 self.level.post('add_speed', {'entity': entity, 'speed': weaponComponents[entity]['weaponSpeed']})
                             else:

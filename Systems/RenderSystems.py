@@ -24,6 +24,15 @@ class RenderEntitiesSystem(BaseSystem):
                     renderComponents[entity]['char'],
                     renderComponents[entity]['fg'],
                     renderComponents[entity]['bg'])
+
+        for entity in self.level.effectsQuery.result:
+            print (f"Rendering {entity}")
+            screen.printLine(
+                    positionComponents[entity]['x'], 
+                    positionComponents[entity]['y'],
+                    renderComponents[entity]['name'],
+                    renderComponents[entity]['fg'],
+                    renderComponents[entity]['bg'])
             
 
 class RenderPlayerUISystem(BaseSystem):

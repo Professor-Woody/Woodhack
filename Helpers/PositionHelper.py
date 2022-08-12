@@ -14,8 +14,7 @@ def getLOS(entity, other, visionRange, Map):
         return False
 
     for x, y in path[1:-1]:
-        if not Map.checkIsPassable(x,y) \
-            or Map.checkIsBlocked(x, y):
+        if not Map.checkIsTransparent(x, y):
             return False
     return path    
 

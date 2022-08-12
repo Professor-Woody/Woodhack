@@ -181,10 +181,23 @@
             "Render": {
                 "name": "Stairs",
                 "char": ">",
-                "fg": [200,200,200]
+                "fg": [200,200,200],
+                "needsVisibility": false
             },
             "Stairs": {},
             "IsTerrain": {}
+        }
+    },
+    {
+        "type": "Effect-Label",
+        "components": {
+            "Render": {
+                "name": "Some Message",
+                "needsVisibility": false
+            },
+            "Init": {"speed": 10},
+            "IsEffect": {},
+            "TTL": {}
         }
     }
 ]
