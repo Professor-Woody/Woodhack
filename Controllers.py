@@ -6,6 +6,8 @@ class BaseController:
     pass
 
 class KeyboardController(BaseController):
+    type="keyboard"
+
     def __init__(self):
         self.commands = {
             "up": pygame.K_UP,
@@ -53,7 +55,8 @@ class KeyboardController(BaseController):
         self.locked.append(action)
 
 class JoystickController(BaseController):
-    
+    type="joystick"
+
     def __init__(self, joystick):
         self.joystick = joystick
         self.commands = {
@@ -118,7 +121,10 @@ class JoystickController(BaseController):
             
     def getRawAxis(self, data):
         axis = data[0]
-        return self.joystick.get_axis(axis)
+        pressed = self.joystick.get_axis(axis)
+        if pressed < -.1 or pressed > .1:
+            return pressed
+        return 0
 
     def getHat(self, data):
         hat, axis, direction = data

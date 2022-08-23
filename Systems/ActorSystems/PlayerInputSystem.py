@@ -23,15 +23,22 @@ class PlayerInputSystem(BaseSystem):
                 continue
             
             # Targeting
-            target = None
-            if controller.getPressedOnce("next"):
-                target = "next"
-            elif controller.getPressedOnce("previous"):
-                target = "previous"
-            elif controller.getPressedOnce("nearestEnemy"):
-                target = "nearestEnemy"
-            if target:
-                self.level.post('target', {'entity': entity, 'targetType': IsNPC, 'targetFocus': target})
+            if controller.type == "joystick":
+                xaxis = controller.getPressed('aimXAxis')
+                yaxis = controller.getPressed("aimYAxis")
+                if xaxis or yaxis:
+                    target = self.aim(entity, xaxis, yaxis)
+                    if not target:
+                        if controller.getPressedOnce("next"):
+                            target = "next"
+                        elif controller.getPressedOnce("previous"):
+                            target = "previous"
+                        elif controller.getPressedOnce("nearestEnemy"):
+                            target = "nearestEnemy"
+                    if target:
+                        self.level.post('target', {'entity': entity, 'targetType': IsNPC, 'targetFocus': target})
+            
+            
 
             # picking up an item
             if controller.getPressedOnce("use"):
@@ -99,3 +106,28 @@ class PlayerInputSystem(BaseSystem):
                 # Temporary for testing purposes
                 if controller.getPressedOnce('cancel'):
                     self.level.e.spawn('orc', positionComponents[entity]['x']+1, positionComponents[entity]['y'])
+
+
+
+
+
+    def aim(self, entity, positionComponents, xaxis, yaxis):
+        aimComponents = self.getComponents(AimPoint)
+
+        if not xaxis:
+            # aiming soley on the y axis
+            self.level.e.addComponent(entity, AimPoint, {
+                'x': positionComponents[entity]['x'],
+                'y': positionComponents[entity]['y'] + int(yaxis * 5)
+            })
+        elif not yaxis:
+            self.level.e.addComponent(entity, AimPoint, {
+                'x': positionComponents[entity]['x'],
+                'x': positionComponents[entity]['x'] + int(xaxis * 5),
+                'y': positionComponents[entity]['y']
+            })
+        else:
+            self.level.e.addComponent(entity, AimPoint, {
+                'x': positionComponents[entity]['x'] + int(xaxis * 5),
+                'y': positionComponents[entity]['y'] + int(yaxis * 5)
+            })

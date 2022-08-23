@@ -5,10 +5,10 @@ def getRange(entityCoords, otherCoords):
     return max(abs(entityCoords[0] - otherCoords[0]), abs(entityCoords[1] - otherCoords[1]))
 
 
-def getLOS(entity, other, visionRange, Map):
+def getLOS(entityCoords, otherCoords, visionRange, Map):
     path = tcod.los.bresenham(
-        (entity[0], entity[1]),
-        (other[0], other[1])
+        (entityCoords[0], entityCoords[1]),
+        (otherCoords[0], otherCoords[1])
     ).tolist()
     if len(path)-1 > visionRange:
         return False
@@ -17,6 +17,24 @@ def getLOS(entity, other, visionRange, Map):
         if not Map.checkIsPassable(x,y) \
             or Map.checkIsBlocked(x, y):
             return False
+    return path    
+
+
+def getAngleLine(entityCoords, otherCoords, length=100, Map=None):
+    path = tcod.los.bresenham(
+        (entityCoords[0], entityCoords[1]),
+        (otherCoords[0], otherCoords[1])
+    ).tolist()
+
+    path = path[:length]
+    if Map:
+        counter = 1
+        for x, y in path[:-1]:
+            if (Map.checkIsPassable(x, y) or Map.checkIsBlocked(x, y)):
+                path = path[1: counter]
+                break
+            counter += 1
+        
     return path    
 
 def getPathTo(start, end, Map, goThroughWalls = 0, diagonal=3, ignoreRestricted=True):

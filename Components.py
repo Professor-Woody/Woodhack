@@ -47,6 +47,7 @@ WeaponStats = 44
 Stackable = 45
 Type = 46
 UseHealing = 47
+AimPoint = 48
 
 
 
@@ -174,6 +175,11 @@ def registerComponents(entityManager):
         'itemSpeed': 240,
         'moveSpeed': 10,
         'useAction': 'use_healing'})
+    entityManager.registerComponent(AimPoint, {
+        'x': 0,
+        'y': 0
+    })
+
 
 # =================================================
 # =================================================

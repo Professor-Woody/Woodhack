@@ -1,0 +1,101 @@
+[
+    {
+        "type": "Dungeon",
+        "tileset": {
+            "wall": {
+                "passable": false,
+                "transparent": false,
+                "light": {
+                    "ch": "#",
+                    "fg": [130, 150, 140],
+                    "bg": [87, 93, 106]
+                },
+                "dark": {
+                    "ch": "#",
+                    "fg": [26, 30, 28],
+                    "bg": [17, 19, 21]
+                }
+            },
+            "floor": {
+                "passable": false,
+                "transparent": false,
+                "light": {
+                    "ch": " ",
+                    "fg": [130, 150, 140],
+                    "bg": [87, 93, 106]
+                },
+                "dark": {
+                    "ch": " ",
+                    "fg": [26, 30, 28],
+                    "bg": [17, 19, 21]
+                }
+            }
+        }
+    },
+    {
+        "type": "Cavern",
+        "tileset": {
+            "wall": {
+                "passable": false,
+                "transparent": false,
+                "light": {
+                    "ch": "▒",
+                    "fg": [130, 150, 140],
+                    "bg": [87, 93, 106]
+                },
+                "dark": {
+                    "ch": "▒",
+                    "fg": [26, 30, 28],
+                    "bg": [17, 19, 21]
+                }
+            },
+            "floors": {
+                "floor": {
+                    "passable": false,
+                    "transparent": false,
+                    "light": {
+                        "ch": ".",
+                        "fg": [130, 150, 140],
+                        "bg": [87, 93, 106]
+                    },
+                    "dark": {
+                        "ch": ".",
+                        "fg": [26, 30, 28],
+                        "bg": [17, 19, 21]
+                    },
+                    "chance": 70
+                },
+                "floor2": {
+                    "passable": false,
+                    "transparent": false,
+                    "light": {
+                        "ch": ".",
+                        "fg": [130, 150, 140],
+                        "bg": [87, 93, 106]
+                    },
+                    "dark": {
+                        "ch": ".",
+                        "fg": [26, 30, 28],
+                        "bg": [17, 19, 21]
+                    },
+                    "chance": 20
+                },
+                "floor3": {
+                    "passable": false,
+                    "transparent": false,
+                    "light": {
+                        "ch": ",",
+                        "fg": [130, 150, 140],
+                        "bg": [87, 93, 106]
+                    },
+                    "dark": {
+                        "ch": ",",
+                        "fg": [26, 30, 28],
+                        "bg": [17, 19, 21]
+                    },
+                    "chance": 10
+                }
+            }
+        }
+    }
+] 
